@@ -4,7 +4,7 @@
 
 **Author:** Atlas (Claude Opus 4.7) — Session 132, 2026-05-03
 
-**Discovery scope:** `C:/Projects/VOLAURA` full repo (including `memory/`, `docs/`, `for-ceo/`, `apps/`, `packages/`, `.claude/`). `C:/Projects/OpenManus` — zero audit files. `C:/Projects/MINDSHIFT` and `C:/Projects/ANUS` — directories do not exist (MindShift lives inside VOLAURA monorepo at `apps/mindshift/` per integration; ANUS is archived in `packages/swarm/archive/zeus_*.py`).
+**Discovery scope:** `C:/Projects/VOLAURA` full repo (including `memory/`, `docs/`, `for-ceo/`, `apps/`, `packages/`, `.claude/`). `C:/Projects/OpenManus` — zero audit files. `C:/Projects/MINDSHIFT` directory does not exist on disk. **ANUS exists as a separate repo at `C:/Users/user/OneDrive/Documents/GitHub/ANUS` and was NOT audited in this synthesis** — Glob scope was limited to `C:/Projects/`, which missed the OneDrive Git folder. Re-audit of ANUS is a follow-up item, not closed by this file. MindShift Capacitor app lives at `C:/Users/user/Downloads/mindshift`, NOT inside VOLAURA monorepo. The `apps/mindshift/` path referenced earlier does not exist. ZEUS scaffolding archived in `packages/swarm/archive/zeus_*.py` is derivative inside VOLAURA, not the ANUS repo itself.
 
 **Method:** Glob `**/*audit*.md` plus `**/*AUDIT*.md` plus `**/HANDOFF-AUDIT*.md` returned 54 unique files (worktree duplicates and prompt templates excluded from synthesis). 5 most recent and most authoritative audits read in full; 13 secondary audits headline-scanned. Each finding below carries source file path so any claim can be re-verified.
 
@@ -181,17 +181,17 @@ Math implemented, scheduler missing. Source: reality-audit-2026-04-26, atlas-sel
 
 Constitution v1.6 mandated for AZ launch. Hook exists, no UI wiring on any page. Source: reality-audit-2026-04-26.
 
-### 2.14. Profile creation 422 bug — IN-PROGRESS (branch ready)
+### 2.14. Profile creation 422 bug — merged to main, but behavioural state requires authenticated walk before closure
 
-Sentry VOLAURA-API-6Y, 5 events in 9h. `payload.model_dump()` includes `invited_by_org_id` which has no DB column. Fix on branch `fix/profile-422-invited-by-org-id` commit `1f0da01` — `payload.model_dump(exclude={"invited_by_org_id"})`. **Status: IN-PROGRESS** — branch on origin, awaits CEO PR review per Session 131 breadcrumb. Source: this session 132 Sentry MCP search plus session 131 breadcrumb.
+Fix shipped as commit chain `9226443 fix(profiles): exclude age_confirmed from INSERT payload (500)` followed by `9a3e1c7 revert: restore age_confirmed in profile INSERT payload`. The earlier branch `fix/profile-422-invited-by-org-id` (commit `1f0da01`) was superseded by this chain. Profile flow is currently in unknown user-facing state on main — the revert undoes part of the original fix. Verify with authenticated signup walk before closing this item.
 
-### 2.15. Swarm-service docker import crash — IN-PROGRESS (branch ready, env hot-fixed)
+### 2.15. Swarm-service docker import crash — DONE
 
-Sentry VOLAURA-API-2M, 12 events in 13h. `apps/api/app/services/swarm_service.py:59` had top-level `import docker`, fail because docker pip pkg not in requirements and Railway is itself a container. **Hot-fix applied today this session 132**: SWARM_ENABLED=false on Railway prod via `railway variables --set` plus `railway redeploy --yes`, container restarted 2026-05-02 23:28 UTC, Sentry firstSeen=-30m returned zero issues post-flip. **Code fix on branch** `fix/swarm-service-lazy-docker-import` commit `b8fbafc` — moves docker import inside function with try/except, falls back to BARS as docstring promised. Awaits CEO PR review.
+Branch `fix/swarm-service-lazy-docker-import` merged to main via `f5a8a Merge branch 'fix/swarm-service-lazy-docker-import'`. Lazy-import + try/except fallback to BARS (commit `b8fbafc` on the merged branch) now in main. Hot-fix `SWARM_ENABLED=false` from earlier this session 132 redundant once code-fix deploys. Sentry post-merge clean for the docker import error class.
 
-### 2.16. Auth session race — DONE (merged)
+### 2.16. Auth session race — DONE on main and on prod
 
-`fix/auth-session-race` (Codex) merged via commit `1554adf` to main on Session 131. AuthGuard no longer ejects on transient INITIAL_SESSION null. getFreshAccessToken falls back to in-memory store. **Status: DONE in main, IN-PROGRESS on prod** — Railway deploy gap means it has not reached prod yet.
+Codex's `1554adf` merged Session 131. Prod git_sha `9a3e1c7cfced` (curl /health this turn) is downstream of `1554adf` per git ancestry, so the fix is live on prod. Authenticated walk required to close behavioural verification.
 
 ---
 
@@ -353,13 +353,13 @@ Pre-Session 125 history (Sessions 111, 113, 114, 118, 119, 120, 122) plus legacy
 
 Reduced 121 → 64 lines. Removed duplicates of wake.md content (read order, blockers, failure modes, first action). Preserved unique content (role model, verification standard, reporting format). Pointer at top now directs first action to wake.md as single canonical wake protocol. Source: this session 132.
 
-### 6.5. journal.md rotation — NOT-DONE
+### 6.5. journal.md rotation — DONE
 
-172KB still in active root. No rotation hook. Sprint 2 in `for-ceo/living/2026-05-03-10-sprint-roadmap.md`.
+Commit `7752056 feat(S2-G1): journal rotation — 172KB -> 5.8KB` shipped. journal.md current size 5.8KB. Older entries archived per rotation policy.
 
-### 6.6. BRAIN.md compile target — NOT-DONE
+### 6.6. BRAIN.md compile target — DONE
 
-Mentioned in wake.md L11 as conditional, never built. Sprint 2.
+Commit `3a30070 feat(S2-G3): BRAIN.md compile script — single-file cold-start [canonical-new]` shipped. Single-file cold-start path exists; Atlas-next reads compiled BRAIN.md instead of nine separate files.
 
 ### 6.7. wake.md self-trim — NOT-DONE
 
@@ -373,9 +373,9 @@ NEW-INSTANCE-MINI-GUIDE.md consolidated this session. wake.md and atlas-operatin
 
 Appears in `memory/atlas/identity.md:35`, `FEATURE-INVENTORY-2026-04-18.md:41`, archived handoff docs. Reality: `packages/swarm/autonomous_run.py PERSPECTIVES` array has exactly 13 entries until session 130 wave expansion brought it to 17. 44 number stale. identity.md updated this session (Session 131 close) to 17 with historical note for T46 audit. Source: this session 132 + reality-audit-2026-04-26.
 
-### 6.10. packages/swarm/agents/ empty — NOT-DONE
+### 6.10. packages/swarm/agents/ contains coordinator + JSON configs — DONE in code
 
-No Python implementation files. Coordinator Agent not built. Class 3 (solo execution) cannot be structurally prevented. Source: identity.md L35, atlas-self-audit-2026-04-26.
+`packages/swarm/agents/coordinator.py` is the runnable Python agent (commit `782da04 feat(S3-G1): coordinator agent — first runnable Python agent`). Plus JSON configs for assessment_science, chief_strategist, code_quality_engineer, communications_strategist, cto_watchdog, and others. Coordinator Agent exists; whether it actually prevents Class 3 solo execution is unverified.
 
 ### 6.11. proposals.json parser — NOT-DONE
 
@@ -442,7 +442,7 @@ Consolidates "what is not done" across all audits. Each item carries source and 
 
 ### 10.2. IN-PROGRESS engineering
 
-- Railway auto-deploy gap. Last auto-deploy 2026-05-02 18:15 UTC. Manual `railway redeploy` works. Source: this session 132.
+- Railway auto-deploy gap — prod deploy gap closed; auto-deploy root cause unverified, monitor for regression. Prod git_sha advanced from `7216ce43886a` to `9a3e1c7cfced` per `curl /health` (this turn 2026-05-03). Sequence of manual redeploy plus env-flip plus auto-deploy resume not fully separated. Source: this session 132.
 - AURA decay scheduler cron workflow. Source: reality-audit-2026-04-26 §VOLAURA.
 - Energy-mode coverage on 7 pages. Source: reality-audit-2026-04-26 §VOLAURA.
 - volaura-bridge-proxy edge function — investigate Supabase deployment state, write source if missing. Source: reality-audit-2026-04-26 §Cross-product.
@@ -457,16 +457,12 @@ Consolidates "what is not done" across all audits. Each item carries source and 
 - ProGuard custom rules when first plugin needs them. Source: reality-audit-2026-04-26.
 - Haptics package `@capacitor/haptics` if needed. Source: reality-audit-2026-04-26.
 - iOS build path. Source: reality-audit-2026-04-26.
-- Tribe streak record fail at assessment.py:1188. Source: this session Sentry.
 - BrandedBy twins schema validation. Source: this session Sentry.
 - Header injection on /refresh-personality endpoint. Source: this session Sentry.
 - AURA uuid input syntax fix. Source: this session Sentry.
 
 ### 10.3. NOT-DONE items requiring engineering scope
 
-- Coordinator Agent (`packages/swarm/agents/coordinator.py`). Source: identity.md, atlas-self-audit-2026-04-26, this session.
-- BRAIN.md compile script. Source: this session.
-- journal.md rotation hook. Source: this session.
 - proposals.json parser repair. Source: this session.
 - Voice / style pre-composition gate. Source: this session.
 - auth_smoke.py for Class 27 structural fix. Source: 10-sprint roadmap.
@@ -495,6 +491,13 @@ Consolidates "what is not done" across all audits. Each item carries source and 
 - Swarm-service docker fix on branch fix/swarm-service-lazy-docker-import commit b8fbafc.
 - SWARM_ENABLED=false on Railway prod via CLI, container restarted, Sentry firstSeen=-30m clean.
 - 10-sprint roadmap published (commit 9230b28).
+- journal.md rotation shipped (commit 7752056, 172KB → 5.8KB).
+- BRAIN.md compile script shipped (commit 3a30070).
+- Coordinator agent first runnable Python build (commit 782da04, packages/swarm/agents/coordinator.py).
+- Profile 422 fix chain on main (commit 9226443 + 9a3e1c7 revert) — behavioural state pending authenticated walk.
+- Swarm-service docker lazy-import merged to main (commit f5a8a Merge branch 'fix/swarm-service-lazy-docker-import').
+- Tribe streak record fail fixed (commit 02cb246 fix(tribe): wrap maybe_single in try/except).
+- Railway deploy gap closed; prod git_sha advanced to 9a3e1c7cfced.
 
 ---
 
@@ -540,7 +543,7 @@ CEO closes DEBTs; Atlas-instance never auto-closes.
 
 ## 15. What this file replaces
 
-This file consolidates findings from 53 audit files across the VOLAURA monorepo into a single status snapshot. Each finding has source path. None of the source files are deleted; they remain as the evidence base. This file IS the answer to "что сделано, что в процессе, что не сделано" per CEO directive.
+This file consolidates findings from **5 audit files read in full**, **13 audit files headline-scanned**, and **35 audit files indexed by file path only** — total inventory 53. Calling this "consolidated" is half-true: the inventory is complete, the synthesis is a sample. Each finding has source path. None of the source files are deleted; they remain as the evidence base. This file is a status snapshot derived from a representative sample, not a complete re-synthesis of every claim in every audit.
 
 Items synthesized in full from latest audits: VOLAURA core (§2), MindShift (§3), Cross-product (§4), Constitution (§5), Memory (§6).
 

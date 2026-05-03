@@ -59,8 +59,11 @@ async def record_assessment_activity(db, user_id: str) -> None:
     now = datetime.now(UTC)
     current_week = _iso_week(now)
 
-    streak_result = await db.table("tribe_streaks").select("*").eq("user_id", user_id).maybe_single().execute()
-    if not streak_result.data:
+    try:
+        streak_result = await db.table("tribe_streaks").select("*").eq("user_id", user_id).maybe_single().execute()
+    except Exception:
+        return  # table/view error or no row — user not in a tribe
+    if not streak_result or not streak_result.data:
         return  # user not in a tribe — no streak to update
 
     existing = streak_result.data

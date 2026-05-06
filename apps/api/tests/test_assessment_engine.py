@@ -130,13 +130,19 @@ def test_submit_response_appends_item():
     state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.8, 5000)
     assert len(state.items) == 1
     assert state.items[0].question_id == "q1"
-    assert state.items[0].response == 1  # 0.8 >= 0.5 → binary 1
+    assert state.items[0].response == 3  # 0.8 → top ordinal bucket
 
 
-def test_submit_response_binary_threshold():
+def test_submit_response_ordinal_bucket_low_score():
     state = CATState()
     state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.3, 5000)
-    assert state.items[0].response == 0  # 0.3 < 0.5 → binary 0
+    assert state.items[0].response == 1  # 0.3 retains partial evidence
+
+
+def test_submit_response_ordinal_bucket_zero_score():
+    state = CATState()
+    state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.0, 5000)
+    assert state.items[0].response == 0
 
 
 def test_submit_response_updates_theta():

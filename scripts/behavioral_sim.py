@@ -37,14 +37,7 @@ import os
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://dwdgzfusjsobnixgyzjk.supabase.co")
 SUPABASE_SERVICE_KEY = os.environ["SUPABASE_SERVICE_KEY"]  # required — never hardcode
-SUPABASE_ANON_KEY = os.environ.get(
-    "SUPABASE_ANON_KEY",
-    (
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-        ".eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3ZGd6ZnVzanNvYm5peGd5emprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTU0MDQsImV4cCI6MjA5MDQ3MTQwNH0"
-        ".rbyIBLRONffOKCmfiLJQU_RVEgDmQ5MjUMPj8I8GxOw"
-    ),
-)
+SUPABASE_ANON_KEY = os.environ["SUPABASE_ANON_KEY"]  # required — never hardcode
 
 SIM_EMAIL_DOMAIN = "@volaura-sim.test"
 SIM_PASSWORD = "SimTest123!"

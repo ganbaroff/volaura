@@ -19,10 +19,11 @@ import pathlib
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from fastapi import HTTPException
 from httpx import ASGITransport, AsyncClient
 
 import app.routers.atlas_gateway as gw_module
-from app.deps import get_current_user_id, get_supabase_admin
+from app.deps import get_supabase_admin, require_platform_admin
 from app.main import app
 
 GATEWAY_SECRET = "test-gateway-secret-abc123"
@@ -434,18 +435,37 @@ async def test_learnings_401_without_auth():
 
 
 @pytest.mark.asyncio
-async def test_learnings_happy_path():
-    """Authenticated call → 200 with learnings list."""
+async def test_learnings_403_without_platform_admin():
+    """JWT present but not platform admin → 403 Forbidden."""
     mock_admin = _make_admin_mock()
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: (_ for _ in ()).throw(
+        HTTPException(status_code=403, detail={"code": "NOT_PLATFORM_ADMIN", "message": "Platform admin access required"})
+    )
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
+
+    assert resp.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_learnings_happy_path():
+    """Platform-admin call → 200 with learnings list."""
+    mock_admin = _make_admin_mock()
+
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     data = resp.json()
@@ -461,13 +481,13 @@ async def test_learnings_empty_when_no_rows():
     mock_admin = _make_admin_mock(rows=[])
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     assert resp.json()["total"] == 0
@@ -480,13 +500,13 @@ async def test_learnings_category_filter():
     mock_admin = _make_admin_mock(rows=[_SAMPLE_LEARNINGS[0]])
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?category=preference")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     assert resp.json()["category_filter"] == "preference"
@@ -497,13 +517,13 @@ async def test_learnings_category_filter():
 async def test_learnings_invalid_category_422():
     """?category=unknown → 422 with INVALID_CATEGORY code."""
     app.dependency_overrides[get_supabase_admin] = lambda: _make_admin_mock()
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?category=unknown_bad")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 422
     assert resp.json()["detail"]["code"] == "INVALID_CATEGORY"
@@ -515,13 +535,13 @@ async def test_learnings_limit_param():
     mock_admin = _make_admin_mock()
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?limit=5")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     assert resp.json()["limit"] == 5
@@ -531,12 +551,12 @@ async def test_learnings_limit_param():
 async def test_learnings_limit_too_large_422():
     """?limit=200 → 422 (exceeds max=100)."""
     app.dependency_overrides[get_supabase_admin] = lambda: _make_admin_mock()
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?limit=200")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 422

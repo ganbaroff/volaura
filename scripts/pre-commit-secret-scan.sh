@@ -37,8 +37,9 @@ check "OpenRouter sk-or-v1-"       'sk-or-v1-[A-Za-z0-9]{40,}'
 check "NVIDIA nvapi-"              'nvapi-[A-Za-z0-9_-]{60,}'
 check "DeepSeek sk-"               'sk-[a-f0-9]{32}'
 # Supabase + auth
-check "Supabase service-role JWT"  'eyJhbGciOiJIUzI1NiI[A-Za-z0-9_.-]+role\\"":\\""service_role'
+check "Supabase JWT (anon/service_role)"  'eyJhbGciOi[A-Za-z0-9_-]+\.eyJpc3MiOiJzdXBhYmFzZSI'
 check "Supabase sb_secret_"        'sb_secret_[A-Za-z0-9_-]{20,}'
+check "Supabase JWT secret (Hs256)" '[A-Za-z0-9+/=]{40,}={1,2}.*Legacy.JWT.secret'
 # Stripe
 check "Stripe sk_live_"            'sk_live_[A-Za-z0-9]{24,}'
 check "Stripe whsec_"              'whsec_[A-Za-z0-9]{32,}'

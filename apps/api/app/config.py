@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
     app_url: str = "http://localhost:3000"
     default_locale: str = "az"  # AZ is primary locale; used in server-generated URLs
+    redis_url: str = ""
 
     # LLM — V-BRAIN chain: primary→fallback→fallback→keyword
     # GEM=aura-eyes, GRQ=quick-pulse, OAI=deep-cortex, DSK=shadow-mind

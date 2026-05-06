@@ -21,6 +21,8 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from starlette.requests import Request
 
+from app.config import settings
+
 
 def _key_func(request: Request) -> str:
     """Rate limit key: IP address + user ID if authenticated.
@@ -38,7 +40,17 @@ def _key_func(request: Request) -> str:
     return ip
 
 
-limiter = Limiter(key_func=_key_func)
+def _build_limiter() -> tuple[Limiter, str]:
+    """Build limiter with Redis when configured, otherwise in-memory."""
+    if settings.redis_url:
+        try:
+            return Limiter(key_func=_key_func, storage_uri=settings.redis_url), "redis"
+        except Exception as exc:  # pragma: no cover - startup resilience path
+            logger.warning("Redis rate limiter unavailable, falling back to memory", error=str(exc))
+    return Limiter(key_func=_key_func), "memory"
+
+
+limiter, _limiter_backend = _build_limiter()
 
 
 # Rate limit constants — import these in routers
@@ -67,4 +79,7 @@ def setup_rate_limiting(app):
     """
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-    logger.info("Rate limiting enabled (in-memory, single-instance mode)")
+    if _limiter_backend == "redis":
+        logger.info("Rate limiting enabled (Redis backend)")
+    else:
+        logger.info("Rate limiting enabled (in-memory, single-instance mode)")

@@ -21,7 +21,7 @@ from fastapi import APIRouter, Header, HTTPException, Query, Request
 from loguru import logger
 
 from app.config import settings
-from app.deps import CurrentUserId, SupabaseAdmin
+from app.deps import PlatformAdminId, SupabaseAdmin
 from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/api/atlas", tags=["atlas-gateway"])
@@ -99,17 +99,17 @@ async def receive_proposal(
 async def get_atlas_learnings(
     request: Request,
     db: SupabaseAdmin,
-    _user_id: CurrentUserId,  # noqa: ARG001 — enforces JWT auth; no per-user filter (CEO-global table)
+    _admin_id: PlatformAdminId,  # noqa: ARG001 — enforce existing platform-admin gate
     limit: int = Query(default=20, ge=1, le=100),
     category: str | None = Query(default=None),
 ) -> dict:
     """Return top-N atlas_learnings ordered by emotional_intensity DESC.
 
     Cross-product memory bridge (Sprint E2): MindShift focus-session engine calls
-    this endpoint with the user's JWT to build CEO-context for LLM prompts.
-    Since atlas_learnings is CEO-global (no user_id column), all authenticated
-    callers receive the same knowledge base.  Service-role admin client bypasses
-    the deny-all RLS policy set in migration 20260419221500.
+    this endpoint with a platform-admin JWT to build CEO-context for LLM prompts.
+    Since atlas_learnings is CEO-global (no user_id column), access is restricted
+    to existing platform admins only. Service-role admin client bypasses the
+    deny-all RLS policy set in migration 20260419221500.
 
     Increments access_count on returned rows as a ZenBrain retrieval signal.
     """

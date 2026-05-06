@@ -1,8 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-
-// ── Mocks ─────────────────────────────────────────────────────────────────────
 
 const mockRouterReplace = vi.fn();
 
@@ -23,22 +21,27 @@ vi.mock("@/lib/supabase/client", () => ({
   }),
 }));
 
-const mockAuthStore = {
-  session: null as null | object,
-  isLoading: true,
-  setSession: vi.fn(),
-  setLoading: vi.fn(),
-};
+const authStore = vi.hoisted(() => {
+  const mockAuthStore = {
+    session: null as null | { user: { id: string }; access_token: string },
+    isLoading: true,
+    setSession: vi.fn(),
+    setLoading: vi.fn(),
+  };
+
+  return {
+    mockAuthStore,
+    useAuthStore: Object.assign(() => mockAuthStore, {
+      getState: () => mockAuthStore,
+    }),
+  };
+});
 
 vi.mock("@/stores/auth-store", () => ({
-  useAuthStore: () => mockAuthStore,
+  useAuthStore: authStore.useAuthStore,
 }));
 
-// ── Import after mocks ────────────────────────────────────────────────────────
-
 import { AuthGuard } from "@/components/layout/auth-guard";
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function fakeSession() {
   return { user: { id: "user-1" }, access_token: "tok" };
@@ -48,13 +51,11 @@ function makeSubscription() {
   return { data: { subscription: { unsubscribe: vi.fn() } } };
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
-
 describe("AuthGuard — loading state", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAuthStore.isLoading = true;
-    mockAuthStore.session = null;
+    authStore.mockAuthStore.isLoading = true;
+    authStore.mockAuthStore.session = null;
     mockGetSession.mockResolvedValue({ data: { session: null } });
     mockOnAuthStateChange.mockReturnValue(makeSubscription());
   });
@@ -63,7 +64,7 @@ describe("AuthGuard — loading state", () => {
     render(
       <AuthGuard>
         <div>Protected content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     expect(screen.getByRole("status")).toBeInTheDocument();
   });
@@ -72,7 +73,7 @@ describe("AuthGuard — loading state", () => {
     render(
       <AuthGuard>
         <div>Protected</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     expect(screen.getByLabelText("Loading")).toBeInTheDocument();
   });
@@ -81,7 +82,7 @@ describe("AuthGuard — loading state", () => {
     render(
       <AuthGuard>
         <div>Protected content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     expect(screen.queryByText("Protected content")).not.toBeInTheDocument();
   });
@@ -90,8 +91,8 @@ describe("AuthGuard — loading state", () => {
 describe("AuthGuard — unauthenticated redirect", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAuthStore.isLoading = false;
-    mockAuthStore.session = null;
+    authStore.mockAuthStore.isLoading = false;
+    authStore.mockAuthStore.session = null;
     mockGetSession.mockResolvedValue({ data: { session: null } });
     mockOnAuthStateChange.mockReturnValue(makeSubscription());
   });
@@ -100,7 +101,7 @@ describe("AuthGuard — unauthenticated redirect", () => {
     render(
       <AuthGuard>
         <div>Protected</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     await waitFor(() => {
       expect(mockRouterReplace).toHaveBeenCalledWith("/az/login");
@@ -111,7 +112,7 @@ describe("AuthGuard — unauthenticated redirect", () => {
     const { container } = render(
       <AuthGuard>
         <div>Protected</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     expect(container).toBeEmptyDOMElement();
   });
@@ -120,8 +121,8 @@ describe("AuthGuard — unauthenticated redirect", () => {
 describe("AuthGuard — authenticated user", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAuthStore.isLoading = false;
-    mockAuthStore.session = fakeSession();
+    authStore.mockAuthStore.isLoading = false;
+    authStore.mockAuthStore.session = fakeSession();
     mockGetSession.mockResolvedValue({ data: { session: fakeSession() } });
     mockOnAuthStateChange.mockReturnValue(makeSubscription());
   });
@@ -130,7 +131,7 @@ describe("AuthGuard — authenticated user", () => {
     render(
       <AuthGuard>
         <div>Protected content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     expect(screen.getByText("Protected content")).toBeInTheDocument();
   });
@@ -139,10 +140,10 @@ describe("AuthGuard — authenticated user", () => {
     render(
       <AuthGuard>
         <div>Protected</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     await waitFor(() => {
-      expect(mockAuthStore.setSession).toHaveBeenCalled();
+      expect(authStore.mockAuthStore.setSession).toHaveBeenCalled();
     });
     expect(mockRouterReplace).not.toHaveBeenCalled();
   });
@@ -151,8 +152,8 @@ describe("AuthGuard — authenticated user", () => {
 describe("AuthGuard — getSession effect", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAuthStore.isLoading = true;
-    mockAuthStore.session = null;
+    authStore.mockAuthStore.isLoading = true;
+    authStore.mockAuthStore.session = null;
     mockOnAuthStateChange.mockReturnValue(makeSubscription());
   });
 
@@ -161,10 +162,10 @@ describe("AuthGuard — getSession effect", () => {
     render(
       <AuthGuard>
         <div>Content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     await waitFor(() => {
-      expect(mockAuthStore.setSession).toHaveBeenCalledWith(null);
+      expect(authStore.mockAuthStore.setSession).toHaveBeenCalledWith(null);
     });
   });
 
@@ -173,10 +174,10 @@ describe("AuthGuard — getSession effect", () => {
     render(
       <AuthGuard>
         <div>Content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     await waitFor(() => {
-      expect(mockAuthStore.setLoading).toHaveBeenCalledWith(false);
+      expect(authStore.mockAuthStore.setLoading).toHaveBeenCalledWith(false);
     });
   });
 
@@ -186,10 +187,10 @@ describe("AuthGuard — getSession effect", () => {
     render(
       <AuthGuard>
         <div>Content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     await waitFor(() => {
-      expect(mockAuthStore.setSession).toHaveBeenCalledWith(session);
+      expect(authStore.mockAuthStore.setSession).toHaveBeenCalledWith(session);
     });
   });
 });
@@ -197,8 +198,8 @@ describe("AuthGuard — getSession effect", () => {
 describe("AuthGuard — onAuthStateChange subscription", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAuthStore.isLoading = false;
-    mockAuthStore.session = fakeSession();
+    authStore.mockAuthStore.isLoading = false;
+    authStore.mockAuthStore.session = fakeSession();
     mockGetSession.mockResolvedValue({ data: { session: fakeSession() } });
   });
 
@@ -208,7 +209,7 @@ describe("AuthGuard — onAuthStateChange subscription", () => {
     render(
       <AuthGuard>
         <div>Content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     expect(mockOnAuthStateChange).toHaveBeenCalled();
   });
@@ -219,7 +220,7 @@ describe("AuthGuard — onAuthStateChange subscription", () => {
     const { unmount } = render(
       <AuthGuard>
         <div>Content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     unmount();
     expect(unsubscribe).toHaveBeenCalled();
@@ -234,7 +235,7 @@ describe("AuthGuard — onAuthStateChange subscription", () => {
     render(
       <AuthGuard>
         <div>Content</div>
-      </AuthGuard>
+      </AuthGuard>,
     );
     capturedCallback("SIGNED_OUT", null);
     expect(mockRouterReplace).toHaveBeenCalledWith("/az/login");

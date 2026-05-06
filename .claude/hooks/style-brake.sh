@@ -158,6 +158,33 @@ if [ -f "$TQ_FLAG" ]; then
   rm -f "$TQ_FLAG"
 fi
 
+# ── STEP 0c: Verification-gap flag from prior turn ────────────
+# Written by verification-evidence-check.sh on Stop. If present, the
+# prior assistant response made 2+ verification claims (готов / done /
+# verified / fixed / closed / deployed) without a single tool_use block
+# in the same turn — Class 26/27/14. Surface loudly.
+VG_FLAG="$PROJECT_DIR/.claude/last-verification-gap.flag"
+if [ -f "$VG_FLAG" ]; then
+  VG_DETAIL=$(cat "$VG_FLAG" 2>/dev/null)
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "⛔ VERIFICATION GAP IN PRIOR TURN"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "Stats: $VG_DETAIL"
+  echo ""
+  echo "Your last response made multiple 'готов/done/verified/fixed/"
+  echo "closed/deployed' claims with ZERO tool_use blocks in the same"
+  echo "turn. That is Class 26 (verification-through-claim, not tool)."
+  echo ""
+  echo "In THIS response: every 'done' / 'works' / 'closed' / 'verified'"
+  echo "claim must have a Read / Bash / curl / MCP tool_use_id in the"
+  echo "SAME turn that proved it. If you cannot prove it now — say so"
+  echo "explicitly: 'unverified, will check next'. Never fake-confirm."
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  rm -f "$VG_FLAG"
+fi
+
 # ── STEP 1: Classify prompt type ──────────────────────────────
 # Determines which lessons/context to inject (GeM-CoT pattern)
 if [ -n "$PYTHON_BIN" ]; then

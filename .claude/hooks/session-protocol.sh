@@ -286,4 +286,37 @@ except:
   fi
 fi
 
+# ── DAILY HOOK SELF-TEST ──────────────────────────────────────────
+# Per CEO directive 2026-05-06: every sprint check hooks are working.
+# Run hook-self-test in background once per ~24h. If it fails, write
+# verdict to inbox so next Atlas wake reads it.
+HOOK_TS_FILE="$PROJECT_DIR_CHECK/.claude/.last-hook-self-test.epoch"
+LAST_TS=0
+[ -f "$HOOK_TS_FILE" ] && LAST_TS=$(cat "$HOOK_TS_FILE" 2>/dev/null || echo 0)
+NOW=$(date +%s 2>/dev/null || echo 0)
+AGE=$((NOW - LAST_TS))
+if [ "$AGE" -gt 86400 ] || [ "$LAST_TS" = "0" ]; then
+  (
+    OUT=$(bash "$PROJECT_DIR_CHECK/.claude/hooks/hook-self-test.sh" 2>&1)
+    RC=$?
+    echo "$NOW" > "$HOOK_TS_FILE" 2>/dev/null
+    if [ "$RC" != "0" ]; then
+      TS=$(date +%Y-%m-%dT%H%M%S 2>/dev/null || echo unknown)
+      INBOX="$PROJECT_DIR_CHECK/memory/atlas/inbox"
+      mkdir -p "$INBOX" 2>/dev/null
+      {
+        echo "# Hook self-test FAILED — $TS"
+        echo
+        echo "Atlas hooks regression detected during daily self-test."
+        echo "Fix the failing hook BEFORE next critical action."
+        echo
+        echo '```'
+        echo "$OUT"
+        echo '```'
+      } > "$INBOX/hook-self-test-failure-$TS.md" 2>/dev/null
+    fi
+  ) &
+  disown 2>/dev/null || true
+fi
+
 exit 0

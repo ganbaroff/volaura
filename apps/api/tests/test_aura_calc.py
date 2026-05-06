@@ -9,6 +9,7 @@ from app.core.assessment.aura_calc import (
     _DECAY_FLOOR,
     _DECAY_PHASE1_DAYS,
     _DECAY_PHASE1_RATE,
+    AuraResult,
     COMPETENCY_WEIGHTS,
     ELITE_AURA_THRESHOLD,
     ELITE_COMPETENCY_THRESHOLD,
@@ -46,18 +47,35 @@ class TestClampCompetencyScore:
 class TestCalculateOverall:
     def test_all_perfect_scores(self):
         scores = {slug: 100.0 for slug in COMPETENCY_WEIGHTS}
-        assert calculate_overall(scores) == 100.0
+        result = calculate_overall(scores)
+        assert isinstance(result, AuraResult)
+        assert result.score == 100.0
+        assert result.status == "complete"
+        assert result.completed == len(COMPETENCY_WEIGHTS)
+        assert result.confidence == 1.0
+        assert result.badge_tier == "platinum"
 
     def test_all_zero_scores(self):
         scores = {slug: 0.0 for slug in COMPETENCY_WEIGHTS}
-        assert calculate_overall(scores) == 0.0
+        result = calculate_overall(scores)
+        assert result.score == 0.0
+        assert result.status == "complete"
+        assert result.badge_tier is None
 
-    def test_missing_competencies_contribute_zero(self):
+    def test_missing_competencies_mark_incomplete(self):
         result = calculate_overall({"communication": 100.0})
-        assert result == pytest.approx(100.0 * 0.20, abs=0.01)
+        assert result.score is None
+        assert result.status == "incomplete"
+        assert result.completed == 1
+        assert result.confidence == pytest.approx(0.125, abs=0.001)
+        assert result.badge_tier is None
 
     def test_empty_scores(self):
-        assert calculate_overall({}) == 0.0
+        result = calculate_overall({})
+        assert result.score is None
+        assert result.status == "incomplete"
+        assert result.completed == 0
+        assert result.confidence == 0.0
 
     def test_weights_sum_to_one(self):
         assert sum(COMPETENCY_WEIGHTS.values()) == pytest.approx(1.0)
@@ -73,12 +91,16 @@ class TestCalculateOverall:
             "adaptability": 75.0,
             "empathy_safeguarding": 65.0,
         }
-        expected = sum(scores[k] * COMPETENCY_WEIGHTS[k] for k in COMPETENCY_WEIGHTS)
-        assert calculate_overall(scores) == pytest.approx(round(expected, 2), abs=0.01)
+        expected = round(sum(scores.values()) / len(scores), 2)
+        result = calculate_overall(scores)
+        assert result.score == pytest.approx(expected, abs=0.01)
+        assert result.status == "complete"
 
     def test_clamped_below(self):
         scores = {slug: -50.0 for slug in COMPETENCY_WEIGHTS}
-        assert calculate_overall(scores) == 0.0
+        result = calculate_overall(scores)
+        assert result.score == 0.0
+        assert result.status == "complete"
 
 
 # ── get_badge_tier ──────────────────────────────────────────────────────────
@@ -99,6 +121,9 @@ class TestGetBadgeTier:
 
     def test_none(self):
         assert get_badge_tier(30.0) == "none"
+
+    def test_incomplete_state_never_gets_badge(self):
+        assert get_badge_tier(95.0, status="incomplete") == "none"
 
     def test_exact_platinum_boundary(self):
         assert get_badge_tier(90.0) == "platinum"

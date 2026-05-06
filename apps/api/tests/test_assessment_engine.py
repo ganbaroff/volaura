@@ -335,7 +335,9 @@ def test_aggregate_weighted():
 
 
 def test_calculate_overall_all_zeros():
-    assert calculate_overall({}) == 0.0
+    result = calculate_overall({})
+    assert result.score is None
+    assert result.status == "incomplete"
 
 
 def test_calculate_overall_all_100():
@@ -352,13 +354,16 @@ def test_calculate_overall_all_100():
             "empathy_safeguarding",
         ]
     }
-    assert calculate_overall(scores) == 100.0
+    result = calculate_overall(scores)
+    assert result.score == 100.0
+    assert result.status == "complete"
 
 
 def test_calculate_overall_partial():
     scores = {"communication": 100.0}  # weight 0.20
     result = calculate_overall(scores)
-    assert abs(result - 20.0) < 0.01
+    assert result.score is None
+    assert result.status == "incomplete"
 
 
 def test_get_badge_tier():

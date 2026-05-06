@@ -57,6 +57,18 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/pre-mutation-context-gate.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
@@ -64,6 +76,16 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/auto-format.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/external-verdict-dispatcher.sh",
+            "timeout": 5
           }
         ]
       }
@@ -79,6 +101,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/voice-breach-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/verification-evidence-check.sh"
           }
         ]
       }

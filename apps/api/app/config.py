@@ -1,4 +1,6 @@
-from pydantic import ConfigDict
+import os
+
+from pydantic import ConfigDict, Field
 from pydantic_settings import BaseSettings
 
 
@@ -37,7 +39,7 @@ class Settings(BaseSettings):
     deepseek_api_key: str = ""  # DSK: experimental (swarm candidate)
 
     # Swarm (multi-model BARS evaluation)
-    swarm_enabled: bool = False
+    swarm_enabled: bool = Field(default_factory=lambda: os.getenv("SWARM_ENABLED", "false").lower() == "true")
 
     # Telegram — V-NERVE: CEO↔bot bidirectional + error alerting
     telegram_bot_token: str = ""

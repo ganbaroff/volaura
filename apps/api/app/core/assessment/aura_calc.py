@@ -9,6 +9,7 @@ Weights are FIXED per the spec — do not change without product sign-off.
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
 COMPETENCY_WEIGHTS: dict[str, float] = {
@@ -66,6 +67,18 @@ _DECAY_PHASE2_HALF_LIFE_DEFAULT: float = round(
     1,
 )
 
+TOTAL_COMPETENCIES = len(COMPETENCY_WEIGHTS)
+MINIMUM_COMPETENCIES_FOR_SCORE = 5
+
+
+@dataclass(frozen=True)
+class AuraResult:
+    score: float | None
+    status: str
+    completed: int
+    confidence: float
+    badge_tier: str | None
+
 
 def clamp_competency_score(score: float) -> float:
     """Clamp a competency score to the valid [0, 100] range.
@@ -78,32 +91,49 @@ def clamp_competency_score(score: float) -> float:
     return max(0.0, min(100.0, score))
 
 
-def calculate_overall(competency_scores: dict[str, float]) -> float:
-    """Compute the weighted AURA score from per-competency scores (0-100).
+def calculate_overall(competency_scores: dict[str, float | None]) -> AuraResult:
+    """Compute the overall AURA result from completed competency scores."""
+    completed_scores = [
+        clamp_competency_score(float(score))
+        for slug, score in competency_scores.items()
+        if slug in COMPETENCY_WEIGHTS and score is not None
+    ]
+    completed = len(completed_scores)
+    confidence = round(completed / TOTAL_COMPETENCIES, 3)
 
-    Missing competencies contribute 0 (not yet assessed).
+    if completed < MINIMUM_COMPETENCIES_FOR_SCORE:
+        return AuraResult(
+            score=None,
+            status="incomplete",
+            completed=completed,
+            confidence=confidence,
+            badge_tier=None,
+        )
 
-    Returns:
-        Overall AURA score 0.0–100.0.
-    """
-    total = 0.0
-    for slug, weight in COMPETENCY_WEIGHTS.items():
-        score = competency_scores.get(slug, 0.0)
-        total += score * weight
-    return round(max(0.0, min(100.0, total)), 2)
+    score = round(sum(completed_scores) / completed, 2)
+    badge_tier = get_badge_tier(score)
+    return AuraResult(
+        score=score,
+        status="complete",
+        completed=completed,
+        confidence=confidence,
+        badge_tier=badge_tier if badge_tier != "none" else None,
+    )
 
 
-def get_badge_tier(overall: float) -> str:
+def get_badge_tier(overall: float | None, status: str = "complete") -> str:
     """Return badge tier string for a given overall AURA score."""
+    if status != "complete" or overall is None:
+        return "none"
     for tier, threshold in BADGE_TIERS:
         if overall >= threshold:
             return tier
     return "none"
 
 
-def is_elite(overall: float, competency_scores: dict[str, float]) -> bool:
+def is_elite(overall: float | None, competency_scores: dict[str, float]) -> bool:
     """Return True if the volunteer qualifies for elite status."""
-    if overall < ELITE_AURA_THRESHOLD:
+    if overall is None or overall < ELITE_AURA_THRESHOLD:
         return False
     high_count = sum(1 for score in competency_scores.values() if score >= ELITE_COMPETENCY_THRESHOLD)
     return high_count >= ELITE_COMPETENCY_COUNT

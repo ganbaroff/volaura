@@ -15,7 +15,7 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from loguru import logger
 from supabase._async.client import AsyncClient
@@ -2275,6 +2275,8 @@ async def _process_telegram_update(update: dict, db: AsyncClient) -> None:
 
 async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
     """Actual message processing logic, extracted from webhook handler."""
+    if not settings.telegram_ceo_chat_id:
+        raise HTTPException(status_code=503, detail="CEO chat not configured")
 
     # ── Handle callback queries (inline keyboard button presses) ──────────────
     callback = update.get("callback_query")

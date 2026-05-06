@@ -18,6 +18,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from fastapi import HTTPException
 
 import app.routers.telegram_webhook as tw
 
@@ -758,11 +759,25 @@ async def test_handle_update_no_message_returns_early(monkeypatch):
         return True
 
     monkeypatch.setattr(tw, "_send_message", _fake_send)
-    monkeypatch.setattr(tw.settings, "telegram_ceo_chat_id", "")
+    monkeypatch.setattr(tw.settings, "telegram_ceo_chat_id", "42")
     monkeypatch.setattr(tw.settings, "telegram_bot_token", "tok")
 
     await tw._handle_telegram_update({"update_id": 1}, db)
     assert send_calls == []
+
+
+@pytest.mark.asyncio
+async def test_handle_update_fails_closed_without_ceo_chat_id(monkeypatch):
+    """Missing CEO chat config → 503 before any Telegram update processing."""
+    db = _make_full_db()
+    monkeypatch.setattr(tw.settings, "telegram_ceo_chat_id", "")
+    monkeypatch.setattr(tw.settings, "telegram_bot_token", "tok")
+
+    with pytest.raises(HTTPException) as exc:
+        await tw._handle_telegram_update({"update_id": 1}, db)
+
+    assert exc.value.status_code == 503
+    assert exc.value.detail == "CEO chat not configured"
 
 
 @pytest.mark.asyncio

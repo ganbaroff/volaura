@@ -756,7 +756,7 @@ async def _call_azure_sub_agent(endpoint: str, api_key: str, sub_prompt: str,
         client = AsyncAzureOpenAI(
             api_key=api_key,
             azure_endpoint=endpoint,
-            api_version="2024-10-21",
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
         )
         resp = await asyncio.wait_for(
             client.chat.completions.create(
@@ -839,7 +839,7 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
             from openai import AsyncAzureOpenAI
             client = AsyncAzureOpenAI(
                 api_key=azure_key, azure_endpoint=azure_endpoint,
-                api_version="2024-10-21",
+                api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
             )
             # o4-mini doesn't support temperature parameter
             create_kw: dict[str, Any] = {

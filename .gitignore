@@ -114,3 +114,7 @@ memory/atlas/work-queue/daemon.log.jsonl
 memory/atlas/work-queue/daemon.log.jsonl
 memory/atlas/work-queue/brain.log.jsonl
 memory/atlas/work-queue/archivist.log.jsonl
+
+# Local-only secrets — never commit anything from secrets/
+secrets/
+!secrets/.gitkeep

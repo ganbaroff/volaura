@@ -209,6 +209,12 @@ def _get_smart_temperature(perspective_name: str, prompt: str) -> float:
     return config_temp
 
 
+def _azure_token_param(model: str, value: int) -> dict:
+    """Azure o-series (o1, o3, o4-mini) need max_completion_tokens; gpt-* models use max_tokens."""
+    is_o_series = re.match(r"^o\d", model.lower()) is not None
+    return {"max_completion_tokens" if is_o_series else "max_tokens": value}
+
+
 def log_event(event: dict) -> None:
     """Append-only governance log."""
     event["ts"] = datetime.now(timezone.utc).isoformat()
@@ -758,13 +764,14 @@ async def _call_azure_sub_agent(endpoint: str, api_key: str, sub_prompt: str,
             azure_endpoint=endpoint,
             api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
         )
+        kwargs: dict[str, Any] = {
+            "model": deployment,
+            "messages": [{"role": "user", "content": sub_prompt}],
+            "temperature": temp,
+            **_azure_token_param(deployment, max_tok),
+        }
         resp = await asyncio.wait_for(
-            client.chat.completions.create(
-                model=deployment,
-                messages=[{"role": "user", "content": sub_prompt}],
-                temperature=temp,
-                max_tokens=max_tok,
-            ),
+            client.chat.completions.create(**kwargs),
             timeout=20.0,
         )
         return resp.choices[0].message.content or ""
@@ -845,7 +852,7 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
             create_kw: dict[str, Any] = {
                 "model": model_id,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": max_tok,
+                **_azure_token_param(model_id, max_tok),
             }
             if "o4-mini" not in model_id:
                 create_kw["temperature"] = temp

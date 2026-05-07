@@ -120,6 +120,9 @@ IN_PROGRESS = QUEUE / "in-progress"
 DONE = QUEUE / "done"
 FAILED = QUEUE / "failed"
 LOG = QUEUE / "daemon.log.jsonl"
+RUNTIME_DIR = ATLAS_MEMORY / "runtime"
+LOCK_FILE = RUNTIME_DIR / "atlas_swarm_daemon.lock"
+HEALTH_FILE = RUNTIME_DIR / "daemon-health.json"
 
 POLL_INTERVAL_SECONDS = int(os.getenv("ATLAS_DAEMON_POLL", "20"))
 MAX_CONCURRENT_TASKS = int(os.getenv("ATLAS_DAEMON_CONCURRENCY", "1"))
@@ -218,6 +221,173 @@ def setup_dirs() -> None:
     for p in (PENDING, IN_PROGRESS, DONE, FAILED):
         p.mkdir(parents=True, exist_ok=True)
 
+
+# ── Single-instance lock + health heartbeat ──────────────────────────────────
+
+def _is_pid_alive(pid: int) -> bool:
+    """Cross-platform PID-alive check. Returns False for invalid pid or dead pid."""
+    if pid is None or pid <= 0:
+        return False
+    try:
+        import psutil  # type: ignore
+        return psutil.pid_exists(int(pid))
+    except ImportError:
+        pass
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, int(pid))
+            if handle:
+                kernel32.CloseHandle(handle)
+                return True
+            return False
+        except Exception:
+            return False
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
+
+
+def acquire_lock() -> bool:
+    """Atomic single-instance lock at LOCK_FILE.
+
+    Returns True if this process owns the lock; False if another live daemon owns it.
+    Recovers stale locks (where the recorded PID is dead).
+    """
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    own_pid = os.getpid()
+    payload = {
+        "pid": own_pid,
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "cwd": str(REPO_ROOT),
+        "command": " ".join(sys.argv) if sys.argv else "atlas_swarm_daemon.py",
+    }
+    if LOCK_FILE.exists():
+        try:
+            existing = json.loads(LOCK_FILE.read_text(encoding="utf-8"))
+            existing_pid = int(existing.get("pid", 0) or 0)
+        except Exception:
+            existing_pid = 0
+        if existing_pid and existing_pid != own_pid and _is_pid_alive(existing_pid):
+            log_event({
+                "event": "daemon_lock_refused",
+                "own_pid": own_pid,
+                "existing_pid": existing_pid,
+                "lock_file": str(LOCK_FILE),
+            })
+            print(
+                f"[daemon] another daemon already running (pid={existing_pid}); refusing to start.",
+                flush=True,
+            )
+            return False
+        try:
+            LOCK_FILE.unlink()
+        except FileNotFoundError:
+            pass
+        log_event({
+            "event": "daemon_lock_stale_recovered",
+            "own_pid": own_pid,
+            "stale_pid": existing_pid,
+        })
+    try:
+        fd = os.open(str(LOCK_FILE), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        try:
+            os.write(fd, json.dumps(payload).encode("utf-8"))
+        finally:
+            os.close(fd)
+    except FileExistsError:
+        log_event({"event": "daemon_lock_race_lost", "own_pid": own_pid})
+        return False
+    log_event({"event": "daemon_lock_acquired", "pid": own_pid})
+    return True
+
+
+def release_lock() -> None:
+    """Remove the lock if it belongs to this PID. Safe to call multiple times."""
+    try:
+        if LOCK_FILE.exists():
+            try:
+                payload = json.loads(LOCK_FILE.read_text(encoding="utf-8"))
+                if int(payload.get("pid", 0) or 0) != os.getpid():
+                    return
+            except Exception:
+                pass
+            LOCK_FILE.unlink()
+            log_event({"event": "daemon_lock_released", "pid": os.getpid()})
+    except Exception as e:
+        log_event({"event": "daemon_lock_release_error", "error": str(e)})
+
+
+def _count_queue() -> dict[str, int]:
+    out: dict[str, int] = {"pending": 0, "in_progress": 0, "done": 0, "failed": 0}
+    try:
+        out["pending"] = len(list(PENDING.glob("*.md")))
+    except Exception:
+        pass
+    try:
+        out["in_progress"] = len([p for p in IN_PROGRESS.iterdir() if p.is_dir()])
+    except Exception:
+        pass
+    try:
+        out["done"] = len([p for p in DONE.iterdir() if p.is_dir()])
+    except Exception:
+        pass
+    try:
+        out["failed"] = len([p for p in FAILED.iterdir() if p.is_dir()])
+    except Exception:
+        pass
+    return out
+
+
+_DAEMON_STARTED_AT: str | None = None
+
+
+def update_health(status: str, current_task_id: str | None = None,
+                  last_completed_task_id: str | None = None,
+                  last_error: str | None = None) -> None:
+    """Write daemon-health.json with current runtime state. atomic via .tmp rename."""
+    global _DAEMON_STARTED_AT
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    if _DAEMON_STARTED_AT is None:
+        _DAEMON_STARTED_AT = datetime.now(timezone.utc).isoformat()
+    prior: dict[str, Any] = {}
+    if HEALTH_FILE.exists():
+        try:
+            prior = json.loads(HEALTH_FILE.read_text(encoding="utf-8"))
+            if not isinstance(prior, dict):
+                prior = {}
+        except Exception:
+            prior = {}
+    payload: dict[str, Any] = {
+        **prior,
+        "status": status,
+        "pid": os.getpid(),
+        "started_at": _DAEMON_STARTED_AT,
+        "last_heartbeat_at": datetime.now(timezone.utc).isoformat(),
+        "cwd": str(REPO_ROOT),
+        "queue_counts": _count_queue(),
+    }
+    if current_task_id is not None:
+        payload["current_task_id"] = current_task_id
+    elif "current_task_id" in prior and status == "idle":
+        payload["current_task_id"] = None
+    if last_completed_task_id is not None:
+        payload["last_completed_task_id"] = last_completed_task_id
+    if last_error is not None:
+        payload["last_error"] = last_error
+    try:
+        tmp = HEALTH_FILE.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        os.replace(str(tmp), str(HEALTH_FILE))
+    except Exception as e:
+        log_event({"event": "health_write_error", "error": str(e)})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 def parse_task_frontmatter(text: str) -> tuple[dict, str]:
     """Extract YAML-ish frontmatter (--- delimited) and body."""
@@ -1764,6 +1934,12 @@ def maybe_rebuild_code_index(force: bool = False) -> None:
 
 
 async def main():
+    if not acquire_lock():
+        return
+    import atexit
+    atexit.register(release_lock)
+    update_health(status="starting")
+
     global _ollama_semaphore
     _ollama_semaphore = asyncio.Semaphore(OLLAMA_CONCURRENCY)
     setup_dirs()
@@ -1792,6 +1968,7 @@ async def main():
 
     while not shutdown_requested:
         try:
+            update_health(status="polling")
             setup_dirs()
             now_ts = datetime.now(timezone.utc).timestamp()
             if now_ts - _last_index_check > CODE_INDEX_REFRESH_SECONDS:
@@ -1813,6 +1990,8 @@ async def main():
             await asyncio.sleep(POLL_INTERVAL_SECONDS)
 
     log_event({"event": "daemon_stop"})
+    update_health(status="stopped")
+    release_lock()
     print("[daemon] stopped cleanly.", flush=True)
 
 

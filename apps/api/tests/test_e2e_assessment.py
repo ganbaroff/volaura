@@ -122,17 +122,19 @@ async def run_e2e():
     print("\nStep 5: AURA calculation...")
     from app.core.assessment.aura_calc import calculate_overall, get_badge_tier, is_elite
 
-    # Simulate 3 competency scores
+    # Simulate 5 competency scores to cross the incomplete threshold
     scores = {
         "communication": comm_score,
         "reliability": 75.0,
         "leadership": 60.0,
+        "english_proficiency": 70.0,
+        "event_performance": 65.0,
     }
     overall = calculate_overall(scores)
-    tier = get_badge_tier(overall)
-    elite = is_elite(overall, scores)
+    tier = get_badge_tier(overall.score, overall.status)
+    elite = is_elite(overall.score, scores)
     print(f"  Scores: {scores}")
-    print(f"  Overall AURA: {overall:.1f}")
+    print(f"  Overall AURA: {overall.score:.1f} ({overall.status}, confidence={overall.confidence:.2f})")
     print(f"  Badge: {tier}")
     print(f"  Elite: {elite}")
 

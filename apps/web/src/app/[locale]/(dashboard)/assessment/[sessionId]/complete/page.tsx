@@ -17,7 +17,6 @@ import {
   ChevronDown,
   ChevronUp,
   ListChecks,
-  Clock,
   LayoutDashboard,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,6 +24,7 @@ import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
 import { apiFetch } from "@/lib/api/client";
 import { CoachingTips } from "@/components/assessment/coaching-tips";
+import { BadgeDisplay } from "@/components/aura/badge-display";
 import { triggerHaptic } from "@/lib/haptics";
 import { getAchievementLevelKey } from "@/lib/utils/achievement-level";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
@@ -42,15 +42,37 @@ interface AssessmentResult {
   gaming_flags: string[];
   completed_at: string | null;
   crystals_earned?: number;
-}
-
-interface AuraScore {
-  total_score: number;
-  badge_tier: string;
-  elite_status: boolean;
-  competency_scores: Record<string, number>;
-  percentile_rank: number | null;
-  effective_score: number | null;
+  session: {
+    session_id: string;
+    competency_slug: string;
+    competency_score: number;
+    questions_answered: number;
+    stop_reason: string | null;
+    completed_at: string | null;
+    gaming_flags: string[];
+    crystals_earned: number;
+  } | null;
+  aura: {
+    score: number;
+    tier: string;
+    confidence: number;
+    total_score: number;
+    badge_tier: string;
+    elite_status: boolean;
+    competency_scores: Record<string, number>;
+    percentile_rank: number | null;
+    effective_score: number | null;
+  } | null;
+  badge: {
+    id: string;
+    badge_type: string;
+    tier: "platinum" | "gold" | "silver" | "bronze" | "none";
+    earned_at: string | null;
+    metadata: {
+      total_score?: number;
+      elite_status?: boolean;
+    };
+  } | null;
 }
 
 // ── Gaming flag code → i18n key mapping ───────────────────────────────
@@ -125,12 +147,6 @@ function GamingFlagsWarning({ flags }: { flags: string[] }) {
 
 // ── Animated counter ───────────────────────────────────────────────────
 
-// NOTE: Tier identity reveal removed from this page per Crystal Law 6 Amendment
-// + G21 (vulnerability window rule). Badge tier and crystal rewards are deferred
-// to the next AURA page visit so users don't see emotionally loaded status
-// feedback at the moment they complete an assessment. The "View AURA score" card
-// (below) routes them there when they choose to look.
-
 function useAnimatedCounter(target: number, duration = 800) {
   const [value, setValue] = useState(0);
   const startTime = useRef<number | null>(null);
@@ -173,7 +189,6 @@ export default function AssessmentResultsPage() {
 
   const [phase, setPhase] = useState<"loading" | "reveal" | "error">("loading");
   const [result, setResult] = useState<AssessmentResult | null>(null);
-  const [aura, setAura] = useState<AuraScore | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
 
@@ -199,22 +214,21 @@ export default function AssessmentResultsPage() {
         return;
       }
 
-      // 1. Complete the assessment (triggers AURA upsert)
+      // 1. Complete the assessment and get atomic session + AURA + badge payload.
       const assessmentResult = await apiFetch<AssessmentResult>(
         `/api/assessment/complete/${sessionId}`,
         { method: "POST", token }
       );
 
       if (!isMounted.current) return;
-      setResult(assessmentResult);
-
-      // 2. Fetch updated AURA score + username for share card
-      try {
-        const auraResult = await apiFetch<AuraScore>("/api/aura/me", { token });
-        if (isMounted.current) setAura(auraResult);
-      } catch {
-        // AURA fetch failure is non-critical — results still show
+      if (!assessmentResult.aura) {
+        throw new Error(
+          t("assessment.auraUnavailable", {
+            defaultValue: "Assessment completed, but your AURA score was not available in the response.",
+          })
+        );
       }
+      setResult(assessmentResult);
       try {
         const supabase2 = createClient();
         const { data: { user } } = await supabase2.auth.getUser();
@@ -226,7 +240,7 @@ export default function AssessmentResultsPage() {
         // username fetch failure is non-critical
       }
 
-      // 3. Invalidate cached AURA score so dashboard refreshes
+      // 2. Invalidate cached AURA score so dashboard refreshes
       queryClient.invalidateQueries({ queryKey: ["aura-score"] });
 
       // Track frontend assessment_completed (backend already tracks via analytics service)
@@ -234,7 +248,7 @@ export default function AssessmentResultsPage() {
         competency_slug: assessmentResult.competency_slug,
         competency_score: Math.round(assessmentResult.competency_score),
         questions_answered: assessmentResult.questions_answered,
-        aura_updated: assessmentResult.aura_updated,
+        aura_updated: Boolean(assessmentResult.aura),
         has_gaming_flags: assessmentResult.gaming_flags.length > 0,
         crystals_earned: assessmentResult.crystals_earned ?? 0,
       }, sessionId);
@@ -262,15 +276,15 @@ export default function AssessmentResultsPage() {
 
   // ── Derived values ───────────────────────────────────────────────────
 
-  const score = result?.competency_score ?? 0;
+  const score = result?.session?.competency_score ?? result?.competency_score ?? 0;
   const animatedScore = useAnimatedCounter(phase === "reveal" ? score : 0);
+  const aura = result?.aura ?? null;
+  const badge = result?.badge ?? null;
   const overallAura = useAnimatedCounter(phase === "reveal" ? (aura?.total_score ?? 0) : 0, 800);
   const percentile = aura?.percentile_rank ?? null;
   const effectiveScore = aura?.effective_score ?? null;
-  // Tier derivation intentionally removed — Crystal Law 6 Amendment defers
-  // badge tier reveal to the next /aura page visit. See TIER_IDENTITY_KEYS
-  // removal note above. Share-card emoji uses overall AURA score threshold
-  // inline below, not a tier name, so we don't leak tier identity on this page.
+  const confidence = aura?.confidence ?? 0;
+  const badgeTier = (badge?.tier ?? aura?.badge_tier ?? "none") as "platinum" | "gold" | "silver" | "bronze" | "none";
   const hasGamingFlags = (result?.gaming_flags?.length ?? 0) > 0;
 
   const competencyLabel = result?.competency_slug
@@ -372,6 +386,16 @@ export default function AssessmentResultsPage() {
           <p className="text-4xl font-bold tabular-nums text-muted-foreground mt-0.5">
             {animatedScore.toFixed(1)}
           </p>
+          {badgeTier !== "none" && (
+            <div className="pt-2">
+              <BadgeDisplay
+                tier={badgeTier}
+                label={t(`aura.${badgeTier}`, { defaultValue: badgeTier })}
+                eliteLabel={t("aura.elite", { defaultValue: "Elite" })}
+                isElite={Boolean(aura?.elite_status)}
+              />
+            </div>
+          )}
           {/* BNE: strength-first framing — lead with what went well, regardless of score */}
           <p className="text-sm text-muted-foreground text-center mt-1">
             {score >= 75
@@ -390,7 +414,7 @@ export default function AssessmentResultsPage() {
           )}
           {/* Discoverability context line */}
           <p className="text-xs text-muted-foreground text-center mt-2">
-            {score >= 60 && result?.aura_updated === true
+            {score >= 60 && Boolean(aura)
               ? t("assessment.scoreUnlocksDiscovery")
               : t("assessment.scoreUnlocksMore")}
           </p>
@@ -398,7 +422,7 @@ export default function AssessmentResultsPage() {
       </motion.div>
 
       {/* Discoverability milestone — shown only if score unlocks org search, no badge tier revealed */}
-      {result?.aura_updated && (aura?.total_score ?? 0) >= 60 && (
+      {Boolean(aura) && (aura?.total_score ?? 0) >= 60 && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: -6 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -443,36 +467,15 @@ export default function AssessmentResultsPage() {
           ) : (
             <>
               <p className="text-2xl font-bold tabular-nums flex items-center justify-center gap-1">
-                <CheckCircle2 className="size-4 text-green-400" />
-                {result?.aura_updated ? t("common.yes") : "—"}
+                {Math.round(confidence * 100)}%
               </p>
-              <p className="text-xs text-muted-foreground">{t("aura.title")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("aura.confidence", { defaultValue: "Confidence" })}
+              </p>
             </>
           )}
         </div>
       </motion.div>
-
-      {/* Growth trajectory with tier names intentionally removed here per
-          Crystal Law 6 Amendment. The same progress-to-next-tier bar belongs on
-          /aura where the user chooses to see badge context. The "View AURA score"
-          card below is the deliberate handoff. */}
-
-      {/* AURA Sync Pending Banner */}
-      {result?.aura_updated === false && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3"
-          role="status"
-          aria-live="polite"
-        >
-          <Clock className="size-4 mt-0.5 shrink-0 text-amber-700 dark:text-amber-400" aria-hidden="true" />
-          <p className="text-sm text-amber-700 dark:text-amber-400">
-            {t("assessment.auraSyncPending")}
-          </p>
-        </motion.div>
-      )}
 
       {/* Gaming Warning */}
       <AnimatePresence>

@@ -34,6 +34,13 @@ class RegisterRequest(BaseModel):
     age_confirmed: bool = False
     terms_version: str | None = None
     terms_accepted_at: str | None = None  # ISO-8601 UTC
+    # Security audit 2026-05-07 P0: backend register did not enforce
+    # settings.open_signup. Mode 1 controlled beta gate existed only in the
+    # frontend signup-status indicator; alternate clients (mobile, E2E, SDK)
+    # could POST /api/auth/register directly and bypass the gate. This field
+    # carries the invite code; the guard at the top of register() verifies it
+    # against beta_invite._load_valid_codes() when open_signup is False.
+    invite_code: str | None = None
 
     @field_validator("password")
     @classmethod
@@ -148,6 +155,26 @@ async def register(
     db_admin: SupabaseAdmin,
 ) -> AuthResponse:
     """Register a new user via Supabase Auth (anon key — OWASP HIGH-05 fix)."""
+    # Security audit 2026-05-07 P0: enforce controlled-beta gate server-side.
+    # Without this, an attacker can curl /api/auth/register directly even when
+    # OPEN_SIGNUP=false, because the frontend gate only hides the form. Now
+    # backend matches the same _load_valid_codes() allowlist used by the
+    # /auth/validate-invite and /invite/validate endpoints.
+    if not settings.open_signup:
+        from app.routers.beta_invite import _load_valid_codes  # noqa: PLC0415
+
+        if not payload.invite_code or not payload.invite_code.strip():
+            raise HTTPException(
+                status_code=403,
+                detail={"code": "INVITE_REQUIRED", "message": "Invite code required for controlled-beta signup."},
+            )
+        valid_codes = _load_valid_codes()
+        if payload.invite_code.strip().upper() not in valid_codes:
+            raise HTTPException(
+                status_code=403,
+                detail={"code": "INVALID_INVITE", "message": "Invite code is invalid or expired."},
+            )
+
     # GDPR consent — forward into user_metadata so onboarding (POST /profiles/me)
     # can copy the values into profiles.age_confirmed / terms_version / terms_accepted_at.
     # Defaults: terms_version="1.0" (current), terms_accepted_at=now() if client omitted.

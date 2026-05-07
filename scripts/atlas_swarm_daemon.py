@@ -1176,6 +1176,93 @@ def _exec_check_prod(**_kw: Any) -> dict:
         return {"status": "prod_down", "error": str(e)[:200]}
 
 
+def _load_swarm_proposals() -> list[dict[str, Any]]:
+    proposals_file = REPO_ROOT / "memory" / "swarm" / "proposals.json"
+    if not proposals_file.exists():
+        return []
+    try:
+        data = json.loads(proposals_file.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+    proposals = data.get("proposals", [])
+    return proposals if isinstance(proposals, list) else []
+
+
+def _select_bridgeable_proposals(limit: int = 2) -> list[dict[str, Any]]:
+    """Pick approved low/medium proposals not yet mirrored into work-queue."""
+    candidates: list[dict[str, Any]] = []
+    severity_order = {"medium": 0, "low": 1}
+    for proposal in _load_swarm_proposals():
+        status = str(proposal.get("status", "")).lower()
+        severity = str(proposal.get("severity", "")).lower()
+        proposal_id = str(proposal.get("id", "")).strip()
+        if status != "approved" or severity not in severity_order or not proposal_id:
+            continue
+        task_id = f"proposal-{proposal_id}"
+        if (PENDING / f"{task_id}.md").exists():
+            continue
+        if (DONE / task_id).exists():
+            continue
+        if (FAILED / task_id).exists():
+            continue
+        if (IN_PROGRESS / task_id).exists():
+            continue
+        candidates.append(proposal)
+    candidates.sort(
+        key=lambda proposal: (
+            severity_order.get(str(proposal.get("severity", "")).lower(), 99),
+            str(proposal.get("timestamp", "")),
+        )
+    )
+    return candidates[:limit]
+
+
+@executor("run_swarm_coder")
+def _exec_run_swarm_coder(**kw: Any) -> dict:
+    """Execute an approved swarm proposal through the existing swarm_coder pipeline."""
+    import subprocess
+
+    proposal_id = str(kw.get("proposal_id", "")).strip()
+    if not proposal_id:
+        return {"status": "error", "error": "proposal_id required"}
+
+    cmd = [sys.executable, str(REPO_ROOT / "scripts" / "swarm_coder.py"), "--id", proposal_id, "--execute"]
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(REPO_ROOT),
+            timeout=900,
+        )
+    except subprocess.TimeoutExpired:
+        return {"status": "timeout", "proposal_id": proposal_id}
+    except Exception as exc:
+        return {"status": "error", "proposal_id": proposal_id, "error": str(exc)}
+
+    output = (result.stdout or "") + "\n" + (result.stderr or "")
+    stage = "unknown"
+    if "Updating proposal status" in output or "stage\": \"executed\"" in output:
+        stage = "implemented"
+    elif "blocked_by_gate" in output or "BLOCKED by safety gate" in output:
+        stage = "blocked"
+    elif "reverted_scope_escape" in output or "reverted_tests_failed" in output:
+        stage = "reverted"
+    elif "aider_failed" in output or "[FAIL]" in output:
+        stage = "aider_failed"
+
+    status = "ok" if stage == "implemented" and result.returncode == 0 else stage
+    return {
+        "status": status,
+        "proposal_id": proposal_id,
+        "stage": stage,
+        "exit_code": result.returncode,
+        "output_tail": output[-1200:],
+    }
+
+
 async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
     """Execute a predefined safe operation with execution_state tracking."""
     task_id = task_path.stem
@@ -1299,6 +1386,17 @@ async def run_self_checks() -> None:
         create_self_task(
             f"{today}-auto-reindex", "execute", "Auto-rebuild stale code-index",
             "", executor="rebuild_code_index")
+
+    for proposal in _select_bridgeable_proposals():
+        proposal_id = str(proposal.get("id", "")).strip()
+        title = str(proposal.get("title", "Approved swarm proposal")).strip()
+        create_self_task(
+            f"proposal-{proposal_id}",
+            "execute",
+            f"Execute approved proposal: {title[:72]}",
+            f"proposal_id={proposal_id}",
+            executor="run_swarm_coder",
+        )
 
     pw = REPO_ROOT / "memory" / "swarm" / "perspective_weights.json"
     if pw.exists():

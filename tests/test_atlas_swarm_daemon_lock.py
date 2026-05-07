@@ -168,3 +168,36 @@ def test_update_health_preserves_prior_keys(tmp_path, monkeypatch):
         "update_health() should preserve prior current_task_id when not explicitly cleared"
     )
     assert data2["status"] == "polling"
+
+
+# ── Azure token-param tests ───────────────────────────────────────────────────
+
+
+def test_azure_token_param_o4_mini_returns_max_completion_tokens():
+    daemon = _load_daemon_module()
+    out = daemon._azure_token_param("o4-mini", 1500)
+    assert out == {"max_completion_tokens": 1500}
+
+
+def test_azure_token_param_o3_mini_returns_max_completion_tokens():
+    daemon = _load_daemon_module()
+    out = daemon._azure_token_param("o3-mini", 800)
+    assert out == {"max_completion_tokens": 800}
+
+
+def test_azure_token_param_gpt_4o_returns_max_tokens():
+    daemon = _load_daemon_module()
+    out = daemon._azure_token_param("gpt-4o", 2000)
+    assert out == {"max_tokens": 2000}
+
+
+def test_azure_token_param_gpt_4_1_mini_returns_max_tokens():
+    daemon = _load_daemon_module()
+    out = daemon._azure_token_param("gpt-4.1-mini", 500)
+    assert out == {"max_tokens": 500}
+
+
+def test_azure_token_param_case_insensitive():
+    daemon = _load_daemon_module()
+    out = daemon._azure_token_param("O4-Mini", 1000)
+    assert out == {"max_completion_tokens": 1000}

@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 import uuid
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
@@ -270,6 +270,9 @@ class AssessmentResultOut(BaseModel):
     completed_at: datetime | None = None
     # Crystal reward: 0 if already claimed for this competency (idempotent), else CRYSTAL_REWARD
     crystals_earned: int = 0
+    session: dict[str, Any] | None = None
+    aura: dict[str, Any] | None = None
+    badge: dict[str, Any] | None = None
 
 
 class CoachingTip(BaseModel):

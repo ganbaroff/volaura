@@ -24,6 +24,7 @@ from loguru import logger
 
 from app.config import settings
 from app.core.assessment import antigaming, bars
+from app.core.assessment.aura_calc import TOTAL_COMPETENCIES, apply_activity_boost, calculate_effective_score
 from app.core.assessment.engine import (
     CATState,
     select_next_item,
@@ -83,6 +84,112 @@ from app.services.notification_service import notify
 from app.services.tribe_streak_tracker import record_assessment_activity
 
 router = APIRouter(prefix="/assessment", tags=["Assessment"])
+
+
+def _unwrap_supabase_single(data: object) -> dict[str, object] | None:
+    if isinstance(data, dict):
+        return data
+    if isinstance(data, list) and data and isinstance(data[0], dict):
+        return data[0]
+    return None
+
+
+def _build_completion_session_payload(
+    *,
+    session_id: str,
+    competency_slug: str,
+    competency_score: float,
+    questions_answered: int,
+    stop_reason: str | None,
+    completed_at: datetime | None,
+    gaming_flags: list[str],
+    crystals_earned: int,
+) -> dict[str, object]:
+    return {
+        "session_id": session_id,
+        "competency_slug": competency_slug,
+        "competency_score": competency_score,
+        "questions_answered": questions_answered,
+        "stop_reason": stop_reason,
+        "completed_at": completed_at.isoformat() if completed_at else None,
+        "gaming_flags": gaming_flags,
+        "crystals_earned": crystals_earned,
+    }
+
+
+async def _fetch_atomic_completion_payload(
+    db_admin: SupabaseAdmin,
+    *,
+    user_id: str,
+    fallback_snapshot: dict[str, object] | None = None,
+) -> tuple[dict[str, object] | None, dict[str, object] | None]:
+    aura_result = await (
+        db_admin.table("aura_scores")
+        .select("volunteer_id,total_score,badge_tier,elite_status,competency_scores,percentile_rank,last_updated,events_attended")
+        .eq("volunteer_id", user_id)
+        .execute()
+    )
+    aura_row = _unwrap_supabase_single(aura_result.data)
+    if aura_row is None and isinstance(fallback_snapshot, dict):
+        aura_row = fallback_snapshot
+    if not aura_row:
+        return None, None
+
+    competency_scores = aura_row.get("competency_scores") or {}
+    completed = sum(1 for value in competency_scores.values() if value is not None)
+    confidence = round(completed / TOTAL_COMPETENCIES, 3)
+
+    last_updated = aura_row.get("last_updated")
+    if isinstance(last_updated, str):
+        try:
+            last_updated = datetime.fromisoformat(last_updated.replace("Z", "+00:00"))
+        except ValueError:
+            last_updated = None
+    if isinstance(last_updated, datetime) and last_updated.tzinfo is None:
+        last_updated = last_updated.replace(tzinfo=UTC)
+
+    total_score = float(aura_row.get("total_score") or 0.0)
+    effective_score = None
+    if total_score > 0 and last_updated is not None:
+        effective_score = apply_activity_boost(
+            calculate_effective_score(total_score, last_updated),
+            int(aura_row.get("events_attended") or 0),
+        )
+
+    badge_tier = str(aura_row.get("badge_tier") or "none")
+    aura_payload: dict[str, object] = {
+        "score": total_score,
+        "tier": badge_tier,
+        "confidence": confidence,
+        "total_score": total_score,
+        "badge_tier": badge_tier,
+        "elite_status": bool(aura_row.get("elite_status", False)),
+        "competency_scores": {k: float(v) for k, v in competency_scores.items()},
+        "percentile_rank": (
+            float(aura_row["percentile_rank"]) if aura_row.get("percentile_rank") is not None else None
+        ),
+        "effective_score": effective_score,
+    }
+
+    if badge_tier == "none":
+        return aura_payload, None
+
+    profile_result = await db_admin.table("profiles").select("badge_issued_at").eq("id", user_id).execute()
+    profile = _unwrap_supabase_single(profile_result.data) or {}
+    earned_at = profile.get("badge_issued_at") or (
+        last_updated.isoformat() if isinstance(last_updated, datetime) else None
+    )
+    badge_payload = {
+        "id": f"aura:{user_id}:{badge_tier}",
+        "badge_type": "aura",
+        "tier": badge_tier,
+        "earned_at": earned_at,
+        "metadata": {
+            "total_score": total_score,
+            "elite_status": bool(aura_row.get("elite_status", False)),
+        },
+    }
+    return aura_payload, badge_payload
 
 
 def _hash_assessment_decision_inputs(
@@ -923,6 +1030,11 @@ async def complete_assessment(
         stored_multiplier = float(session.get("gaming_penalty_multiplier") or 1.0)
         stored_flags = session.get("gaming_flags") or []
         competency_score_early = round(theta_to_score(state.theta) * stored_multiplier, 2)
+        aura_payload_early, badge_payload_early = await _fetch_atomic_completion_payload(
+            db_admin,
+            user_id=str(user_id),
+            fallback_snapshot=None,
+        )
         return AssessmentResultOut(
             session_id=session_id,
             competency_slug=slug_early,
@@ -933,6 +1045,18 @@ async def complete_assessment(
             gaming_flags=stored_flags,
             completed_at=_parse_dt(session.get("completed_at")),
             crystals_earned=0,
+            session=_build_completion_session_payload(
+                session_id=session_id,
+                competency_slug=slug_early,
+                competency_score=competency_score_early,
+                questions_answered=len(state.items),
+                stop_reason=state.stop_reason,
+                completed_at=_parse_dt(session.get("completed_at")),
+                gaming_flags=stored_flags,
+                crystals_earned=0,
+            ),
+            aura=aura_payload_early,
+            badge=badge_payload_early,
         )
 
     # Anti-gaming analysis — run once for new completions, reuse stored values for durable replays.
@@ -985,16 +1109,40 @@ async def complete_assessment(
         and all_side_effects_complete(existing_job.get("side_effects"))
     ):
         completed_context = existing_job.get("result_context") or {}
+        aura_payload_completed, badge_payload_completed = await _fetch_atomic_completion_payload(
+            db_admin,
+            user_id=str(user_id),
+            fallback_snapshot=completed_context.get("aura_snapshot"),
+        )
+        completed_at = _parse_dt(completed_context.get("completed_at") or session.get("completed_at"))
+        competency_slug_completed = completed_context.get("competency_slug") or slug
+        competency_score_completed = float(completed_context.get("competency_score") or competency_score)
+        questions_answered_completed = int(completed_context.get("questions_answered") or len(state.items))
+        stop_reason_completed = completed_context.get("stop_reason") or state.stop_reason
+        gaming_flags_completed = list(completed_context.get("gaming_flags") or gaming_flags)
+        crystals_earned_completed = int(completed_context.get("crystals_earned") or 0)
         return AssessmentResultOut(
             session_id=session_id,
-            competency_slug=completed_context.get("competency_slug") or slug,
-            competency_score=float(completed_context.get("competency_score") or competency_score),
-            questions_answered=int(completed_context.get("questions_answered") or len(state.items)),
-            stop_reason=completed_context.get("stop_reason") or state.stop_reason,
+            competency_slug=competency_slug_completed,
+            competency_score=competency_score_completed,
+            questions_answered=questions_answered_completed,
+            stop_reason=stop_reason_completed,
             aura_updated=bool(completed_context.get("aura_updated", False)),
-            gaming_flags=list(completed_context.get("gaming_flags") or gaming_flags),
-            completed_at=_parse_dt(completed_context.get("completed_at") or session.get("completed_at")),
-            crystals_earned=int(completed_context.get("crystals_earned") or 0),
+            gaming_flags=gaming_flags_completed,
+            completed_at=completed_at,
+            crystals_earned=crystals_earned_completed,
+            session=_build_completion_session_payload(
+                session_id=session_id,
+                competency_slug=competency_slug_completed,
+                competency_score=competency_score_completed,
+                questions_answered=questions_answered_completed,
+                stop_reason=stop_reason_completed,
+                completed_at=completed_at,
+                gaming_flags=gaming_flags_completed,
+                crystals_earned=crystals_earned_completed,
+            ),
+            aura=aura_payload_completed,
+            badge=badge_payload_completed,
         )
 
     # Capture old badge tier BEFORE upsert — needed for badge_tier_changed event.
@@ -1012,7 +1160,9 @@ async def complete_assessment(
         except Exception:
             pass  # first assessment — no previous tier
 
+    existing_context = dict((existing_job or {}).get("result_context") or {})
     completion_context = {
+        **existing_context,
         "competency_slug": slug,
         "competency_score": competency_score,
         "questions_answered": len(state.items),
@@ -1036,6 +1186,13 @@ async def complete_assessment(
         competency_slug=slug,
         result_context=completion_context,
     )
+    if job.get("result_context"):
+        completion_context = {
+            **dict(job.get("result_context") or {}),
+            **completion_context,
+            "aura_snapshot": completion_context.get("aura_snapshot")
+            or (dict(job.get("result_context") or {}).get("aura_snapshot")),
+        }
     job = await save_completion_job(
         db_admin,
         job,
@@ -1443,6 +1600,20 @@ async def complete_assessment(
         completed_at=(datetime.now(UTC).isoformat() if final_status == "completed" else job.get("completed_at")),
     )
 
+    aura_payload, badge_payload = await _fetch_atomic_completion_payload(
+        db_admin,
+        user_id=str(user_id),
+        fallback_snapshot=result_context.get("aura_snapshot"),
+    )
+    if slug and aura_payload is None:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "code": "AURA_FINALIZATION_FAILED",
+                "message": "Assessment completed but AURA score could not be finalized atomically",
+            },
+        )
+
     return AssessmentResultOut(
         session_id=session_id,
         competency_slug=slug,
@@ -1454,6 +1625,18 @@ async def complete_assessment(
         gaming_flags=gaming_flags,
         completed_at=completed_at_dt,
         crystals_earned=crystals_earned,
+        session=_build_completion_session_payload(
+            session_id=session_id,
+            competency_slug=slug,
+            competency_score=competency_score,
+            questions_answered=len(state.items),
+            stop_reason=state.stop_reason,
+            completed_at=completed_at_dt,
+            gaming_flags=gaming_flags,
+            crystals_earned=crystals_earned,
+        ),
+        aura=aura_payload,
+        badge=badge_payload,
     )
 
 

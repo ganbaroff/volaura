@@ -18,9 +18,10 @@ import json
 import pathlib
 
 from fastapi import APIRouter, Header, HTTPException, Query, Request
+from loguru import logger
 
 from app.config import settings
-from app.deps import CurrentUserId, SupabaseAdmin
+from app.deps import PlatformAdminId, SupabaseAdmin
 from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/api/atlas", tags=["atlas-gateway"])
@@ -39,6 +40,7 @@ async def gateway_health(request: Request) -> dict:
 @limiter.limit(RATE_AUTH)  # Tight — secret-gated but defense-in-depth against brute-force or runaway swarm retry loop
 async def receive_proposal(
     request: Request,
+    db: SupabaseAdmin,
     x_gateway_secret: str = Header(None),
 ) -> dict:
     if not settings.gateway_secret:
@@ -47,6 +49,17 @@ async def receive_proposal(
         raise HTTPException(status_code=403, detail="Invalid secret")
 
     body = await request.json()
+    proposal_row = {
+        "agent_id": str(body.get("agent") or body.get("agent_id") or body.get("source") or "unknown"),
+        "proposal_type": str(body.get("type") or body.get("proposal_type") or "unknown"),
+        "payload": body,
+    }
+
+    try:
+        result = await db.table("swarm_proposals").insert(proposal_row).execute()
+    except Exception as exc:
+        logger.error("Atlas proposal DB write failed", error=str(exc))
+        raise HTTPException(status_code=500, detail="Failed to persist proposal") from exc
 
     proposals: list = []
     if _PROPOSALS_PATH.exists():
@@ -64,11 +77,21 @@ async def receive_proposal(
             json.dumps(proposals, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
-    except OSError:
-        # Railway read-only filesystem — log and continue (non-blocking)
-        pass
+    except OSError as exc:
+        logger.warning("Atlas proposal debug file write failed", error=str(exc))
 
-    return {"status": "queued", "total": len(proposals)}
+    proposal_id = None
+    if getattr(result, "data", None):
+        first_row = result.data[0] if isinstance(result.data, list) else result.data
+        proposal_id = first_row.get("id")
+
+    return {
+        "status": "queued",
+        "proposal_id": proposal_id,
+        "agent_id": proposal_row["agent_id"],
+        "proposal_type": proposal_row["proposal_type"],
+        "debug_total": len(proposals),
+    }
 
 
 @router.get("/learnings")
@@ -76,17 +99,17 @@ async def receive_proposal(
 async def get_atlas_learnings(
     request: Request,
     db: SupabaseAdmin,
-    _user_id: CurrentUserId,  # noqa: ARG001 — enforces JWT auth; no per-user filter (CEO-global table)
+    _admin_id: PlatformAdminId,  # noqa: ARG001 — enforce existing platform-admin gate
     limit: int = Query(default=20, ge=1, le=100),
     category: str | None = Query(default=None),
 ) -> dict:
     """Return top-N atlas_learnings ordered by emotional_intensity DESC.
 
     Cross-product memory bridge (Sprint E2): MindShift focus-session engine calls
-    this endpoint with the user's JWT to build CEO-context for LLM prompts.
-    Since atlas_learnings is CEO-global (no user_id column), all authenticated
-    callers receive the same knowledge base.  Service-role admin client bypasses
-    the deny-all RLS policy set in migration 20260419221500.
+    this endpoint with a platform-admin JWT to build CEO-context for LLM prompts.
+    Since atlas_learnings is CEO-global (no user_id column), access is restricted
+    to existing platform admins only. Service-role admin client bypasses the
+    deny-all RLS policy set in migration 20260419221500.
 
     Increments access_count on returned rows as a ZenBrain retrieval signal.
     """

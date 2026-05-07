@@ -11,10 +11,37 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request
 
-from app.deps import SupabaseAdmin
-from app.middleware.rate_limit import RATE_DISCOVERY, limiter
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, limiter
 
 router = APIRouter(prefix="/badges", tags=["Badges"])
+
+
+def _build_badge_list(
+    *,
+    volunteer_id: str,
+    badge_tier: str | None,
+    issued_at: str | None,
+    total_score: float | None,
+    elite_status: bool | None,
+) -> list[dict]:
+    """Project AURA score into the dashboard's lightweight Badge[] shape."""
+    if not badge_tier or badge_tier == "none":
+        return []
+
+    return [
+        {
+            "id": f"aura:{volunteer_id}:{badge_tier}",
+            "volunteer_id": volunteer_id,
+            "badge_type": "aura",
+            "tier": badge_tier,
+            "earned_at": issued_at or datetime.now(UTC).isoformat(),
+            "metadata": {
+                "total_score": total_score,
+                "elite_status": bool(elite_status),
+            },
+        }
+    ]
 
 # ── Open Badges 3.0 JSON-LD ───────────────────────────────────────────────────
 
@@ -129,6 +156,38 @@ async def get_open_badge_credential(
             ],
         },
     }
+
+
+@router.get("/me")
+@limiter.limit(RATE_DEFAULT)
+async def get_my_badges(
+    request: Request,
+    db: SupabaseUser,
+    user_id: CurrentUserId,
+) -> list[dict]:
+    """Return the authenticated user's dashboard badge list."""
+    profile_result = await db.table("profiles").select("badge_issued_at").eq("id", user_id).maybe_single().execute()
+    aura_result = (
+        await db.table("aura_scores")
+        .select("total_score,badge_tier,elite_status,last_updated")
+        .eq("volunteer_id", user_id)
+        .maybe_single()
+        .execute()
+    )
+
+    if not aura_result.data:
+        return []
+
+    profile = profile_result.data or {}
+    aura = aura_result.data
+    issued_at = profile.get("badge_issued_at") or aura.get("last_updated")
+    return _build_badge_list(
+        volunteer_id=user_id,
+        badge_tier=aura.get("badge_tier"),
+        issued_at=issued_at,
+        total_score=aura.get("total_score"),
+        elite_status=aura.get("elite_status"),
+    )
 
 
 @router.get("/issuer")

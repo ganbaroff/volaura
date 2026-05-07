@@ -3,8 +3,10 @@
 Covers:
 - GET /api/atlas/health — healthcheck response
 - POST /api/atlas/proposal — auth gates (503/403)
-- POST /api/atlas/proposal — happy path, file append, corrupt-JSON recovery
-- POST /api/atlas/proposal — OSError on write (Railway read-only FS)
+- POST /api/atlas/proposal — DB-backed queue happy path
+- POST /api/atlas/proposal — corrupt-JSON recovery for optional debug file
+- POST /api/atlas/proposal — DB failure returns 500
+- POST /api/atlas/proposal — OSError on debug file write still returns queued
 - POST /api/atlas/proposal — empty body
 - _PROPOSALS_PATH constant value
 - GET /api/atlas/learnings — cross-product memory bridge (E2)
@@ -17,10 +19,11 @@ import pathlib
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from fastapi import HTTPException
 from httpx import ASGITransport, AsyncClient
 
 import app.routers.atlas_gateway as gw_module
-from app.deps import get_current_user_id, get_supabase_admin
+from app.deps import get_supabase_admin, require_platform_admin
 from app.main import app
 
 GATEWAY_SECRET = "test-gateway-secret-abc123"
@@ -34,6 +37,19 @@ def _make_client() -> AsyncClient:
 
 def _proposal_path(tmp_path: pathlib.Path) -> pathlib.Path:
     return tmp_path / "proposals.json"
+
+
+def _make_proposal_admin_mock() -> AsyncMock:
+    result = MagicMock()
+    result.data = [{"id": "proposal-1"}]
+
+    chain = AsyncMock()
+    chain.execute = AsyncMock(return_value=result)
+    chain.insert = MagicMock(return_value=chain)
+
+    mock_admin = AsyncMock()
+    mock_admin.table = MagicMock(return_value=chain)
+    return mock_admin
 
 
 # ── constant sanity check ──────────────────────────────────────────────────
@@ -72,14 +88,19 @@ async def test_proposal_503_when_gateway_secret_not_configured(tmp_path, monkeyp
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", "")
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", _proposal_path(tmp_path)):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "test"},
-                headers={"X-Gateway-Secret": "anything"},
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", _proposal_path(tmp_path)):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "test"},
+                    headers={"X-Gateway-Secret": "anything"},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
     assert resp.status_code == 503
     assert "not configured" in resp.json()["detail"].lower()
 
@@ -89,14 +110,19 @@ async def test_proposal_403_on_wrong_secret(tmp_path, monkeypatch):
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", _proposal_path(tmp_path)):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "test"},
-                headers={"X-Gateway-Secret": "wrong-secret"},
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", _proposal_path(tmp_path)):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "test"},
+                    headers={"X-Gateway-Secret": "wrong-secret"},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
     assert resp.status_code == 403
     assert "invalid" in resp.json()["detail"].lower()
 
@@ -106,14 +132,18 @@ async def test_proposal_403_on_missing_secret_header(tmp_path, monkeypatch):
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", _proposal_path(tmp_path)):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "test"},
-                # no X-Gateway-Secret header
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", _proposal_path(tmp_path)):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "test"},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
     assert resp.status_code == 403
 
 
@@ -122,24 +152,34 @@ async def test_proposal_403_on_missing_secret_header(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_proposal_happy_path_queued(tmp_path, monkeypatch):
-    """Correct secret → 200, proposal written to file."""
+    """Correct secret → 200, proposal persisted to DB and mirrored to debug file."""
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
     proposals_file = _proposal_path(tmp_path)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "ship it", "priority": "high"},
-                headers={"X-Gateway-Secret": GATEWAY_SECRET},
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"agent": "atlas-reviewer", "type": "agent.finding", "title": "ship it", "priority": "high"},
+                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "queued"
-    assert data["total"] == 1
+    assert data["proposal_id"] == "proposal-1"
+    assert data["agent_id"] == "atlas-reviewer"
+    assert data["proposal_type"] == "agent.finding"
+    assert data["debug_total"] == 1
+
+    mock_admin.table.assert_called_with("swarm_proposals")
 
     written = json.loads(proposals_file.read_text(encoding="utf-8"))
     assert len(written) == 1
@@ -148,28 +188,32 @@ async def test_proposal_happy_path_queued(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_proposal_appends_to_existing_file(tmp_path, monkeypatch):
-    """Second proposal appends to list; total reflects both entries."""
+    """Debug file append remains intact after DB queue write."""
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
     proposals_file = _proposal_path(tmp_path)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
 
-    # Pre-seed one proposal
     proposals_file.write_text(
         json.dumps([{"title": "first"}], ensure_ascii=False),
         encoding="utf-8",
     )
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "second"},
-                headers={"X-Gateway-Secret": GATEWAY_SECRET},
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "second"},
+                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 200
-    assert resp.json()["total"] == 2
+    assert resp.json()["debug_total"] == 2
 
     written = json.loads(proposals_file.read_text(encoding="utf-8"))
     assert written[0]["title"] == "first"
@@ -181,23 +225,28 @@ async def test_proposal_appends_to_existing_file(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_proposal_handles_corrupt_json_in_file(tmp_path, monkeypatch):
-    """Corrupt JSON in existing file → reset to [] and still queue the proposal."""
+    """Corrupt debug file JSON → reset to [] and still queue the proposal."""
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
     proposals_file = _proposal_path(tmp_path)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
     proposals_file.write_text("{{{broken json", encoding="utf-8")
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "after corrupt"},
-                headers={"X-Gateway-Secret": GATEWAY_SECRET},
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "after corrupt"},
+                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 200
-    assert resp.json()["total"] == 1
+    assert resp.json()["debug_total"] == 1
 
     written = json.loads(proposals_file.read_text(encoding="utf-8"))
     assert written == [{"title": "after corrupt"}]
@@ -205,23 +254,55 @@ async def test_proposal_handles_corrupt_json_in_file(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_proposal_handles_non_list_json_in_file(tmp_path, monkeypatch):
-    """Non-list JSON (e.g. a dict) in existing file → reset to [] and queue."""
+    """Non-list debug file JSON resets to [] and queues cleanly."""
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
     proposals_file = _proposal_path(tmp_path)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
     proposals_file.write_text(json.dumps({"oops": "a dict"}), encoding="utf-8")
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "after non-list"},
-                headers={"X-Gateway-Secret": GATEWAY_SECRET},
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "after non-list"},
+                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 200
-    assert resp.json()["total"] == 1
+    assert resp.json()["debug_total"] == 1
+
+
+@pytest.mark.asyncio
+async def test_proposal_db_failure_returns_500(tmp_path, monkeypatch):
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
+    mock_admin = AsyncMock()
+    chain = AsyncMock()
+    chain.insert = MagicMock(return_value=chain)
+    chain.execute = AsyncMock(side_effect=RuntimeError("db down"))
+    mock_admin.table = MagicMock(return_value=chain)
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", _proposal_path(tmp_path)):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "volatile"},
+                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+
+    assert resp.status_code == 500
+    assert "persist" in resp.json()["detail"].lower()
 
 
 # ── POST /api/atlas/proposal — OSError on write ────────────────────────────
@@ -229,13 +310,14 @@ async def test_proposal_handles_non_list_json_in_file(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_proposal_write_oserror_still_returns_queued(tmp_path, monkeypatch):
-    """OSError during file write (Railway read-only FS) → still returns queued."""
+    """Debug file OSError logs warning but DB-backed queue still succeeds."""
     from app.config import settings
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
     proposals_file = _proposal_path(tmp_path)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
 
-    # Patch write_text on pathlib.Path so the router's write call raises OSError.
     original_write_text = pathlib.Path.write_text
 
     def _raise_on_target(self, *args, **kwargs):
@@ -243,21 +325,24 @@ async def test_proposal_write_oserror_still_returns_queued(tmp_path, monkeypatch
             raise OSError("Read-only file system")
         return original_write_text(self, *args, **kwargs)
 
-    with (
-        patch.object(gw_module, "_PROPOSALS_PATH", proposals_file),
-        patch.object(pathlib.Path, "write_text", _raise_on_target),
-    ):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={"title": "volatile"},
-                headers={"X-Gateway-Secret": GATEWAY_SECRET},
-            )
+    try:
+        with (
+            patch.object(gw_module, "_PROPOSALS_PATH", proposals_file),
+            patch.object(pathlib.Path, "write_text", _raise_on_target),
+        ):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={"title": "volatile"},
+                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "queued"
-    assert data["total"] == 1
+    assert data["proposal_id"] == "proposal-1"
 
 
 # ── POST /api/atlas/proposal — empty body ─────────────────────────────────
@@ -270,17 +355,23 @@ async def test_proposal_empty_body_accepted(tmp_path, monkeypatch):
 
     monkeypatch.setattr(settings, "gateway_secret", GATEWAY_SECRET)
     proposals_file = _proposal_path(tmp_path)
+    mock_admin = _make_proposal_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
 
-    with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
-        async with _make_client() as ac:
-            resp = await ac.post(
-                "/api/atlas/proposal",
-                json={},
-                headers={"X-Gateway-Secret": GATEWAY_SECRET},
-            )
+    try:
+        with patch.object(gw_module, "_PROPOSALS_PATH", proposals_file):
+            async with _make_client() as ac:
+                resp = await ac.post(
+                    "/api/atlas/proposal",
+                    json={},
+                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
+                )
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 200
-    assert resp.json()["total"] == 1
+    assert resp.json()["agent_id"] == "unknown"
+    assert resp.json()["proposal_type"] == "unknown"
 
     written = json.loads(proposals_file.read_text(encoding="utf-8"))
     assert written == [{}]
@@ -344,18 +435,37 @@ async def test_learnings_401_without_auth():
 
 
 @pytest.mark.asyncio
-async def test_learnings_happy_path():
-    """Authenticated call → 200 with learnings list."""
+async def test_learnings_403_without_platform_admin():
+    """JWT present but not platform admin → 403 Forbidden."""
     mock_admin = _make_admin_mock()
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: (_ for _ in ()).throw(
+        HTTPException(status_code=403, detail={"code": "NOT_PLATFORM_ADMIN", "message": "Platform admin access required"})
+    )
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
+
+    assert resp.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_learnings_happy_path():
+    """Platform-admin call → 200 with learnings list."""
+    mock_admin = _make_admin_mock()
+
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     data = resp.json()
@@ -371,13 +481,13 @@ async def test_learnings_empty_when_no_rows():
     mock_admin = _make_admin_mock(rows=[])
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     assert resp.json()["total"] == 0
@@ -390,13 +500,13 @@ async def test_learnings_category_filter():
     mock_admin = _make_admin_mock(rows=[_SAMPLE_LEARNINGS[0]])
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?category=preference")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     assert resp.json()["category_filter"] == "preference"
@@ -407,13 +517,13 @@ async def test_learnings_category_filter():
 async def test_learnings_invalid_category_422():
     """?category=unknown → 422 with INVALID_CATEGORY code."""
     app.dependency_overrides[get_supabase_admin] = lambda: _make_admin_mock()
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?category=unknown_bad")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 422
     assert resp.json()["detail"]["code"] == "INVALID_CATEGORY"
@@ -425,13 +535,13 @@ async def test_learnings_limit_param():
     mock_admin = _make_admin_mock()
 
     app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?limit=5")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 200
     assert resp.json()["limit"] == 5
@@ -441,12 +551,12 @@ async def test_learnings_limit_param():
 async def test_learnings_limit_too_large_422():
     """?limit=200 → 422 (exceeds max=100)."""
     app.dependency_overrides[get_supabase_admin] = lambda: _make_admin_mock()
-    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    app.dependency_overrides[require_platform_admin] = lambda: "admin-123"
     try:
         async with _make_client() as ac:
             resp = await ac.get("/api/atlas/learnings?limit=200")
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)
-        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(require_platform_admin, None)
 
     assert resp.status_code == 422

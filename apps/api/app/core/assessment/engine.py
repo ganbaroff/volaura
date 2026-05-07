@@ -47,7 +47,7 @@ class ItemRecord:
     irt_a: float
     irt_b: float
     irt_c: float
-    response: int  # 0 or 1 (for open-ended: binarised via BARS threshold)
+    response: int  # 0/1 for MCQ, 0-3 ordinal bucket for open-ended BARS
     raw_score: float  # 0.0-1.0 continuous score (BARS output)
     response_time_ms: int
     theta_at_answer: float = 0.0  # RT-IRT: theta snapshot BEFORE this item was administered
@@ -189,10 +189,13 @@ def _estimate_eap(
         for item in items:
             p = _prob_3pl(t, item.irt_a, item.irt_b, item.irt_c)
             p = max(1e-10, min(1.0 - 1e-10, p))
-            if item.response == 1:
-                log_like += math.log(p)
-            else:
-                log_like += math.log(1.0 - p)
+            # Open-ended BARS answers now preserve 4 ordinal buckets (0..3) instead
+            # of collapsing everything at a 0.5 binary threshold. We approximate
+            # those buckets as fractional evidence for the existing 3PL model:
+            # 0 -> fully incorrect, 3 -> fully correct, 1/2 -> partial evidence.
+            response_fraction = max(0.0, min(1.0, item.response / 3.0 if item.response > 1 else float(item.response)))
+            log_like += response_fraction * math.log(p)
+            log_like += (1.0 - response_fraction) * math.log(1.0 - p)
         log_prior = math.log(max(1e-30, _normal_density(t, prior_mean, prior_sd)))
         log_posteriors.append(log_like + log_prior)
 
@@ -299,12 +302,13 @@ def submit_response(
     """Record a response and update theta estimate.
 
     `raw_score` is a 0.0-1.0 continuous value (from BARS for open-ended,
-    or 0/1 for MCQ). We binarise at 0.5 for the IRT model.
+    or 0/1 for MCQ). Open-ended responses are mapped to 4 ordinal buckets
+    so partial evidence reaches the 3PL update instead of collapsing at 0.5.
 
     Returns:
         Updated CATState.
     """
-    binary_response = 1 if raw_score >= 0.5 else 0
+    ordinal_response = min(int(raw_score * 4), 3)
     theta_snapshot = state.theta  # RT-IRT: capture theta BEFORE updating with this response
 
     record = ItemRecord(
@@ -312,7 +316,7 @@ def submit_response(
         irt_a=irt_a,
         irt_b=irt_b,
         irt_c=irt_c,
-        response=binary_response,
+        response=ordinal_response,
         raw_score=raw_score,
         theta_at_answer=theta_snapshot,
         response_time_ms=response_time_ms,

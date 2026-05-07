@@ -130,13 +130,19 @@ def test_submit_response_appends_item():
     state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.8, 5000)
     assert len(state.items) == 1
     assert state.items[0].question_id == "q1"
-    assert state.items[0].response == 1  # 0.8 >= 0.5 → binary 1
+    assert state.items[0].response == 3  # 0.8 → top ordinal bucket
 
 
-def test_submit_response_binary_threshold():
+def test_submit_response_ordinal_bucket_low_score():
     state = CATState()
     state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.3, 5000)
-    assert state.items[0].response == 0  # 0.3 < 0.5 → binary 0
+    assert state.items[0].response == 1  # 0.3 retains partial evidence
+
+
+def test_submit_response_ordinal_bucket_zero_score():
+    state = CATState()
+    state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.0, 5000)
+    assert state.items[0].response == 0
 
 
 def test_submit_response_updates_theta():
@@ -335,7 +341,9 @@ def test_aggregate_weighted():
 
 
 def test_calculate_overall_all_zeros():
-    assert calculate_overall({}) == 0.0
+    result = calculate_overall({})
+    assert result.score is None
+    assert result.status == "incomplete"
 
 
 def test_calculate_overall_all_100():
@@ -352,13 +360,16 @@ def test_calculate_overall_all_100():
             "empathy_safeguarding",
         ]
     }
-    assert calculate_overall(scores) == 100.0
+    result = calculate_overall(scores)
+    assert result.score == 100.0
+    assert result.status == "complete"
 
 
 def test_calculate_overall_partial():
     scores = {"communication": 100.0}  # weight 0.20
     result = calculate_overall(scores)
-    assert abs(result - 20.0) < 0.01
+    assert result.score is None
+    assert result.status == "incomplete"
 
 
 def test_get_badge_tier():

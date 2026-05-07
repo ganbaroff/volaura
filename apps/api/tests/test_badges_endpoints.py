@@ -16,7 +16,7 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 
-from app.deps import get_supabase_admin
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -24,6 +24,7 @@ from app.main import app
 VALID_UUID = str(uuid.uuid4())
 ENDPOINT_ISSUER = "/api/badges/issuer"
 ENDPOINT_CREDENTIAL = f"/api/badges/{VALID_UUID}/credential"
+ENDPOINT_ME = "/api/badges/me"
 
 
 def _make_admin_mock(profile_data=None, aura_data=None):
@@ -63,8 +64,22 @@ def _override_admin(mock_db):
     return mock_db
 
 
+def _override_user(mock_db, user_id: str = VALID_UUID):
+    async def _db_dep():
+        yield mock_db
+
+    async def _user_dep():
+        return user_id
+
+    app.dependency_overrides[get_supabase_user] = _db_dep
+    app.dependency_overrides[get_current_user_id] = _user_dep
+    return mock_db
+
+
 def _clear_overrides():
     app.dependency_overrides.pop(get_supabase_admin, None)
+    app.dependency_overrides.pop(get_supabase_user, None)
+    app.dependency_overrides.pop(get_current_user_id, None)
 
 
 # ── Fixtures ───────────────────────────────────────────────────────────────────
@@ -104,6 +119,59 @@ def test_issuer_id_contains_base_url(client):
     resp = client.get(ENDPOINT_ISSUER)
     body = resp.json()
     assert "/api/badges/issuer" in body["id"]
+
+
+# ── GET /api/badges/me ────────────────────────────────────────────────────────
+
+
+def test_me_returns_empty_list_without_aura(client):
+    mock_db = _make_admin_mock(profile_data={"badge_issued_at": None}, aura_data=None)
+    _override_user(mock_db)
+
+    resp = client.get(ENDPOINT_ME)
+
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+def test_me_returns_dashboard_badge_list(client):
+    profile = {"badge_issued_at": "2026-01-01T00:00:00Z"}
+    aura = {
+        "total_score": 82.5,
+        "badge_tier": "gold",
+        "elite_status": False,
+        "last_updated": "2026-03-15T12:00:00Z",
+    }
+    mock_db = _make_admin_mock(profile_data=profile, aura_data=aura)
+    _override_user(mock_db)
+
+    resp = client.get(ENDPOINT_ME)
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 1
+    assert body[0]["volunteer_id"] == VALID_UUID
+    assert body[0]["badge_type"] == "aura"
+    assert body[0]["tier"] == "gold"
+    assert body[0]["earned_at"] == "2026-01-01T00:00:00Z"
+    assert body[0]["metadata"]["total_score"] == 82.5
+
+
+def test_me_returns_empty_list_for_none_tier(client):
+    profile = {"badge_issued_at": None}
+    aura = {
+        "total_score": 10.0,
+        "badge_tier": "none",
+        "elite_status": False,
+        "last_updated": "2026-03-15T12:00:00Z",
+    }
+    mock_db = _make_admin_mock(profile_data=profile, aura_data=aura)
+    _override_user(mock_db)
+
+    resp = client.get(ENDPOINT_ME)
+
+    assert resp.status_code == 200
+    assert resp.json() == []
 
 
 # ── GET /api/badges/{professional_id}/credential — happy path ────────────────

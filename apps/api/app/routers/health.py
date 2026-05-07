@@ -12,6 +12,7 @@ from app.deps import SupabaseAdmin
 from app.middleware.rate_limit import limiter
 
 router = APIRouter()
+API_VERSION = "0.2.0"
 
 
 class HealthResponse(BaseModel):
@@ -58,7 +59,7 @@ async def health_check(request: Request, db: SupabaseAdmin) -> HealthResponse:
 
     return HealthResponse(
         status=status,
-        version="0.2.0",
+        version=API_VERSION,
         database=db_status,
         llm_configured=llm_ok,
         supabase_project_ref=_extract_project_ref(settings.supabase_url),
@@ -66,6 +67,13 @@ async def health_check(request: Request, db: SupabaseAdmin) -> HealthResponse:
         nvidia=nvidia_set,
         git_sha=git_sha,
     )
+
+
+@router.get("/api/v1/status")
+@limiter.limit("60/minute")
+async def v1_status(request: Request) -> dict:
+    """Legacy status endpoint kept for stale monitors and docs."""
+    return {"status": "ok", "version": API_VERSION}
 
 
 # CRIT-01 FIXED (Session 51 OWASP audit): /health/env-debug DELETED.

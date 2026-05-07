@@ -141,12 +141,12 @@ STALE_IN_PROGRESS_SECONDS = int(
 AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
     # ── CORE ENGINEERING (wave 0) ──
     "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),     # Architect
-    "Security Auditor":        ("azure", "o4-mini"),                   # Reasoner
-    "Code Quality Engineer":   ("azure", "gpt-4.1-mini"),             # Reviewer
+    "Security Auditor":        ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Re-routed from Azure (RAI content-filter)
+    "Code Quality Engineer":   ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (RAI content-filter)
     "Ecosystem Auditor":       ("nvidia-heavy", "nvidia/llama-3.1-nemotron-ultra-253b-v1"),
     "DevOps Engineer":         ("groq", "llama-3.3-70b-versatile"),   # Fast infra checks
     # ── STRATEGY & PRODUCT (wave 0-1) ──
-    "Chief Strategist":        ("azure", "gpt-4o"),                    # Best reasoning for strategy
+    "Chief Strategist":        ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Re-routed from Azure (RAI content-filter)
     "Product Strategist":      ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep analysis
     "Sales Director":          ("nvidia", "meta/llama-3.3-70b-instruct"),       # Practical sales
     # ── DESIGN & CULTURE (wave 1) ──
@@ -157,10 +157,10 @@ AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
     "Assessment Science":      ("vertex-ai", "gemini-2.5-flash"),     # Psychometric rigor
     "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Compliance
     "Growth Hacker":           ("groq", "llama-3.3-70b-versatile"),   # Fast acquisition tactics
-    "QA Engineer":             ("azure", "gpt-4.1-mini"),             # Systematic testing
+    "QA Engineer":             ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (RAI content-filter)
     # ── RISK & OVERSIGHT (wave 1-3) ──
     "Risk Manager":            ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep risk analysis
-    "CTO Watchdog":            ("azure", "gpt-4o"),                    # Process oversight
+    "CTO Watchdog":            ("nvidia", "nvidia/llama-3.1-nemotron-nano-8b-v1"),  # Re-routed from Azure (RAI content-filter)
 }
 
 # Legacy set kept for backward compat — now derived from AGENT_LLM_MAP

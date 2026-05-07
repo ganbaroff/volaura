@@ -201,3 +201,35 @@ def test_azure_token_param_case_insensitive():
     daemon = _load_daemon_module()
     out = daemon._azure_token_param("O4-Mini", 1000)
     assert out == {"max_completion_tokens": 1000}
+
+
+# ── Provider mapping tests (post Azure-RAI remap) ─────────────────────────────
+
+
+def test_remapped_perspectives_are_not_azure():
+    daemon = _load_daemon_module()
+    remapped = [
+        "Security Auditor",
+        "Code Quality Engineer",
+        "Chief Strategist",
+        "QA Engineer",
+        "CTO Watchdog",
+    ]
+    for name in remapped:
+        provider, _model = daemon.AGENT_LLM_MAP[name]
+        assert provider != "azure", (
+            f"{name} must be re-routed off azure (RAI content-filter)"
+        )
+
+
+def test_ux_designer_stays_azure():
+    daemon = _load_daemon_module()
+    provider, model = daemon.AGENT_LLM_MAP["UX Designer"]
+    assert provider == "azure"
+    assert model == "gpt-4.1-nano"
+
+
+def test_ecosystem_auditor_stays_nvidia_heavy():
+    daemon = _load_daemon_module()
+    provider, _model = daemon.AGENT_LLM_MAP["Ecosystem Auditor"]
+    assert provider == "nvidia-heavy"

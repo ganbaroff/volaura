@@ -358,3 +358,87 @@ def test_secrets_dir_in_gitignore():
     gi = Path("C:/Projects/VOLAURA/.gitignore").read_text(encoding="utf-8")
     lines = [l.strip() for l in gi.splitlines()]
     assert "secrets/" in lines, "secrets/ must be in .gitignore"
+
+
+# ── In-progress runtime state tests (CEO directive 2026-05-08) ────────────────
+
+
+def test_in_progress_dir_in_gitignore():
+    from pathlib import Path
+    gi = Path("C:/Projects/VOLAURA/.gitignore").read_text(encoding="utf-8")
+    lines = [l.strip() for l in gi.splitlines()]
+    assert "memory/atlas/work-queue/in-progress/*" in lines, (
+        "in-progress runtime queue must be gitignored"
+    )
+
+
+def test_task_age_uses_task_id_date_when_mtime_fresh(tmp_path):
+    daemon = _load_daemon_module()
+    # Dir name is months in the past, but its mtime was JUST touched (e.g. by git checkout)
+    task_dir = tmp_path / "2026-01-15-brain-1"
+    task_dir.mkdir()
+    # mtime defaults to now
+    from datetime import datetime, timezone
+    now_ts = datetime.now(timezone.utc).timestamp()
+    age = daemon._task_age_seconds(task_dir, now_ts)
+    # Should detect via the YYYY-MM-DD prefix that this is much older than mtime suggests
+    # 2026-01-15 to 2026-05-08 is ~110 days = ~9.5M seconds, well past any sane STALE
+    assert age > 30 * 24 * 3600, f"id-date fallback should report >30d age, got {age}"
+
+
+def test_task_age_uses_started_at_when_present(tmp_path):
+    daemon = _load_daemon_module()
+    task_dir = tmp_path / "fresh-name-no-date"
+    task_dir.mkdir()
+    # Write started_at 5 days ago
+    from datetime import datetime, timedelta, timezone
+    five_days_ago = datetime.now(timezone.utc) - timedelta(days=5)
+    (task_dir / "started_at.json").write_text(
+        json.dumps({"task_id": "fresh-name-no-date",
+                     "started_at": five_days_ago.isoformat()}),
+        encoding="utf-8",
+    )
+    now_ts = datetime.now(timezone.utc).timestamp()
+    age = daemon._task_age_seconds(task_dir, now_ts)
+    assert age >= 4 * 24 * 3600, f"started_at fallback should report ~5d age, got {age}"
+
+
+def test_archive_stale_uses_unique_failed_destination(tmp_path, monkeypatch):
+    daemon = _load_daemon_module()
+
+    in_prog = tmp_path / "in-progress"
+    failed = tmp_path / "failed"
+    in_prog.mkdir()
+    failed.mkdir()
+
+    task_id = "2026-01-01-collision-test"
+    stale_dir = in_prog / task_id
+    stale_dir.mkdir()
+    # Pre-existing failed/<task_id> (collision target)
+    existing_fail = failed / task_id
+    existing_fail.mkdir()
+    (existing_fail / "result.json").write_text(
+        json.dumps({"task_id": task_id, "status": "earlier_failure"}),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(daemon, "IN_PROGRESS", in_prog)
+    monkeypatch.setattr(daemon, "FAILED", failed)
+    monkeypatch.setattr(daemon, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(daemon, "STALE_IN_PROGRESS_SECONDS", 1)
+    monkeypatch.setattr(daemon, "log_event", lambda event: None)
+
+    from datetime import datetime, timezone
+    future_ts = datetime.now(timezone.utc).timestamp() + 999_999
+    recovered = daemon._archive_stale_in_progress(now_ts=future_ts)
+
+    assert recovered == 1
+    assert not stale_dir.exists(), "stale dir must be moved out of in-progress"
+    # Original failed/<task_id> retains its earlier evidence (not overwritten)
+    assert existing_fail.exists()
+    assert json.loads((existing_fail / "result.json").read_text(encoding="utf-8"))["status"] == "earlier_failure"
+    # Suffix-named sibling exists
+    siblings = sorted(p.name for p in failed.iterdir() if p.is_dir())
+    assert any(s.startswith(f"{task_id}-stale-") for s in siblings), (
+        f"unique suffix dir must exist alongside original; got {siblings}"
+    )

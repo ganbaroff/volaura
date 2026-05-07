@@ -126,6 +126,11 @@ app = FastAPI(
     lifespan=lifespan,
     docs_url="/docs" if settings.is_dev else None,
     redoc_url="/redoc" if settings.is_dev else None,
+    # Security audit 2026-05-07 P0: openapi.json was reachable in prod, leaking
+    # full 140-route map including /api/admin/*, /api/auth/e2e-setup,
+    # /api/atlas/proposal — recon starter for attackers. Gate the same way as
+    # /docs and /redoc.
+    openapi_url="/openapi.json" if settings.is_dev else None,
 )
 
 # Security: Trust X-Forwarded-For from Railway's reverse proxy so per-IP rate

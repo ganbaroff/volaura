@@ -123,6 +123,9 @@ LOG = QUEUE / "daemon.log.jsonl"
 
 POLL_INTERVAL_SECONDS = int(os.getenv("ATLAS_DAEMON_POLL", "20"))
 MAX_CONCURRENT_TASKS = int(os.getenv("ATLAS_DAEMON_CONCURRENCY", "1"))
+STALE_IN_PROGRESS_SECONDS = int(
+    os.getenv("ATLAS_STALE_IN_PROGRESS_SECONDS", str(12 * 60 * 60))
+)
 
 # ── 11-agent architecture: CEO directive 2026-04-30 ─────────────────────
 # "сколько у нас LLM столько и агентов. слабым тоже надо давать шанс."
@@ -1189,14 +1192,15 @@ def _load_swarm_proposals() -> list[dict[str, Any]]:
 
 
 def _select_bridgeable_proposals(limit: int = 2) -> list[dict[str, Any]]:
-    """Pick approved low/medium proposals not yet mirrored into work-queue."""
+    """Pick accepted/approved low/medium proposals not yet mirrored into work-queue."""
     candidates: list[dict[str, Any]] = []
     severity_order = {"medium": 0, "low": 1}
+    executable_statuses = {"accepted", "approved"}
     for proposal in _load_swarm_proposals():
         status = str(proposal.get("status", "")).lower()
         severity = str(proposal.get("severity", "")).lower()
         proposal_id = str(proposal.get("id", "")).strip()
-        if status != "approved" or severity not in severity_order or not proposal_id:
+        if status not in executable_statuses or severity not in severity_order or not proposal_id:
             continue
         task_id = f"proposal-{proposal_id}"
         if (PENDING / f"{task_id}.md").exists():
@@ -1348,6 +1352,58 @@ def create_self_task(task_id: str, task_type: str, title: str, body: str,
 SELF_CHECK_INTERVAL = int(os.getenv("ATLAS_SELF_CHECK_INTERVAL", str(10 * 60)))
 
 
+def _archive_stale_in_progress(now_ts: float | None = None) -> int:
+    """Move abandoned in-progress task dirs to failed so the daemon can self-heal."""
+    if not IN_PROGRESS.exists():
+        return 0
+    now_ts = now_ts or datetime.now(timezone.utc).timestamp()
+    recovered = 0
+    for task_dir in sorted(IN_PROGRESS.iterdir()):
+        if not task_dir.is_dir():
+            continue
+        try:
+            age_seconds = now_ts - task_dir.stat().st_mtime
+        except OSError:
+            continue
+        if age_seconds < STALE_IN_PROGRESS_SECONDS:
+            continue
+
+        task_id = task_dir.name
+        target = FAILED / task_id
+        if target.exists():
+            suffix = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+            target = FAILED / f"{task_id}-stale-{suffix}"
+        target.parent.mkdir(parents=True, exist_ok=True)
+
+        result_file = task_dir / "result.json"
+        if not result_file.exists():
+            result_file.write_text(
+                json.dumps(
+                    {
+                        "task_id": task_id,
+                        "status": "failed",
+                        "error": "stale_in_progress_recovered",
+                        "age_seconds": round(age_seconds),
+                        "recovered_at": datetime.now(timezone.utc).isoformat(),
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+        shutil.move(str(task_dir), str(target))
+        log_event(
+            {
+                "event": "stale_in_progress_archived",
+                "task_id": task_id,
+                "age_seconds": round(age_seconds),
+                "target": str(target.relative_to(REPO_ROOT)),
+            }
+        )
+        recovered += 1
+    return recovered
+
+
 def _git_last_commit_ts() -> float:
     """Get timestamp of last git commit in REPO_ROOT. Returns 0 on failure."""
     import subprocess
@@ -1369,6 +1425,7 @@ async def run_self_checks() -> None:
     """
     global _self_tasks_this_cycle
     _self_tasks_this_cycle = 0
+    stale_recovered = _archive_stale_in_progress()
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     ci = REPO_ROOT / "memory" / "swarm" / "code-index.json"
@@ -1468,6 +1525,7 @@ async def run_self_checks() -> None:
             executor=None)
 
     log_event({"event": "self_check_complete", "pending": pending_count,
+               "stale_recovered": stale_recovered,
                "tasks_created": _self_tasks_this_cycle})
 
 

@@ -118,3 +118,8 @@ memory/atlas/work-queue/archivist.log.jsonl
 # Local-only secrets — never commit anything from secrets/
 secrets/
 !secrets/.gitkeep
+
+# Atlas swarm runtime queue state — daemon's in-progress dir is ephemeral,
+# never tracked. Pending and done are tracked by intent.
+memory/atlas/work-queue/in-progress/*
+!memory/atlas/work-queue/in-progress/.gitkeep

@@ -1598,8 +1598,45 @@ def create_self_task(task_id: str, task_type: str, title: str, body: str,
 SELF_CHECK_INTERVAL = int(os.getenv("ATLAS_SELF_CHECK_INTERVAL", str(10 * 60)))
 
 
+def _task_age_seconds(task_dir: Path, now_ts: float) -> float:
+    """Best-effort age computation, robust to mtime resets from git checkout.
+
+    Uses the OLDEST signal among:
+      1. started_at.json (written by process_task when entering in-progress)
+      2. directory mtime
+      3. YYYY-MM-DD date prefix in task_id (fallback for git-touched dirs)
+    """
+    candidates: list[float] = []
+    started_meta = task_dir / "started_at.json"
+    if started_meta.exists():
+        try:
+            data = json.loads(started_meta.read_text(encoding="utf-8"))
+            iso = str(data.get("started_at", "")).replace("Z", "+00:00")
+            ts = datetime.fromisoformat(iso).timestamp()
+            candidates.append(now_ts - ts)
+        except Exception:
+            pass
+    try:
+        candidates.append(now_ts - task_dir.stat().st_mtime)
+    except OSError:
+        pass
+    m = re.match(r"^(\d{4})-(\d{2})-(\d{2})", task_dir.name)
+    if m:
+        try:
+            d = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                         tzinfo=timezone.utc)
+            candidates.append(now_ts - d.timestamp())
+        except Exception:
+            pass
+    return max(candidates) if candidates else 0.0
+
+
 def _archive_stale_in_progress(now_ts: float | None = None) -> int:
-    """Move abandoned in-progress task dirs to failed so the daemon can self-heal."""
+    """Move abandoned in-progress task dirs to failed so the daemon can self-heal.
+
+    Robust to mtime resets caused by git checkout — falls back to started_at.json
+    and YYYY-MM-DD prefix in the task_id when computing age.
+    """
     if not IN_PROGRESS.exists():
         return 0
     now_ts = now_ts or datetime.now(timezone.utc).timestamp()
@@ -1607,10 +1644,7 @@ def _archive_stale_in_progress(now_ts: float | None = None) -> int:
     for task_dir in sorted(IN_PROGRESS.iterdir()):
         if not task_dir.is_dir():
             continue
-        try:
-            age_seconds = now_ts - task_dir.stat().st_mtime
-        except OSError:
-            continue
+        age_seconds = _task_age_seconds(task_dir, now_ts)
         if age_seconds < STALE_IN_PROGRESS_SECONDS:
             continue
 
@@ -1793,6 +1827,21 @@ async def process_task(task_path: Path) -> None:
     work_dir.mkdir(parents=True, exist_ok=True)
     moved_task = work_dir / task_path.name
     shutil.move(str(task_path), str(moved_task))
+
+    # Stamp started_at.json — robust age signal for stale recovery
+    # (survives git checkout mtime resets).
+    try:
+        (work_dir / "started_at.json").write_text(
+            json.dumps({
+                "task_id": task_id,
+                "started_at": datetime.now(timezone.utc).isoformat(),
+                "pid": os.getpid(),
+            }),
+            encoding="utf-8",
+        )
+    except Exception as e:
+        log_event({"event": "started_at_write_failed", "task_id": task_id,
+                    "error": str(e)[:120]})
 
     # Filter perspectives
     allow = meta.get("perspectives", "all")

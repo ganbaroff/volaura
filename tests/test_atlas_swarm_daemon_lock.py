@@ -233,3 +233,128 @@ def test_ecosystem_auditor_stays_nvidia_heavy():
     daemon = _load_daemon_module()
     provider, _model = daemon.AGENT_LLM_MAP["Ecosystem Auditor"]
     assert provider == "nvidia-heavy"
+
+
+# ── Git mutation safety tests (CEO directive 2026-05-07) ──────────────────────
+
+
+def _fake_run_factory(stdout_map):
+    """Build a subprocess.run replacement that returns canned stdout per command prefix."""
+    from types import SimpleNamespace
+
+    def _run(cmd, **_kw):
+        joined = " ".join(str(c) for c in cmd[:4])
+        for prefix, stdout in stdout_map.items():
+            if joined.startswith(prefix):
+                return SimpleNamespace(returncode=0, stdout=stdout, stderr="")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+    return _run
+
+
+def test_git_commit_push_blocked_without_env_flag(monkeypatch):
+    daemon = _load_daemon_module()
+    monkeypatch.delenv("ATLAS_GIT_MUTATIONS_ENABLED", raising=False)
+    result = daemon._exec_git_commit_push(message="t", files=["a.py"])
+    assert result["status"] == "blocked"
+    assert "ATLAS_GIT_MUTATIONS_ENABLED" in result["reason"]
+
+
+def test_git_commit_push_blocked_on_main_without_allow_flag(monkeypatch):
+    import subprocess
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_GIT_MUTATIONS_ENABLED", "true")
+    monkeypatch.delenv("ATLAS_ALLOW_MAIN_GIT_MUTATIONS", raising=False)
+    monkeypatch.setattr(
+        subprocess, "run",
+        _fake_run_factory({"git rev-parse --abbrev-ref": "main\n"}),
+    )
+    result = daemon._exec_git_commit_push(message="t", files=["a.py"])
+    assert result["status"] == "blocked"
+    assert "main" in result["reason"]
+
+
+def test_git_commit_push_blocked_pre_staged_unrelated(monkeypatch):
+    import subprocess
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_GIT_MUTATIONS_ENABLED", "true")
+    monkeypatch.setattr(
+        subprocess, "run",
+        _fake_run_factory({
+            "git rev-parse --abbrev-ref": "codex/feature\n",
+            "git status --porcelain": "M  unrelated.py\n",  # staged unrelated
+        }),
+    )
+    result = daemon._exec_git_commit_push(message="t", files=["a.py"])
+    assert result["status"] == "blocked"
+    assert "pre-staged" in result["reason"]
+
+
+def test_git_commit_push_blocked_dirty_unrelated_untracked(monkeypatch):
+    import subprocess
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_GIT_MUTATIONS_ENABLED", "true")
+    monkeypatch.setattr(
+        subprocess, "run",
+        _fake_run_factory({
+            "git rev-parse --abbrev-ref": "codex/feature\n",
+            "git status --porcelain": "?? unrelated.py\n",  # untracked unrelated
+        }),
+    )
+    result = daemon._exec_git_commit_push(message="t", files=["a.py"])
+    assert result["status"] == "blocked"
+    assert "unrelated" in result["reason"]
+
+
+def test_git_commit_push_uses_current_branch(monkeypatch):
+    import subprocess
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_GIT_MUTATIONS_ENABLED", "true")
+
+    pushed_target = []
+
+    from types import SimpleNamespace
+
+    def fake_run(cmd, **_kw):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="codex/myfeature\n", stderr="")
+        if joined.startswith("git status --porcelain"):
+            return SimpleNamespace(returncode=0, stdout=" M a.py\n", stderr="")
+        if joined.startswith("git push origin"):
+            pushed_target.append(cmd[3] if len(cmd) > 3 else None)
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        if cmd[:1] == ["python3"]:
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    # Bypass safety_gate import inside function with a real-or-stub allow
+    class _OkVerdict:
+        level = "ok"
+        reason = ""
+        blocked_paths: list = []
+
+        def can_auto_execute(self):
+            return True
+
+    import sys
+    fake_module = type(sys)("scripts.safety_gate")
+    fake_module.classify_proposal = lambda *_a, **_kw: _OkVerdict()
+    monkeypatch.setitem(sys.modules, "scripts.safety_gate", fake_module)
+
+    result = daemon._exec_git_commit_push(message="t", files=["a.py"])
+    assert result.get("branch") == "codex/myfeature", (
+        f"branch in result must be codex/myfeature, got {result}"
+    )
+    assert pushed_target == ["codex/myfeature"], (
+        f"git push must target current branch, not hardcoded main; got {pushed_target}"
+    )
+
+
+def test_secrets_dir_in_gitignore():
+    from pathlib import Path
+    gi = Path("C:/Projects/VOLAURA/.gitignore").read_text(encoding="utf-8")
+    lines = [l.strip() for l in gi.splitlines()]
+    assert "secrets/" in lines, "secrets/ must be in .gitignore"

@@ -1259,6 +1259,12 @@ def _exec_git_commit_push(**kw: Any) -> dict:
     """Commit staged changes and push. Runs tests first — reverts if red.
 
     Rate limit: max 5 commits/hour (checked by caller via log).
+
+    Safety gates (CEO directive 2026-05-07, P0 audit):
+    - ATLAS_GIT_MUTATIONS_ENABLED must be 'true' (default: blocked)
+    - main branch blocked unless ATLAS_ALLOW_MAIN_GIT_MUTATIONS='true'
+    - dirty tree (pre-staged or unrelated modified/untracked) blocks
+    - push targets current branch's upstream, not hardcoded main
     """
     import subprocess
     message = kw.get("message", "swarm: auto-commit")
@@ -1267,7 +1273,69 @@ def _exec_git_commit_push(**kw: Any) -> dict:
     if not files:
         return {"status": "error", "error": "no files specified"}
 
-    # Safety gate on ALL files
+    # ── Gate 1: env-flag must be explicitly enabled ──
+    if os.getenv("ATLAS_GIT_MUTATIONS_ENABLED", "").lower() != "true":
+        log_event({"event": "git_mutation_blocked", "reason": "env_disabled",
+                    "files": files})
+        return {"status": "blocked",
+                "reason": "ATLAS_GIT_MUTATIONS_ENABLED is not true (default safety: refuse)"}
+
+    # ── Gate 2: branch protection ──
+    try:
+        br = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                            cwd=str(REPO_ROOT), timeout=5,
+                            capture_output=True, text=True)
+        current_branch = (br.stdout or "").strip()
+    except Exception as e:
+        log_event({"event": "git_mutation_blocked", "reason": "branch_detect_failed",
+                    "error": str(e)[:120]})
+        return {"status": "blocked", "reason": f"branch detect failed: {e}"}
+    if not current_branch or current_branch == "HEAD":
+        log_event({"event": "git_mutation_blocked", "reason": "detached_head"})
+        return {"status": "blocked", "reason": "detached HEAD"}
+    if current_branch == "main" and \
+       os.getenv("ATLAS_ALLOW_MAIN_GIT_MUTATIONS", "").lower() != "true":
+        log_event({"event": "git_mutation_blocked", "reason": "main_branch",
+                    "current_branch": current_branch})
+        return {"status": "blocked",
+                "reason": "current branch is main; ATLAS_ALLOW_MAIN_GIT_MUTATIONS not set"}
+
+    # ── Gate 3: dirty-tree guard ──
+    try:
+        st = subprocess.run(["git", "status", "--porcelain"],
+                            cwd=str(REPO_ROOT), timeout=5,
+                            capture_output=True, text=True)
+        porcelain_lines = [l for l in (st.stdout or "").splitlines() if l.strip()]
+    except Exception as e:
+        log_event({"event": "git_mutation_blocked", "reason": "status_failed",
+                    "error": str(e)[:120]})
+        return {"status": "blocked", "reason": f"git status failed: {e}"}
+    requested = set(files)
+    pre_staged = []
+    unrelated = []
+    for line in porcelain_lines:
+        if len(line) < 4:
+            continue
+        index_status = line[0]
+        path = line[3:].strip().split(" -> ")[-1]
+        if path not in requested:
+            unrelated.append(path)
+        if index_status not in (" ", "?") and path not in requested:
+            pre_staged.append(path)
+    if pre_staged:
+        log_event({"event": "git_mutation_blocked", "reason": "pre_staged_unrelated",
+                    "pre_staged": pre_staged[:10]})
+        return {"status": "blocked",
+                "reason": "pre-staged unrelated files exist",
+                "pre_staged": pre_staged[:10]}
+    if unrelated:
+        log_event({"event": "git_mutation_blocked", "reason": "dirty_tree_unrelated",
+                    "unrelated": unrelated[:10]})
+        return {"status": "blocked",
+                "reason": "unrelated modified/untracked files in working tree",
+                "unrelated": unrelated[:10]}
+
+    # Existing safety gate on ALL files
     try:
         from scripts.safety_gate import classify_proposal
         verdict = classify_proposal({"title": message}, target_files=files)
@@ -1314,15 +1382,16 @@ def _exec_git_commit_push(**kw: Any) -> dict:
             ["git", "commit", "-m", f"{message}\n\nAuto-committed by swarm daemon"],
             cwd=str(REPO_ROOT), timeout=10, capture_output=True)
 
-        # Push
+        # Push current branch (not hardcoded main)
         push = subprocess.run(
-            ["git", "push", "origin", "main"],
+            ["git", "push", "origin", current_branch],
             cwd=str(REPO_ROOT), timeout=30, capture_output=True, text=True)
 
         log_event({"event": "git_commit_push", "message": message, "files": files,
+                    "branch": current_branch,
                     "push_ok": push.returncode == 0})
         return {"status": "ok" if push.returncode == 0 else "committed_push_failed",
-                "message": message, "files": files}
+                "message": message, "files": files, "branch": current_branch}
     except Exception as e:
         return {"status": "error", "error": str(e)}
 

@@ -215,6 +215,115 @@ def _azure_token_param(model: str, value: int) -> dict:
     return {"max_completion_tokens" if is_o_series else "max_tokens": value}
 
 
+def _check_repo_mutation_safety(executor_name: str, env_flag: str, *,
+                                 require_clean_tree: bool = False,
+                                 requested_files: list[str] | None = None
+                                 ) -> dict | None:
+    """Shared safety gate for daemon executors that mutate code or git state.
+
+    Returns None if mutation is allowed; otherwise a blocked-result dict.
+
+    Gates (CEO directive 2026-05-08):
+    - env-flag (per-executor) must be 'true'
+    - branch must match ATLAS_MUTATION_BRANCH_PATTERN (default codex/feat/fix/chore/claude)
+    - main blocked unless ATLAS_ALLOW_MAIN_GIT_MUTATIONS='true'
+    - manual-session lock (memory/atlas/runtime/manual-session.lock) freshness blocks
+    - require_clean_tree: pre-staged or unrelated dirty files block
+    """
+    import subprocess
+    requested = set(requested_files or [])
+
+    # Gate 1: env flag
+    if os.getenv(env_flag, "").lower() != "true":
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "env_disabled", "env_var": env_flag})
+        return {"status": "blocked",
+                "reason": f"{env_flag} is not true (default safety: refuse)"}
+
+    # Gate 2: branch protection
+    try:
+        br = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                            cwd=str(REPO_ROOT), timeout=5,
+                            capture_output=True, text=True)
+        current_branch = (br.stdout or "").strip()
+    except Exception as e:
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "branch_detect_failed", "error": str(e)[:120]})
+        return {"status": "blocked", "reason": f"branch detect failed: {e}"}
+    if not current_branch or current_branch == "HEAD":
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "detached_head"})
+        return {"status": "blocked", "reason": "detached HEAD"}
+    if current_branch == "main" and \
+       os.getenv("ATLAS_ALLOW_MAIN_GIT_MUTATIONS", "").lower() != "true":
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "main_branch", "current_branch": current_branch})
+        return {"status": "blocked",
+                "reason": "current branch is main; ATLAS_ALLOW_MAIN_GIT_MUTATIONS not set"}
+    pattern = os.getenv("ATLAS_MUTATION_BRANCH_PATTERN",
+                        r"^(codex/|feat/|fix/|chore/|claude/)")
+    if not re.match(pattern, current_branch):
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "branch_not_in_allowlist",
+                    "current_branch": current_branch, "pattern": pattern})
+        return {"status": "blocked",
+                "reason": f"branch '{current_branch}' does not match {pattern}"}
+
+    # Gate 3: manual session lock
+    manual_lock = ATLAS_MEMORY / "runtime" / "manual-session.lock"
+    if manual_lock.exists():
+        try:
+            ttl = int(os.getenv("ATLAS_MANUAL_SESSION_LOCK_TTL_SECONDS", "1800"))
+            age = datetime.now(timezone.utc).timestamp() - manual_lock.stat().st_mtime
+            if age < ttl:
+                log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                            "reason": "manual_session_lock_active",
+                            "lock_age_seconds": round(age), "ttl_seconds": ttl})
+                return {"status": "blocked",
+                        "reason": f"manual_session_lock_active (age={int(age)}s, ttl={ttl}s)"}
+        except Exception:
+            pass
+
+    # Gate 4: dirty tree (when requested)
+    if require_clean_tree:
+        try:
+            st = subprocess.run(["git", "status", "--porcelain"],
+                                cwd=str(REPO_ROOT), timeout=5,
+                                capture_output=True, text=True)
+            porcelain_lines = [l for l in (st.stdout or "").splitlines() if l.strip()]
+        except Exception as e:
+            log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                        "reason": "status_failed", "error": str(e)[:120]})
+            return {"status": "blocked", "reason": f"git status failed: {e}"}
+        pre_staged = []
+        unrelated = []
+        for line in porcelain_lines:
+            if len(line) < 4:
+                continue
+            index_status = line[0]
+            path = line[3:].strip().split(" -> ")[-1]
+            if path not in requested:
+                unrelated.append(path)
+            if index_status not in (" ", "?") and path not in requested:
+                pre_staged.append(path)
+        if pre_staged:
+            log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                        "reason": "pre_staged_unrelated",
+                        "pre_staged": pre_staged[:10]})
+            return {"status": "blocked",
+                    "reason": "pre-staged unrelated files exist",
+                    "pre_staged": pre_staged[:10]}
+        if unrelated:
+            log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                        "reason": "dirty_tree_unrelated",
+                        "unrelated": unrelated[:10]})
+            return {"status": "blocked",
+                    "reason": "unrelated modified/untracked files in working tree",
+                    "unrelated": unrelated[:10]}
+
+    return None
+
+
 def log_event(event: dict) -> None:
     """Append-only governance log."""
     event["ts"] = datetime.now(timezone.utc).isoformat()
@@ -1273,67 +1382,22 @@ def _exec_git_commit_push(**kw: Any) -> dict:
     if not files:
         return {"status": "error", "error": "no files specified"}
 
-    # ── Gate 1: env-flag must be explicitly enabled ──
-    if os.getenv("ATLAS_GIT_MUTATIONS_ENABLED", "").lower() != "true":
-        log_event({"event": "git_mutation_blocked", "reason": "env_disabled",
-                    "files": files})
-        return {"status": "blocked",
-                "reason": "ATLAS_GIT_MUTATIONS_ENABLED is not true (default safety: refuse)"}
+    # Shared mutation guard: env-flag, branch allowlist, manual-session lock, dirty tree
+    guard = _check_repo_mutation_safety(
+        "git_commit_push", "ATLAS_GIT_MUTATIONS_ENABLED",
+        require_clean_tree=True, requested_files=files,
+    )
+    if guard:
+        return guard
 
-    # ── Gate 2: branch protection ──
+    # Detect current branch for push target (already validated by guard)
     try:
         br = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
                             cwd=str(REPO_ROOT), timeout=5,
                             capture_output=True, text=True)
         current_branch = (br.stdout or "").strip()
     except Exception as e:
-        log_event({"event": "git_mutation_blocked", "reason": "branch_detect_failed",
-                    "error": str(e)[:120]})
         return {"status": "blocked", "reason": f"branch detect failed: {e}"}
-    if not current_branch or current_branch == "HEAD":
-        log_event({"event": "git_mutation_blocked", "reason": "detached_head"})
-        return {"status": "blocked", "reason": "detached HEAD"}
-    if current_branch == "main" and \
-       os.getenv("ATLAS_ALLOW_MAIN_GIT_MUTATIONS", "").lower() != "true":
-        log_event({"event": "git_mutation_blocked", "reason": "main_branch",
-                    "current_branch": current_branch})
-        return {"status": "blocked",
-                "reason": "current branch is main; ATLAS_ALLOW_MAIN_GIT_MUTATIONS not set"}
-
-    # ── Gate 3: dirty-tree guard ──
-    try:
-        st = subprocess.run(["git", "status", "--porcelain"],
-                            cwd=str(REPO_ROOT), timeout=5,
-                            capture_output=True, text=True)
-        porcelain_lines = [l for l in (st.stdout or "").splitlines() if l.strip()]
-    except Exception as e:
-        log_event({"event": "git_mutation_blocked", "reason": "status_failed",
-                    "error": str(e)[:120]})
-        return {"status": "blocked", "reason": f"git status failed: {e}"}
-    requested = set(files)
-    pre_staged = []
-    unrelated = []
-    for line in porcelain_lines:
-        if len(line) < 4:
-            continue
-        index_status = line[0]
-        path = line[3:].strip().split(" -> ")[-1]
-        if path not in requested:
-            unrelated.append(path)
-        if index_status not in (" ", "?") and path not in requested:
-            pre_staged.append(path)
-    if pre_staged:
-        log_event({"event": "git_mutation_blocked", "reason": "pre_staged_unrelated",
-                    "pre_staged": pre_staged[:10]})
-        return {"status": "blocked",
-                "reason": "pre-staged unrelated files exist",
-                "pre_staged": pre_staged[:10]}
-    if unrelated:
-        log_event({"event": "git_mutation_blocked", "reason": "dirty_tree_unrelated",
-                    "unrelated": unrelated[:10]})
-        return {"status": "blocked",
-                "reason": "unrelated modified/untracked files in working tree",
-                "unrelated": unrelated[:10]}
 
     # Existing safety gate on ALL files
     try:
@@ -1475,6 +1539,15 @@ def _exec_run_swarm_coder(**kw: Any) -> dict:
     proposal_id = str(kw.get("proposal_id", "")).strip()
     if not proposal_id:
         return {"status": "error", "error": "proposal_id required"}
+
+    # Shared mutation guard: aider may modify any file + commit, must be safe-by-default
+    guard = _check_repo_mutation_safety(
+        "run_swarm_coder", "ATLAS_CODE_MUTATIONS_ENABLED",
+        require_clean_tree=True,
+    )
+    if guard:
+        guard["proposal_id"] = proposal_id
+        return guard
 
     cmd = [sys.executable, str(REPO_ROOT / "scripts" / "swarm_coder.py"), "--id", proposal_id, "--execute"]
     try:

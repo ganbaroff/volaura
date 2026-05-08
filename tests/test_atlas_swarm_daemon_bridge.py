@@ -81,8 +81,14 @@ def test_select_bridgeable_proposals_filters_and_sorts(tmp_path, monkeypatch):
 
 def test_run_swarm_coder_executor_marks_success(monkeypatch):
     daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_CODE_MUTATIONS_ENABLED", "true")
 
-    def fake_run(*args, **kwargs):
+    def fake_run(cmd, *args, **kwargs):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="codex/test\n", stderr="")
+        if joined.startswith("git status --porcelain"):
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
         return SimpleNamespace(
             returncode=0,
             stdout="...\n[6/6] Updating proposal status -> implemented\n",
@@ -126,8 +132,14 @@ def test_archive_stale_in_progress_unblocks_daemon(tmp_path, monkeypatch):
 
 def test_run_swarm_coder_executor_marks_blocked(monkeypatch):
     daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_CODE_MUTATIONS_ENABLED", "true")
 
-    def fake_run(*args, **kwargs):
+    def fake_run(cmd, *args, **kwargs):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="codex/test\n", stderr="")
+        if joined.startswith("git status --porcelain"):
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
         return SimpleNamespace(
             returncode=1,
             stdout="[SWARM_CODER] BLOCKED by safety gate\n",

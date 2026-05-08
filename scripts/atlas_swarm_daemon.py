@@ -149,7 +149,7 @@ AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
     "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),     # Architect
     "Security Auditor":        ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Re-routed from Azure (RAI content-filter)
     "Code Quality Engineer":   ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (RAI content-filter)
-    "Ecosystem Auditor":       ("nvidia-heavy", "nvidia/llama-3.1-nemotron-ultra-253b-v1"),
+    "Ecosystem Auditor":       ("nvidia", "meta/llama-3.3-70b-instruct"),  # Re-routed from nvidia-heavy nemotron-ultra-253b (404 Function not found on this account); proven on Sales/Legal/CTO Watchdog
     "DevOps Engineer":         ("groq", "llama-3.3-70b-versatile"),   # Fast infra checks
     # ── STRATEGY & PRODUCT (wave 0-1) ──
     "Chief Strategist":        ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Re-routed from Azure (RAI content-filter)

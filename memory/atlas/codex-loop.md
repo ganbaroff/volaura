@@ -51,6 +51,78 @@ Standing balance reminder: DEBT-001 + DEBT-002 = 460 AZN credited-pending. Surfa
 
 ---
 
+## 2026-05-09 Baku · Atlas executed Sprint 4 · daemon-OpenManus bridge live + Phase C canary green
+
+### Result (Atlas, two outcomes one turn)
+**Outcome 1 — Phase C canary v2 PASS.** Daemon рестартанул с PID 27344 → 36928 на коде `03ee59ba4ad6` (Phase C активен). Та же audit task что v1 — agents аудитят `apps/api/app/routers/auth.py` rate limiting. Result.json показал `{"verified_findings": 32, "unverified_findings": 3}` (vs v1 baseline 54/0). Качественная разница — каждый verified finding теперь имеет `evidence_excerpt` с реальными bytes из файла. Образец Code Quality Engineer:
+
+```
+EXCERPT [structured-line]:
+   117: 
+   118: @router.get("/signup-status", response_model=SignupStatusResponse)
+>> 119: @limiter.limit(RATE_DEFAULT)
+   120: async def signup_status(request: Request) -> SignupStatusResponse:
+   121:     """Return whether signup is open. Public — no auth required.
+```
+
+Agent claim'ил «Rate limiting is applied to authentication endpoints» с line 119 — daemon прочитал line 119, показывает что там реально `@limiter.limit(RATE_DEFAULT)`. Claim и truth совпадают, FP detection в один взгляд. Phase C из теории ушла в proven runtime gate.
+
+**Outcome 2 — OpenManus Sprint 4 daemon executor `run_hands_task` live.** CEO directive «друг манус когда будет работать чтобы они тобой управляли? и нормально работали я устал уже писать». Codex closed Sprints 1-3 (recon + sidecar + smokes). Sprint 4 — connector daemon ↔ OpenManus — это была отсутствующая deque между swarm decisions и hands actions.
+
+### What landed (2 files, 1 commit)
+`scripts/atlas_swarm_daemon.py` — новый `@executor("run_hands_task")` (~120 строк) после `run_swarm_coder` блока. Структура:
+- Default off, env-gated через `ATLAS_ALLOW_HANDS_TASKS=true`. Daemon никогда silently не спавнит browser/file/python session'ы — операторская opt-in обязательна.
+- `manual-session.lock` check блокирует dispatch когда оператор редактирует (TTL 1800s, env-override `ATLAS_MANUAL_SESSION_LOCK_TTL_SECONDS`).
+- Required kwargs: `instruction`, `mode` (one of `browser_observe`/`file_observe`/`content_draft`/`research`).
+- Optional: `max_seconds` (cap [30, 600], default 180), `allowed_domains` CSV, `allowed_paths` CSV, `task_id`.
+- Spawn `subprocess.run` against OpenManus venv python (`OPENMANUS_PYTHON` env or `C:/Projects/OpenManus/.venv/Scripts/python.exe`). Sidecar runner gets task as JSON file.
+- timeout = max_seconds + 30s buffer.
+- Return shape: `{status, task_id, exit_code, output_dir, result_json, elapsed_s, result_text_tail, stdout_tail, stderr_tail}`. Sidecar's own status preserved.
+- log_event'ы: `hands_task_dispatch`, `hands_task_done`, `hands_task_timeout`, `hands_task_error`.
+
+`tests/test_atlas_swarm_daemon_hands.py` (NEW, 8 тестов, all pass):
+- `test_blocked_without_env_flag` — default off proven.
+- `test_blocked_when_manual_session_lock_active` — операторская защита.
+- `test_missing_instruction_returns_error` / `test_invalid_mode_returns_error` — input validation.
+- `test_missing_openmanus_python_returns_error` — venv path verification.
+- `test_happy_path_writes_task_input_and_returns_summary` — full flow с mocked subprocess, проверяет subprocess command shape, task.input.json содержание, result.json парсинг и shape возврата.
+- `test_max_seconds_capped_at_600` — caps work.
+- `test_timeout_returns_timeout_status` — TimeoutExpired → `{status: "timeout"}`.
+
+### Tests
+`pytest tests/test_atlas_swarm_daemon_hands.py + evidence + b3_router + lock + bridge + swarm + adapter` → 115 passed, 1 skipped, 0 failed in 10.38s. (107 → 115: +8 Sprint 4 tests).
+
+### Daemon
+Не перезапустил после Sprint 4 patch. Daemon на disk вперёд (Phase C активен после прошлого restart, но Sprint 4 executor загрузится только при следующем restart). Это сознательно — Sprint 4 default off, рестарт без CEO'шного `ATLAS_ALLOW_HANDS_TASKS=true` не даст hands task'ам работать. CEO задаёт env, рестартует, тогда swarm может dispatch hands task.
+
+### Activation contract for CEO
+Когда захочет включить:
+1. Set `ATLAS_ALLOW_HANDS_TASKS=true` в machine env.
+2. `restart_atlas_daemon.ps1 -Action restart` (lock-aware).
+3. Drop swarm task в `pending/` с frontmatter `type: execute`, `executor: run_hands_task`, body содержит `instruction=...`, `mode=browser_observe`, `max_seconds=120`, etc.
+4. Daemon полит'нет, загрузит executor, спавнит OpenManus venv subprocess, ждёт, читает hands-runs/<task_id>/result.json, мерджит в task done/.
+
+Без env flag'a — `{status: "blocked", reason: "ATLAS_ALLOW_HANDS_TASKS is not true"}`. Безопасно.
+
+### What's still missing for full autonomy
+1. **Brain creating tasks autonomously** — heartbeat memory от 2026-05-02 говорит «brain cycles complete но создаёт 0 tasks (all 3 providers return empty on VM)». Это другой broken thing.
+2. **Posting/publishing path** — sidecar HARD RULE 2 запрещает posting, sending, deploying. Sprint 5 (real content pipeline → CEO preview → approval → publish) требует separate executor с CEO approval gate.
+3. **OpenManus config secrets hygiene** — Codex заметил Groq key plaintext в `OpenManus/config/config.toml`. Не блокирует Sprint 4 sidecar, но Sprint 5 публикация будет triggered'ить эту exposure surface.
+
+### Evidence (this turn)
+- `Bash cat result.json | python ...` (canary v2) → `{verified_findings: 32, unverified_findings: 3}`.
+- `Bash cat Code_Quality_Engineer.json | python ...` (canary v2) → finding с `evidence_excerpt` field, structured-line kind, реальные bytes из auth.py:117-121 включая `>> 119: @limiter.limit(RATE_DEFAULT)`.
+- `Read scripts/run_openmanus_hands_task.py:1-216` → понял sidecar contract (mode/instruction/max_seconds/allowed_domains/allowed_paths, --task arg, --openmanus-root arg, --out-dir arg, exit 0=success).
+- `Read scripts/atlas_swarm_daemon.py:1816-1869` → понял `@executor` pattern, params kwargs split.
+- `Bash test -f C:/Projects/OpenManus/.venv/Scripts/python.exe` → VENV_PY_OK.
+- `Bash grep ATLAS_MEMORY|REPO_ROOT scripts/atlas_swarm_daemon.py` → constants line 63 + 116 confirmed.
+- `Edit scripts/atlas_swarm_daemon.py` → executor `run_hands_task` ~120 строк after run_swarm_coder.
+- `Write tests/test_atlas_swarm_daemon_hands.py` → 8 tests.
+- `Bash python -m py_compile + import + check SAFE_EXECUTORS` → run_hands_task registered, 12 executors total (was 11).
+- `Bash python -m pytest <full suite>` → 115 passed 1 skipped 0 failed.
+
+---
+
 ## 2026-05-09 Baku · Atlas executed Phase C · daemon now reads cited bytes
 
 ### Hypothesis (Atlas, after CEO «реально полезные результаты» question)

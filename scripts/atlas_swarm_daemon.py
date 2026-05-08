@@ -156,7 +156,7 @@ AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
     "Product Strategist":      ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep analysis
     "Sales Director":          ("nvidia", "meta/llama-3.3-70b-instruct"),       # Practical sales
     # ── DESIGN & CULTURE (wave 1) ──
-    "UX Designer":             ("azure", "gpt-4.1-nano"),             # Fast design checks
+    "UX Designer":             ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (gpt-4.1-nano returned empty error); proven groq model
     "Cultural Intelligence":   ("ollama", "qwen3:8b"),                # Local, learns by doing
     "Readiness Manager":       ("ollama", "gemma4"),                  # SRE scoring
     # ── SCIENCE & COMPLIANCE (wave 2) ──

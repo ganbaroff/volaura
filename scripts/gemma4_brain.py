@@ -184,7 +184,8 @@ def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
                 "https://api.cerebras.ai/v1/chat/completions",
                 data=payload,
                 headers={"Content-Type": "application/json",
-                         "Authorization": f"Bearer {cerebras_key}"},
+                         "Authorization": f"Bearer {cerebras_key}",
+                         "User-Agent": "VolauraBrain/1.0"},
                 method="POST",
             )
             with urllib.request.urlopen(req, timeout=120) as resp:
@@ -234,7 +235,8 @@ def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
                 "https://api.groq.com/openai/v1/chat/completions",
                 data=payload,
                 headers={"Content-Type": "application/json",
-                         "Authorization": f"Bearer {groq_key}"},
+                         "Authorization": f"Bearer {groq_key}",
+                         "User-Agent": "VolauraBrain/1.0"},
                 method="POST",
             )
             with urllib.request.urlopen(req, timeout=60) as resp:

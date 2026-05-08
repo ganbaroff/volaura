@@ -229,10 +229,21 @@ def test_ux_designer_stays_azure():
     assert model == "gpt-4.1-nano"
 
 
-def test_ecosystem_auditor_stays_nvidia_heavy():
+def test_ecosystem_auditor_uses_proven_nvidia_model():
+    """Ecosystem Auditor was on nvidia-heavy / nemotron-ultra-253b which 404'd
+    (Function not found on this account). Re-routed to the same proven model
+    used by Sales Director / Legal Advisor / CTO Watchdog."""
     daemon = _load_daemon_module()
-    provider, _model = daemon.AGENT_LLM_MAP["Ecosystem Auditor"]
-    assert provider == "nvidia-heavy"
+    provider, model = daemon.AGENT_LLM_MAP["Ecosystem Auditor"]
+    assert provider == "nvidia", (
+        f"Ecosystem Auditor must be on nvidia (not nvidia-heavy), got {provider}"
+    )
+    assert "nemotron-ultra" not in model, (
+        f"Ecosystem Auditor must not use 404-returning nemotron-ultra, got {model}"
+    )
+    assert model == "meta/llama-3.3-70b-instruct", (
+        f"Ecosystem Auditor must use proven nvidia model, got {model}"
+    )
 
 
 def test_cto_watchdog_uses_proven_nvidia_model():

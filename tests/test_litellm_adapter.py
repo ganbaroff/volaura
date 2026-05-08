@@ -88,6 +88,36 @@ def test_model_list_with_all_keys_has_cerebras_ollama_nvidia_no_anthropic():
     assert all(not s.startswith("anthropic/") for s in model_strings), model_strings
 
 
+def test_ollama_default_is_qwen3_8b():
+    """Phase B2.5: default Ollama fallback model should match what's actually present locally."""
+    adapter = _load_adapter_module()
+    model_list = adapter._build_model_list(env={})
+    ollama = next(m for m in model_list if m["model_name"] == "ollama-fb")
+    assert ollama["litellm_params"]["model"] == "ollama/qwen3:8b"
+
+
+def test_ollama_model_env_override():
+    adapter = _load_adapter_module()
+    model_list = adapter._build_model_list(env={"OLLAMA_MODEL": "ollama/gemma4:latest"})
+    ollama = next(m for m in model_list if m["model_name"] == "ollama-fb")
+    assert ollama["litellm_params"]["model"] == "ollama/gemma4:latest"
+
+
+def test_ollama_model_override_auto_prefixes():
+    """Operator may pass `qwen3:8b` without `ollama/` prefix — adapter should fix it."""
+    adapter = _load_adapter_module()
+    model_list = adapter._build_model_list(env={"OLLAMA_MODEL": "qwen3:8b"})
+    ollama = next(m for m in model_list if m["model_name"] == "ollama-fb")
+    assert ollama["litellm_params"]["model"] == "ollama/qwen3:8b"
+
+
+def test_ollama_api_base_env_override():
+    adapter = _load_adapter_module()
+    model_list = adapter._build_model_list(env={"OLLAMA_API_BASE": "http://10.0.0.5:11434"})
+    ollama = next(m for m in model_list if m["model_name"] == "ollama-fb")
+    assert ollama["litellm_params"]["api_base"] == "http://10.0.0.5:11434"
+
+
 def test_model_names_unique():
     """Defensive: prevent duplicate model_name keys that would confuse Router fallback semantics."""
     adapter = _load_adapter_module()

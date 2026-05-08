@@ -349,3 +349,37 @@ The structural fix lives in this very entry. Future Atlas reads this on wake bef
 3. Status hierarchy in deploy report: «public routes 200» = level 1 plumbing. «Authenticated endpoints 200 with real token» = level 2 surface. «Cross-navigation session persistence verified» = level 3 fix-specific. Never report level 1 as if it were level 3.
 
 **Cross-references:** triggered today by merge of `codex/fix-auth-session-race` to main at commit `1554adf` ~21:42 Baku, browser-surfaced 422 at ~01:50 Baku. The 422 itself is separate from the auth-session race fix — CEO's session held long enough to GET `/api/profiles/me`, which is indirect evidence the Codex patch may be working. New bug surface visible: response model validation likely failing in `apps/api/app/routers/profiles.py:48 get_my_profile()`. Separate Class 28 if root-caused later.
+
+---
+
+## Class 28 — Reactive remap loop instead of architectural fix (2026-05-08)
+
+Symptom. Sprint sequence: Azure RAI blocks 5 perspectives → remap to cerebras/groq/nvidia (`7397b61`). Azure max_tokens unsupported on o4-mini → conditional helper (`e11816c`). NVIDIA-nano returns empty → CTO Watchdog remap to meta-llama-3.3 (`c6d681a`). NVIDIA-heavy 404 Function not found → Ecosystem Auditor remap (`93a975d`). Azure empty error → UX Designer remap (`fc7445a`). Four of last ten commits = reactive remap. Each surgical, none architectural.
+
+Pathway. AGENT_LLM_MAP в `scripts/atlas_swarm_daemon.py` хардкодит `(provider, model)` per role. Когда конкретный провайдер ужесточает RAI или конкретная модель пропадает с аккаунта — мгновенная потеря 1-5 perspectives до следующего remap commit. `packages/swarm/providers/litellm_adapter.py` (Apr 21, 4939 byte) реализует Router с fallback chain — но daemon hot path (`_call_assigned_model`) обходит ProviderRegistry полностью. Адаптер живёт «in the dead zone» — есть код, есть hook через `SWARM_USE_LITELLM=1` env, но никто не зовёт.
+
+Fix. Phase B mega sprint. (1) `pip install litellm>=1.50` в `C:\Python314` (production python, не apps/api/.venv). (2) переписать `_call_assigned_model` чтобы делегировал через `ProviderRegistry.discover()` или прямо в Router. (3) drop Anthropic Haiku из adapter fallback chain — нарушает Constitution Article 0 (`atlas_swarm_daemon.py:19` «Anthropic Claude is FORBIDDEN»). (4) гармонизировать `_PROVIDER_MAP` в Registry с реальными именами провайдеров daemon (Cerebras/Vertex/Azure/NVIDIA/Groq/Ollama). Tests + canary 17/17/0 до commit. Анти-pattern remap-каждый-раз. Pro-pattern: один Router + fallback + auto-discovery. Sibling Class 24 (courier-batch optimization).
+
+---
+
+## Class 29 — Manual-session.lock blocks tests by design (2026-05-08)
+
+Symptom. После создания `memory/atlas/runtime/manual-session.lock` (operator session marker per Operating Protocol Rule 10) 6 mutation tests падают с `{'status': 'blocked', 'reason': 'manual_session_lock_active (age=Ns, ttl=1800s)'}`. Конкретно `test_git_commit_push_uses_current_branch`, `test_run_swarm_coder_blocked_on_dirty_tree`, `test_run_swarm_coder_executor_marks_success`, `test_run_swarm_coder_executor_marks_blocked`, плюс два других. Atlas-instance вынужден временно удалять lock, гонять pytest, recreate lock — чтобы commit мог пройти. Это работает, но нарушает протокол semantics («lock держится на всё время edit cycle до commit + report»).
+
+Pathway. Тесты не mock'ают runtime пути lock-файла. `_exec_git_commit_push` и `_exec_run_swarm_coder` читают `LOCK_FILE = RUNTIME_DIR / "manual-session.lock"` напрямую через module global, не через injection. Когда тест запускается в реальной FS среде с активным live lock — гейт ловит. Это правильное boevoe поведение, но противоречит pytest hermetic principle.
+
+Fix (Phase F mega sprint). (1) Conftest fixture `autouse=True` который точечно `monkeypatch.setattr(daemon, "RUNTIME_DIR", tmp_path)` для каждого mutation test, чтобы lock-проверка била по tmp_path а не реальному `memory/atlas/runtime/`. ИЛИ (2) env-override `ATLAS_SKIP_MUTATION_LOCK=1` который daemon respects когда set в test mode. (3) Operating Protocol Rule 19 (закодифицирован 2026-05-08) допускает temp remove → tests → recreate, но это manual workaround не fix.
+
+Sibling Class 18 (grenade-launcher new-file-per-correction) — те же tests pass without lock, fail with — design oversight в момент когда я добавил manual-session.lock gate без обновления тестов одновременно.
+
+---
+
+## Class 30 — Daemon orphaned from scheduled-task control (2026-05-08)
+
+Symptom. AtlasSwarmDaemon Windows scheduled task имеет RestartCount=999, RestartInterval=PT1M, MultipleInstances=IgnoreNew, LogonTrigger. Scheduler действительно стартует daemon на user logon. Но как только operator делает `Stop-Process -Id <pid>` + `Start-Process python -WorkingDirectory ...` — новый daemon процесс orphan'ится: parent PID указывает на временный PowerShell host, который завершился и parent gone. Scheduler уже не контролирует этот PID. Если daemon crashes, RestartCount=999 не сработает потому что owned-by-task-scheduler chain рвётся.
+
+Pathway. Каждый remap requires restart, чтобы daemon в памяти подхватил новую AGENT_LLM_MAP. Каждый restart рвёт scheduler control. Между моими сессиями PIDs скакали 28796 → 5592 → 5860 → 12760 → 27344 → ... 6+ перезапусков за день (per `Bash Get-CimInstance` ParentProcessId checks). Никто из перезапусков не от scheduler — все ручные либо через мой `restart_atlas_daemon.ps1`.
+
+Fix. Phase A mega sprint. NSSM Windows service replaces ad-hoc Start-Process. Service supervisor владеет процессом — restart on actual exit-code-non-zero, real RestartCount, boot trigger (не только LogonTrigger), PID stability. Scheduled task переключить на triggering NSSM start вместо direct python.exe. Cross-reference Class 21 ledger discipline + Class 28 reactive remap — оба усиливаются если supervisor правильный. После Phase A daemon крутится без operator восстановления; operator только мониторит health.json.
+
+---

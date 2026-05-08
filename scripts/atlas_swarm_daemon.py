@@ -10,12 +10,13 @@ Aggregates results, writes back to queue, logs to governance.
 Master orchestrator (Atlas-Code via Opus 4.7) drops task files. Daemon does
 the work. Opus doesn't pay per-token for execution — only for orchestration.
 
-PROVIDER CHAIN (per Constitution Article 0):
-  1. Cerebras (cloud, primary for heavy)         — CEREBRAS_API_KEY
-  2. Ollama localhost:11434 (local, your 5060)   — OLLAMA_URL (no key)
-  3. NVIDIA NIM (cloud, heavy fallback)          — NVIDIA_API_KEY
-  4. Gemini (cloud, mid)                         — GEMINI_API_KEY
-  5. Groq (cloud, fast)                          — GROQ_API_KEY
+PROVIDERS in use (Constitution Article 0 + 2026-05-07 azure remap):
+  Cerebras (qwen-3-235b)               — CEREBRAS_API_KEY
+  Groq (llama-3.3-70b)                 — GROQ_API_KEY
+  NVIDIA NIM (meta/llama-3.3-70b)      — NVIDIA_API_KEY
+  Ollama localhost:11434 (qwen3:8b)    — OLLAMA_URL (no key)
+  Gemini / Vertex-AI (gemini-2.5-flash)— GEMINI_API_KEY / GOOGLE_APPLICATION_CREDENTIALS
+  Azure OpenAI (gpt-4.1-nano, sub-agents) — AZURE_OPENAI_API_KEY + ENDPOINT + API_VERSION
   Anthropic Claude is FORBIDDEN per Article 0.
 
 QUEUE PROTOCOL:
@@ -130,10 +131,15 @@ STALE_IN_PROGRESS_SECONDS = int(
     os.getenv("ATLAS_STALE_IN_PROGRESS_SECONDS", str(12 * 60 * 60))
 )
 
-# ── 11-agent architecture: CEO directive 2026-04-30 ─────────────────────
+# ── 17-agent architecture: CEO directive 2026-04-30 ─────────────────────
 # "сколько у нас LLM столько и агентов. слабым тоже надо давать шанс."
 # Each perspective gets ONE dedicated LLM. No fallback chain — if your
-# model fails, you return empty. The other 10 still contribute.
+# model fails, you return empty. The other 16 still contribute.
+#
+# 2026-05-07 remap: 5 perspectives moved off azure to cerebras/groq/nvidia
+# because Azure RAI content-filter blocks the shared Atlas context for them.
+# UX Designer kept on azure (different empty-error symptom, separate fix);
+# Ecosystem Auditor kept on nvidia-heavy (separate 404 model issue).
 #
 # Mapping: perspective name -> (provider_key, model_id)
 # provider_key used by call_assigned_model() to pick the right client.

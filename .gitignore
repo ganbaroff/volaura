@@ -96,6 +96,7 @@ models/
 
 # Atlas runtime — ephemeral primer files, regenerated each wake, never committed
 memory/atlas/runtime/
+memory/atlas/hands-runs/
 
 .vercel
 .coverage

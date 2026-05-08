@@ -7,7 +7,12 @@ Enable via env var: SWARM_USE_LITELLM=1
 Disable (default): unset or SWARM_USE_LITELLM=0
 
 Fallback chain mirrors CLAUDE.md hierarchy:
-  Cerebras Qwen3-235B → Ollama local → NVIDIA NIM → Anthropic Haiku (last resort)
+  Cerebras Qwen3-235B → Ollama local → NVIDIA NIM
+
+Constitution Article 0 (atlas_swarm_daemon.py:19): Anthropic Claude is FORBIDDEN
+as a swarm agent. The adapter MUST NOT route any prompt to anthropic/* models,
+even if ANTHROPIC_API_KEY is present in the environment. Enforced by
+``_build_model_list`` and covered by tests/test_litellm_adapter.py.
 """
 
 from __future__ import annotations
@@ -32,19 +37,33 @@ except ImportError:
     Router = None  # type: ignore[assignment,misc]
 
 
-def _build_router() -> "Router":
-    """Build LiteLLM Router with VOLAURA fallback chain."""
-    if not _LITELLM_AVAILABLE:
-        raise ImportError("litellm is not installed. Run: pip install litellm>=1.50")
+_FORBIDDEN_MODEL_PREFIXES: tuple[str, ...] = ("anthropic/",)
+"""Model prefixes that are forbidden by Constitution Article 0.
 
-    model_list = []
+Any entry returned by ``_build_model_list`` whose ``litellm_params.model``
+begins with one of these prefixes is rejected before the Router is built.
+Tests in ``tests/test_litellm_adapter.py`` assert this invariant even when
+``ANTHROPIC_API_KEY`` is set in the environment.
+"""
 
-    if os.environ.get("CEREBRAS_API_KEY"):
+
+def _build_model_list(env: dict[str, str] | None = None) -> list[dict[str, Any]]:
+    """Construct the LiteLLM model_list from environment.
+
+    Pure function — does not require litellm to be importable. Easy to test
+    without instantiating ``Router``. Constitution Article 0 is enforced here:
+    no anthropic/* model can ever land in the returned list, regardless of
+    whether ``ANTHROPIC_API_KEY`` is set.
+    """
+    env = env if env is not None else dict(os.environ)
+    model_list: list[dict[str, Any]] = []
+
+    if env.get("CEREBRAS_API_KEY"):
         model_list.append({
             "model_name": "primary",
             "litellm_params": {
                 "model": "cerebras/qwen-3-235b-a22b-instruct",
-                "api_key": os.environ["CEREBRAS_API_KEY"],
+                "api_key": env["CEREBRAS_API_KEY"],
             },
         })
 
@@ -53,31 +72,46 @@ def _build_router() -> "Router":
         "model_name": "ollama-fb",
         "litellm_params": {
             "model": "ollama/qwen2.5:32b",
-            "api_base": os.environ.get("OLLAMA_API_BASE", "http://localhost:11434"),
+            "api_base": env.get("OLLAMA_API_BASE", "http://localhost:11434"),
         },
     })
 
-    if os.environ.get("NVIDIA_API_KEY"):
+    if env.get("NVIDIA_API_KEY"):
         model_list.append({
             "model_name": "nvidia-fb",
             "litellm_params": {
                 "model": "nvidia_nim/meta/llama-3.3-70b-instruct",
-                "api_key": os.environ["NVIDIA_API_KEY"],
+                "api_key": env["NVIDIA_API_KEY"],
             },
         })
 
-    # Haiku — always registered as last resort (CLAUDE.md: never use as swarm agent proactively)
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        model_list.append({
-            "model_name": "haiku-lr",
-            "litellm_params": {
-                "model": "anthropic/claude-haiku-4-5-20251001",
-                "api_key": os.environ["ANTHROPIC_API_KEY"],
-            },
-        })
+    # Constitution Article 0 enforcement: drop any anthropic/* even if a future
+    # author re-introduces it above. Belt + suspenders.
+    safe_list = [
+        m for m in model_list
+        if not str(m.get("litellm_params", {}).get("model", "")).startswith(_FORBIDDEN_MODEL_PREFIXES)
+    ]
+
+    if len(safe_list) != len(model_list):
+        dropped = [m for m in model_list if m not in safe_list]
+        logger.warning(
+            "litellm_adapter dropped {n} forbidden model(s) per Constitution Article 0: {names}",
+            n=len(dropped),
+            names=[m.get("model_name") for m in dropped],
+        )
+
+    return safe_list
+
+
+def _build_router() -> "Router":
+    """Build LiteLLM Router with VOLAURA fallback chain."""
+    if not _LITELLM_AVAILABLE:
+        raise ImportError("litellm is not installed. Run: pip install litellm>=1.50")
+
+    model_list = _build_model_list()
 
     if not model_list:
-        raise RuntimeError("No LLM credentials found. Set at least one of: CEREBRAS_API_KEY, NVIDIA_API_KEY, ANTHROPIC_API_KEY")
+        raise RuntimeError("No LLM credentials found. Set at least one of: CEREBRAS_API_KEY, NVIDIA_API_KEY")
 
     primary_name = model_list[0]["model_name"]
     fallback_names = [m["model_name"] for m in model_list[1:]]
@@ -116,7 +150,7 @@ class LiteLLMProvider(LLMProvider):
     def info(self) -> ProviderInfo:
         return ProviderInfo(
             name="litellm",
-            model="router/cerebras→ollama→nvidia→haiku",
+            model="router/cerebras→ollama→nvidia",
             cost_per_mtok_input=0.0,
             cost_per_mtok_output=0.0,
             rate_limit_rpm=60,

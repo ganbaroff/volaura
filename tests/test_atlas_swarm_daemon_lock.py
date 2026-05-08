@@ -569,3 +569,90 @@ def test_aider_instruction_forbids_git_mutations():
     ]
     for cmd in forbidden:
         assert cmd in src, f"aider instruction must forbid '{cmd}'"
+
+
+# ── Health task-telemetry tests (CEO directive 2026-05-08) ────────────────────
+
+
+def test_health_includes_code_version_hash_branch_commit(tmp_path, monkeypatch):
+    daemon = _load_daemon_module()
+    _, _, health_file = _wire_paths(daemon, tmp_path)
+    daemon._DAEMON_STARTED_AT = None
+    monkeypatch.setattr(daemon, "_DAEMON_CODE_VERSION", {
+        "code_version_hash": "abc123def456abcd",
+        "git_branch": "codex/test",
+        "git_commit": "deadbeef1234",
+    })
+    daemon.update_health(status="polling")
+    data = json.loads(health_file.read_text(encoding="utf-8"))
+    assert data["code_version_hash"] == "abc123def456abcd"
+    assert data["git_branch"] == "codex/test"
+    assert data["git_commit"] == "deadbeef1234"
+
+
+def test_health_task_start_sets_current_task(tmp_path, monkeypatch):
+    daemon = _load_daemon_module()
+    _, _, health_file = _wire_paths(daemon, tmp_path)
+    daemon._DAEMON_STARTED_AT = None
+    monkeypatch.setattr(daemon, "_DAEMON_CODE_VERSION", {})
+
+    daemon.update_health(
+        status="processing",
+        current_task_id="2026-05-08-canary",
+        current_task_started_at="2026-05-08T04:30:00+00:00",
+    )
+    data = json.loads(health_file.read_text(encoding="utf-8"))
+    assert data["status"] == "processing"
+    assert data["current_task_id"] == "2026-05-08-canary"
+    assert data["current_task_started_at"] == "2026-05-08T04:30:00+00:00"
+
+
+def test_health_task_completion_clears_current_and_sets_last_completed(tmp_path, monkeypatch):
+    daemon = _load_daemon_module()
+    _, _, health_file = _wire_paths(daemon, tmp_path)
+    daemon._DAEMON_STARTED_AT = None
+    monkeypatch.setattr(daemon, "_DAEMON_CODE_VERSION", {})
+
+    daemon.update_health(
+        status="processing",
+        current_task_id="abc",
+        current_task_started_at="2026-05-08T04:30:00+00:00",
+    )
+    daemon.update_health(
+        status="polling",
+        clear_current_task=True,
+        last_completed_task_id="abc",
+        last_completed_at="2026-05-08T04:32:00+00:00",
+    )
+    data = json.loads(health_file.read_text(encoding="utf-8"))
+    assert data["status"] == "polling"
+    assert data["current_task_id"] is None
+    assert data["current_task_started_at"] is None
+    assert data["last_completed_task_id"] == "abc"
+    assert data["last_completed_at"] == "2026-05-08T04:32:00+00:00"
+
+
+def test_health_task_failure_clears_current_and_sets_last_failed(tmp_path, monkeypatch):
+    daemon = _load_daemon_module()
+    _, _, health_file = _wire_paths(daemon, tmp_path)
+    daemon._DAEMON_STARTED_AT = None
+    monkeypatch.setattr(daemon, "_DAEMON_CODE_VERSION", {})
+
+    daemon.update_health(
+        status="processing",
+        current_task_id="bad-task",
+        current_task_started_at="2026-05-08T04:30:00+00:00",
+    )
+    daemon.update_health(
+        status="polling",
+        clear_current_task=True,
+        last_failed_task_id="bad-task",
+        last_failed_at="2026-05-08T04:32:00+00:00",
+        last_error="all_perspectives_failed",
+    )
+    data = json.loads(health_file.read_text(encoding="utf-8"))
+    assert data["status"] == "polling"
+    assert data["current_task_id"] is None
+    assert data["last_failed_task_id"] == "bad-task"
+    assert data["last_failed_at"] == "2026-05-08T04:32:00+00:00"
+    assert data["last_error"] == "all_perspectives_failed"

@@ -465,12 +465,70 @@ def _count_queue() -> dict[str, int]:
 
 
 _DAEMON_STARTED_AT: str | None = None
+_DAEMON_CODE_VERSION: dict[str, str] | None = None
 
 
-def update_health(status: str, current_task_id: str | None = None,
+def _compute_daemon_code_version() -> dict[str, str]:
+    """Compute daemon-source identity + git context once per process lifetime.
+
+    Returns dict with whatever signals are available:
+      - code_version_hash: short sha256 of scripts/atlas_swarm_daemon.py at startup
+      - git_branch: current branch (best-effort)
+      - git_commit: short HEAD commit (best-effort)
+    """
+    import hashlib
+    import subprocess
+    info: dict[str, str] = {}
+    try:
+        src_path = Path(__file__).resolve()
+        info["code_version_hash"] = hashlib.sha256(src_path.read_bytes()).hexdigest()[:16]
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                           cwd=str(REPO_ROOT), timeout=5,
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            branch = (r.stdout or "").strip()
+            if branch:
+                info["git_branch"] = branch
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(["git", "rev-parse", "HEAD"],
+                           cwd=str(REPO_ROOT), timeout=5,
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            commit = (r.stdout or "").strip()
+            if commit:
+                info["git_commit"] = commit[:12]
+    except Exception:
+        pass
+    return info
+
+
+def _get_daemon_code_version() -> dict[str, str]:
+    """Cached daemon code-version snapshot. Tests can monkeypatch _DAEMON_CODE_VERSION."""
+    global _DAEMON_CODE_VERSION
+    if _DAEMON_CODE_VERSION is None:
+        _DAEMON_CODE_VERSION = _compute_daemon_code_version()
+    return _DAEMON_CODE_VERSION
+
+
+def update_health(status: str, *,
+                  current_task_id: str | None = None,
+                  current_task_started_at: str | None = None,
                   last_completed_task_id: str | None = None,
-                  last_error: str | None = None) -> None:
-    """Write daemon-health.json with current runtime state. atomic via .tmp rename."""
+                  last_completed_at: str | None = None,
+                  last_failed_task_id: str | None = None,
+                  last_failed_at: str | None = None,
+                  last_error: str | None = None,
+                  clear_current_task: bool = False) -> None:
+    """Write daemon-health.json with current runtime state. Atomic via .tmp rename.
+
+    Task-lifecycle telemetry: pass clear_current_task=True on completion/failure
+    to drop current_task_id/current_task_started_at from payload.
+    """
     global _DAEMON_STARTED_AT
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
     if _DAEMON_STARTED_AT is None:
@@ -492,12 +550,28 @@ def update_health(status: str, current_task_id: str | None = None,
         "cwd": str(REPO_ROOT),
         "queue_counts": _count_queue(),
     }
-    if current_task_id is not None:
-        payload["current_task_id"] = current_task_id
-    elif "current_task_id" in prior and status == "idle":
+    payload.update(_get_daemon_code_version())
+
+    if clear_current_task:
         payload["current_task_id"] = None
+        payload["current_task_started_at"] = None
+    else:
+        if current_task_id is not None:
+            payload["current_task_id"] = current_task_id
+        if current_task_started_at is not None:
+            payload["current_task_started_at"] = current_task_started_at
+        # Backwards-compat: legacy idle status also clears
+        if status == "idle" and "current_task_id" in prior:
+            payload["current_task_id"] = None
+
     if last_completed_task_id is not None:
         payload["last_completed_task_id"] = last_completed_task_id
+    if last_completed_at is not None:
+        payload["last_completed_at"] = last_completed_at
+    if last_failed_task_id is not None:
+        payload["last_failed_task_id"] = last_failed_task_id
+    if last_failed_at is not None:
+        payload["last_failed_at"] = last_failed_at
     if last_error is not None:
         payload["last_error"] = last_error
     try:
@@ -1909,11 +1983,12 @@ async def process_task(task_path: Path) -> None:
 
     # Stamp started_at.json — robust age signal for stale recovery
     # (survives git checkout mtime resets).
+    started_at_iso = datetime.now(timezone.utc).isoformat()
     try:
         (work_dir / "started_at.json").write_text(
             json.dumps({
                 "task_id": task_id,
-                "started_at": datetime.now(timezone.utc).isoformat(),
+                "started_at": started_at_iso,
                 "pid": os.getpid(),
             }),
             encoding="utf-8",
@@ -1921,6 +1996,13 @@ async def process_task(task_path: Path) -> None:
     except Exception as e:
         log_event({"event": "started_at_write_failed", "task_id": task_id,
                     "error": str(e)[:120]})
+
+    # Health telemetry: mark daemon as actively processing this task
+    update_health(
+        status="processing",
+        current_task_id=task_id,
+        current_task_started_at=started_at_iso,
+    )
 
     # Filter perspectives
     allow = meta.get("perspectives", "all")
@@ -2036,6 +2118,23 @@ async def process_task(task_path: Path) -> None:
         "task_id": task_id,
         "summary": {k: v for k, v in summary.items() if k != "perspectives"},
     })
+    # Health telemetry: clear current_task, record outcome
+    completion_iso = datetime.now(timezone.utc).isoformat()
+    if target.parent == DONE:
+        update_health(
+            status="polling",
+            clear_current_task=True,
+            last_completed_task_id=task_id,
+            last_completed_at=completion_iso,
+        )
+    else:
+        update_health(
+            status="polling",
+            clear_current_task=True,
+            last_failed_task_id=task_id,
+            last_failed_at=completion_iso,
+            last_error="all_perspectives_failed",
+        )
     print(f"[{datetime.now().strftime('%H:%M:%S')}] {target.parent.name.upper()}: {task_id} -- {summary['perspectives_responded']}/{summary['perspectives_dispatched']} responded")
 
     # Telegram report to CEO — one short message per completed task

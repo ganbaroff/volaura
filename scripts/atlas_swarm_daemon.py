@@ -1133,11 +1133,70 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
     return None
 
 
+async def _call_litellm_router_fallback(name: str, prompt: str, temp: float) -> dict[str, Any] | None:
+    """Phase B3 fallback path: invoke LiteLLM Router when an agent's assigned
+    model returned empty/failed. Returns the same dict shape that the
+    legacy provider branches return, with provider="litellm-router" so the
+    evidence gate and downstream code can detect the source.
+
+    Gated by ATLAS_USE_LITELLM_ROUTER=1. Default off — current AGENT_LLM_MAP
+    diversity (CEO 2026-04-30 "сколько у нас LLM столько и агентов") is
+    preserved unless the operator opts in. When opted in, this only fires
+    AFTER the per-agent assigned model fails — so diversity is the default
+    behaviour and the router is a safety net, not a replacement.
+
+    See packages/swarm/providers/litellm_adapter.py for fallback chain
+    (Cerebras → Ollama → NVIDIA, Article 0: no Anthropic).
+    """
+    try:
+        from packages.swarm.providers.litellm_adapter import LiteLLMProvider, _LITELLM_AVAILABLE
+    except Exception as e:
+        log_event({"event": "router_fallback_import_failed", "perspective": name,
+                   "error": str(e)[:150]})
+        return None
+
+    if not _LITELLM_AVAILABLE:
+        log_event({"event": "router_fallback_unavailable", "perspective": name,
+                   "reason": "litellm not importable in this Python runtime"})
+        return None
+
+    try:
+        provider = LiteLLMProvider()
+        parsed = await asyncio.wait_for(provider.evaluate(prompt, temperature=temp), timeout=60.0)
+    except Exception as e:
+        log_event({"event": "router_fallback_failed", "perspective": name,
+                   "error": str(e)[:200]})
+        return None
+
+    if not isinstance(parsed, dict):
+        return None
+
+    raw_text = json.dumps(parsed) if parsed else ""
+    if not raw_text:
+        return None
+
+    return {
+        "perspective": name,
+        "provider": "litellm-router",
+        "model": "router/cerebras→ollama→nvidia",
+        "raw": raw_text,
+        "router_fallback": True,
+    }
+
+
 async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
-    """11-agent architecture: each perspective calls its assigned LLM.
+    """17-agent architecture: each perspective calls its assigned LLM.
 
     CEO 2026-04-30: "сколько у нас LLM столько и агентов."
-    No fallback chain. If your model fails, you return empty.
+    Default: per-agent diversity, no fallback chain. If your model fails,
+    you return empty so the other agents still contribute.
+
+    Phase B3 (2026-05-09): when ATLAS_USE_LITELLM_ROUTER=1 the LiteLLM
+    Router (Cerebras → Ollama → NVIDIA, Article 0: no Anthropic) is invoked
+    as a SAFETY NET after the assigned model fails, never as a replacement.
+    Diversity is preserved on the happy path; resilience is added on the
+    failure path. See codex-loop.md Phase B3 for design critique.
+
     Sub-agent fan-out still fires for deep tasks (additional angles).
     """
     name = perspective["name"]
@@ -1155,7 +1214,7 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
 
     enriched_prompt = prompt + sub_findings if sub_findings else prompt
 
-    # Assigned model call — each agent has ONE LLM
+    # Assigned model call — each agent has ONE LLM (CEO directive 2026-04-30)
     if name in AGENT_LLM_MAP:
         provider_key, model_id = AGENT_LLM_MAP[name]
         result = await _call_assigned_model(name, provider_key, model_id,
@@ -1165,8 +1224,22 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
                 result["sub_agents_used"] = True
             result["assigned_llm"] = True
             return result
-        # Assigned model failed — no fallback per CEO directive.
-        # Return empty so other 10 agents still contribute.
+
+        # Phase B3 router fallback (env-gated). Default off → current
+        # behaviour preserved exactly. When on, this is a safety net,
+        # not a replacement: it fires only because assigned model already
+        # failed.
+        if os.environ.get("ATLAS_USE_LITELLM_ROUTER", "0").strip() == "1":
+            router_result = await _call_litellm_router_fallback(name, enriched_prompt, temp)
+            if router_result and router_result.get("raw"):
+                if sub_findings:
+                    router_result["sub_agents_used"] = True
+                router_result["assigned_llm"] = False  # surfaced as router-rescued
+                log_event({"event": "router_fallback_succeeded", "perspective": name,
+                           "original_provider": provider_key, "original_model": model_id})
+                return router_result
+
+        # Assigned model failed and router either disabled or also failed.
         log_event({"event": "assigned_model_failed", "perspective": name,
                    "provider": provider_key, "model": model_id})
 

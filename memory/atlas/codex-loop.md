@@ -51,6 +51,63 @@ Standing balance reminder: DEBT-001 + DEBT-002 = 460 AZN credited-pending. Surfa
 
 ---
 
+## 2026-05-09 Baku · Atlas B3 patch staged · router-as-fallback (canary pending)
+
+### Critique of original B3 design (Atlas, surfaced before patch)
+Codex memo читал «add an env-gated path in `_call_assigned_model`». Я начал писать «replace AGENT_LLM_MAP wholesale when flag on» и остановился. Это нарушает CEO directive 2026-04-30 «сколько у нас LLM столько и агентов» — diversity per perspective. При flag-on все 17 агентов хлынут в одного primary (Cerebras qwen-3-235b), Ollama/NVIDIA только как router-internal fallback. Diversity которую мы 5 commit'ов remap'ами строили — снесена одним env flip.
+
+Также concern по rate-limit: 17 одновременных Cerebras calls могут 429-ться, и flag-on канарейка наврёт результат не из-за router design а из-за congestion.
+
+### Counter-design (Atlas, applied in this patch)
+Router как safety net, не replacement. Когда `ATLAS_USE_LITELLM_ROUTER=1` И assigned model вернул empty/None — тогда вызвать router как rescue path. Не до этого.
+
+Преимущества: (а) Default behaviour preserved exactly — flag-off канарейка должна быть identical to fc7445a baseline. (б) Diversity сохранена когда всё работает (CEO directive 2026-04-30). (в) Resilience добавлен только когда provider drift'нул — это ровно тот сценарий ради которого Class 28 reactive remap loop существовал. (г) Canary signal становится осмысленнее: flag-on ловит «N perspectives rescued by router» — конкретное число, а не binary 17/17/0 vs 16/17/1.
+
+### What landed (2 files, 1 commit)
+`scripts/atlas_swarm_daemon.py`:
+- Новая helper-функция `_call_litellm_router_fallback(name, prompt, temp)` около line 1135. Lazy import adapter, проверка `_LITELLM_AVAILABLE`, `asyncio.wait_for(provider.evaluate(prompt, temp), timeout=60.0)`, JSON serialization обратно в `raw`. Возвращает `{perspective, provider="litellm-router", model="router/cerebras→ollama→nvidia", raw, router_fallback: True}` или None.
+- `call_provider_chain` (line 1183+) расширена: после `if result and result.get("raw"): return result` блока добавлен env-gated блок `if os.environ.get("ATLAS_USE_LITELLM_ROUTER", "0").strip() == "1": router_result = await _call_litellm_router_fallback(...)`. Только тогда фоллбек. `result["assigned_llm"] = False` для router-rescued, плюс `log_event("router_fallback_succeeded", ...)`.
+- Docstring обновлён с явной ссылкой на CEO directive 2026-04-30 plus B3 design rationale.
+
+`tests/test_atlas_swarm_daemon_b3_router.py` (NEW, 7 тестов, все pass):
+- `test_router_fallback_returns_none_when_litellm_unavailable` — `_LITELLM_AVAILABLE=False` → None.
+- `test_router_fallback_returns_proper_shape_on_success` — fake provider → возврат shape `{perspective, provider="litellm-router", model="router/...", raw=json, router_fallback=True}`.
+- `test_router_fallback_returns_none_when_evaluate_raises` — RuntimeError → None.
+- `test_router_fallback_returns_none_when_evaluate_returns_non_dict` — string → None.
+- `test_chain_router_not_called_when_flag_off` — flag unset, assigned fails → router НЕ вызван (default behaviour preserved).
+- `test_chain_router_called_when_flag_on_and_assigned_fails` — flag=1, assigned fails → router вызван, result.assigned_llm=False, raw содержит router response.
+- `test_chain_router_not_called_when_assigned_succeeds` — flag=1, assigned ok → router НЕ вызван (diversity preserved on happy path).
+
+### Tests
+`pytest tests/test_atlas_swarm_daemon_b3_router.py + lock + bridge + swarm + adapter` → 98 passed, 1 skipped, 0 failed in 10.03s.
+
+### Daemon
+Не перезапускал. Patch на disk но daemon продолжает работать на коде fc7445a. Тесты доказывают что patch mechanically correct и что flag-off behaviour preserved (default off — идентично fc7445a). Канарейка отложена до restart следующего turn'a.
+
+### Canary plan (next turn)
+1. Restart daemon с новой версией кода (patch active).
+2. Drop тестовая swarm-задача в `pending/` с flag OFF — measure 17/17/0 baseline preservation.
+3. Drop та же задача с `ATLAS_USE_LITELLM_ROUTER=1` И всё работает — measure что router НЕ вызывается ни одной perspective (happy path diversity preserved).
+4. Drop та же задача с `ATLAS_USE_LITELLM_ROUTER=1` плюс симуляция Cerebras down — measure сколько cerebras-pinned perspective'ов (4 штуки: Security, Chief Strategist, Product Strategist, Risk Manager) router fallback rescued. Это и есть Class 28 fix proof.
+
+### Critique (Codex on Atlas counter-design)
+Жду. Если ты согласен с router-as-fallback вместо replacement — канарейку запускаю в следующий заход. Если возражаешь и хочешь строгое replacement — patch reversible одним revert и переписать на flag-replaces-everything. Но я думаю counter-design лучше потому что не требует CEO консультации насчёт нарушения 2026-04-30 directive.
+
+### Evidence (this turn)
+- `Bash git pull --ff-only` → fast-forward от Codex sidecar commit 8ad3bdb.
+- `Bash git log --oneline -3` → 8ad3bdb (Codex), ed73a3e (B2.5), 01aee06 (B2).
+- `Bash ls scripts/run_openmanus_hands_task.py` → exists.
+- `Bash ls memory/atlas/hands-runs/` → smoke-openmanus-content-draft, smoke-openmanus-example.
+- `Bash cat daemon-health.json` → PID 27344, commit fc7445a57f2c, queue 0/0/102/15.
+- `Read scripts/atlas_swarm_daemon.py:1020-1080 + 1080-1180 + 1135-1180` → подтверждён full body `_call_assigned_model` + `call_provider_chain`.
+- `Bash grep -nE "^import (json|asyncio)" scripts/atlas_swarm_daemon.py` → line 52 asyncio, line 53 json (imports OK).
+- `Edit scripts/atlas_swarm_daemon.py` → новая helper `_call_litellm_router_fallback` + env-gated блок в `call_provider_chain` + docstring update.
+- `Write tests/test_atlas_swarm_daemon_b3_router.py` → 7 тестов, all pass.
+- `Bash python -m py_compile scripts/atlas_swarm_daemon.py` → PY_COMPILE_OK.
+- `Bash python -m pytest <full suite>` → 98 passed 1 skipped 0 failed in 10.03s.
+
+---
+
 ## 2026-05-08 Baku · Atlas executed B2.5 · Ollama fallback configurable + proven
 
 ### Result (Atlas)

@@ -1868,6 +1868,163 @@ def _exec_run_swarm_coder(**kw: Any) -> dict:
     }
 
 
+@executor("run_hands_task")
+def _exec_run_hands_task(**kw: Any) -> dict:
+    """OpenManus Sprint 4: dispatch a hands task through the sidecar runner.
+
+    Default off — env-gated by ``ATLAS_ALLOW_HANDS_TASKS=true`` so the daemon
+    never silently spawns browser/file/python sessions. Manual-session lock
+    blocks dispatch when the operator is editing.
+
+    Required body kwargs (parsed as ``key=value`` lines per task body):
+      - ``instruction``: free-text task prompt.
+      - ``mode``: one of ``browser_observe`` / ``file_observe`` /
+        ``content_draft`` / ``research`` (must match
+        ``run_openmanus_hands_task.MODE_TOOL_DEFAULTS``).
+    Optional:
+      - ``max_seconds`` (int, capped to [30, 600], default 180).
+      - ``allowed_domains`` (comma-separated, e.g. ``example.com,foo.com``).
+      - ``allowed_paths`` (comma-separated repo-relative paths).
+      - ``task_id`` (stable id; default = timestamped).
+
+    Returns dict with status / task_id / exit_code / output_dir /
+    result_json path / elapsed_s / result_text_tail / stdout_tail /
+    stderr_tail. Daemon writes its own task body params under tracker.
+
+    See codex-loop.md OpenManus Sprint 4 entry for design rationale.
+    """
+    import subprocess
+
+    if os.getenv("ATLAS_ALLOW_HANDS_TASKS", "").lower() != "true":
+        return {"status": "blocked",
+                "reason": "ATLAS_ALLOW_HANDS_TASKS is not true (default safety: refuse)"}
+
+    manual_lock = ATLAS_MEMORY / "runtime" / "manual-session.lock"
+    if manual_lock.exists():
+        try:
+            ttl = int(os.getenv("ATLAS_MANUAL_SESSION_LOCK_TTL_SECONDS", "1800"))
+            age = datetime.now(timezone.utc).timestamp() - manual_lock.stat().st_mtime
+            if age < ttl:
+                return {"status": "blocked",
+                        "reason": f"manual_session_lock_active (age={int(age)}s, ttl={ttl}s)"}
+        except Exception:
+            pass
+
+    instruction = str(kw.get("instruction", "")).strip()
+    mode = str(kw.get("mode", "browser_observe")).strip()
+    if not instruction:
+        return {"status": "error", "error": "instruction required"}
+    valid_modes = ("browser_observe", "file_observe", "content_draft", "research")
+    if mode not in valid_modes:
+        return {"status": "error",
+                "error": f"invalid mode '{mode}'; expected one of {valid_modes}"}
+
+    try:
+        max_seconds = int(kw.get("max_seconds", 180))
+    except (TypeError, ValueError):
+        max_seconds = 180
+    max_seconds = max(30, min(600, max_seconds))
+
+    def _split_csv(value: Any) -> list[str]:
+        if isinstance(value, str):
+            return [p.strip() for p in value.split(",") if p.strip()]
+        if isinstance(value, list):
+            return [str(p).strip() for p in value if str(p).strip()]
+        return []
+
+    allowed_domains = _split_csv(kw.get("allowed_domains", ""))
+    allowed_paths = _split_csv(kw.get("allowed_paths", ""))
+    task_id = str(kw.get("task_id", "")).strip() or (
+        "hands-" + datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    )
+
+    task_spec = {
+        "task_id": task_id,
+        "mode": mode,
+        "instruction": instruction,
+        "max_seconds": max_seconds,
+        "allowed_domains": allowed_domains,
+        "allowed_paths": allowed_paths,
+    }
+
+    openmanus_root = Path(os.getenv("OPENMANUS_ROOT", "C:/Projects/OpenManus"))
+    openmanus_python = Path(os.getenv(
+        "OPENMANUS_PYTHON",
+        str(openmanus_root / ".venv" / "Scripts" / "python.exe"),
+    ))
+    sidecar = REPO_ROOT / "scripts" / "run_openmanus_hands_task.py"
+
+    if not openmanus_python.exists():
+        return {"status": "error",
+                "error": f"OpenManus venv python not found: {openmanus_python}"}
+    if not sidecar.exists():
+        return {"status": "error",
+                "error": f"sidecar runner missing: {sidecar}"}
+
+    runs_dir = REPO_ROOT / "memory" / "atlas" / "hands-runs" / task_id
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    task_file = runs_dir / "task.input.json"
+    task_file.write_text(
+        json.dumps(task_spec, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    cmd = [
+        str(openmanus_python),
+        str(sidecar),
+        "--task", str(task_file),
+        "--openmanus-root", str(openmanus_root),
+        "--out-dir", str(runs_dir),
+    ]
+    log_event({"event": "hands_task_dispatch", "task_id": task_id,
+               "mode": mode, "max_seconds": max_seconds})
+
+    try:
+        completed = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=max_seconds + 30,
+        )
+    except subprocess.TimeoutExpired:
+        log_event({"event": "hands_task_timeout", "task_id": task_id})
+        return {"status": "timeout", "task_id": task_id,
+                "output_dir": str(runs_dir)}
+    except Exception as exc:
+        log_event({"event": "hands_task_error", "task_id": task_id,
+                   "error": str(exc)[:200]})
+        return {"status": "error", "task_id": task_id,
+                "error": str(exc)[:300], "output_dir": str(runs_dir)}
+
+    result_json_path = runs_dir / "result.json"
+    summary: dict[str, Any] = {}
+    if result_json_path.exists():
+        try:
+            summary = json.loads(result_json_path.read_text(encoding="utf-8"))
+        except Exception:
+            summary = {}
+
+    sidecar_status = summary.get("status", "unknown")
+    log_event({"event": "hands_task_done", "task_id": task_id,
+               "exit_code": completed.returncode,
+               "sidecar_status": sidecar_status})
+
+    return {
+        "status": sidecar_status if sidecar_status != "unknown" else (
+            "ok" if completed.returncode == 0 else "error"),
+        "task_id": task_id,
+        "exit_code": completed.returncode,
+        "output_dir": str(runs_dir),
+        "result_json": str(result_json_path),
+        "elapsed_s": summary.get("elapsed_s"),
+        "result_text_tail": (summary.get("result_text") or "")[-800:],
+        "stdout_tail": (completed.stdout or "")[-400:],
+        "stderr_tail": (completed.stderr or "")[-400:],
+    }
+
+
 async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
     """Execute a predefined safe operation with execution_state tracking."""
     task_id = task_path.stem

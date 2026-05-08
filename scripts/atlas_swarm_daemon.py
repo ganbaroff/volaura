@@ -1263,6 +1263,9 @@ PATH_CANDIDATE_RE = re.compile(
 LINE_PROOF_RE = re.compile(
     r"(?i)(?:\bline(?:s)?\s*[:#]?\s*\d+\b|\bL\d+\b|:\d+\b|\bgrep\b|\brg\b|@limiter|\.limit\(|select\()"
 )
+PATH_LINE_RE = re.compile(
+    r"(?P<path>(?:apps|packages|docs|memory|supabase|scripts|\.github)/[\w./@()[\]-]+?)[:\s#L]+(?P<line>\d+)\b"
+)
 
 
 def _finding_text(finding: dict[str, Any]) -> str:
@@ -1287,8 +1290,129 @@ def _existing_evidence_paths(finding: dict[str, Any]) -> list[str]:
     return paths
 
 
+def _coerce_line_no(value: Any) -> int | None:
+    """Best-effort int extraction from finding line/line_number/start fields."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if value > 0 else None
+    if isinstance(value, str):
+        v = value.strip()
+        if v.isdigit():
+            n = int(v)
+            return n if n > 0 else None
+    return None
+
+
+def _fetch_evidence_excerpt(finding: dict[str, Any], paths: list[str], context: int = 2) -> dict[str, Any] | None:
+    """Phase C — open the cited file at the cited line and return a real excerpt.
+
+    Phase B and earlier evidence gate trusted the agent's claim that a file
+    existed AND that it contained a numeric line reference. The agent could
+    still fabricate WHICH line said WHAT. This helper closes that gap by
+    actually reading the bytes at the cited line and surfacing them on the
+    finding so a reviewer immediately sees agent-claim vs file-truth.
+
+    Returns dict ``{path, line, excerpt, excerpt_kind}`` if a clear
+    ``path + line_number`` citation exists and the file is readable. Returns
+    None otherwise — caller should preserve the existing evidence_status logic.
+
+    Strategy:
+      1. Try finding-level structured fields ``line`` / ``line_number`` /
+         ``start`` against the first existing repo path.
+      2. Else parse ``evidence_path_or_command`` and finding text for
+         ``path:line`` form.
+      3. Read [line - context, line + context] window from the file with
+         line numbers prefixed, capped at 800 characters total.
+    """
+    if not paths:
+        return None
+
+    line_no = (
+        _coerce_line_no(finding.get("line"))
+        or _coerce_line_no(finding.get("line_number"))
+        or _coerce_line_no(finding.get("start"))
+    )
+    target_path: str | None = None
+    excerpt_kind = "structured-line"
+
+    if line_no is not None:
+        target_path = paths[0]
+
+    if line_no is None:
+        # Look for path:line in the evidence_path_or_command field first, then
+        # in any other text. Stop on first match whose path actually exists.
+        haystacks: list[str] = []
+        evp = finding.get("evidence_path_or_command")
+        if isinstance(evp, str):
+            haystacks.append(evp)
+        haystacks.append(_finding_text(finding))
+        for hay in haystacks:
+            for m in PATH_LINE_RE.finditer(hay.replace("\\", "/")):
+                candidate = m.group("path").strip("`'\".,);:")
+                if (REPO_ROOT / candidate).is_file():
+                    target_path = candidate
+                    line_no = int(m.group("line"))
+                    excerpt_kind = "parsed-from-text"
+                    break
+            if target_path is not None:
+                break
+
+    if target_path is None or line_no is None:
+        return None
+
+    full_path = REPO_ROOT / target_path
+    try:
+        with full_path.open("r", encoding="utf-8", errors="replace") as fh:
+            lines = fh.readlines()
+    except OSError as e:
+        return {
+            "path": target_path,
+            "line": line_no,
+            "excerpt": "",
+            "excerpt_kind": "error",
+            "error": str(e)[:120],
+        }
+
+    total = len(lines)
+    if line_no > total or line_no < 1:
+        return {
+            "path": target_path,
+            "line": line_no,
+            "excerpt": "",
+            "excerpt_kind": "out-of-range",
+            "error": f"line {line_no} > file length {total}",
+        }
+
+    start = max(1, line_no - context)
+    end = min(total, line_no + context)
+    chunk_lines: list[str] = []
+    for n in range(start, end + 1):
+        raw = lines[n - 1].rstrip("\n")
+        marker = ">>" if n == line_no else "  "
+        chunk_lines.append(f"{marker} {n}: {raw}")
+    excerpt = "\n".join(chunk_lines)
+    if len(excerpt) > 800:
+        excerpt = excerpt[:800] + "\n... [truncated]"
+
+    return {
+        "path": target_path,
+        "line": line_no,
+        "excerpt": excerpt,
+        "excerpt_kind": excerpt_kind,
+    }
+
+
 def _mark_finding_evidence(finding: dict[str, Any]) -> dict[str, Any]:
-    """Mark findings with hard repo evidence before they affect learning."""
+    """Mark findings with hard repo evidence before they affect learning.
+
+    Phase C (2026-05-09): in addition to verifying the cited path exists and
+    a line/grep reference is present, daemon now actually opens the file at
+    the cited line and attaches the real bytes as ``evidence_excerpt``.
+    Reviewers (and downstream learning) can compare agent-claim vs
+    file-truth without re-reading the file by hand. See codex-loop.md
+    Phase C entry for the design rationale.
+    """
     marked = dict(finding)
     paths = _existing_evidence_paths(marked)
     line_value = marked.get("line") or marked.get("line_number") or marked.get("start")
@@ -1296,6 +1420,11 @@ def _mark_finding_evidence(finding: dict[str, Any]) -> dict[str, Any]:
         isinstance(line_value, str) and line_value.strip().isdigit()
     )
     has_line_or_grep = has_structured_line or bool(LINE_PROOF_RE.search(_finding_text(marked)))
+
+    excerpt = _fetch_evidence_excerpt(marked, paths)
+    if excerpt is not None:
+        marked["evidence_excerpt"] = excerpt
+
     if paths and has_line_or_grep:
         marked["evidence_status"] = "verified"
         marked["evidence_paths"] = paths

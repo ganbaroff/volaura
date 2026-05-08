@@ -51,6 +51,64 @@ Standing balance reminder: DEBT-001 + DEBT-002 = 460 AZN credited-pending. Surfa
 
 ---
 
+## 2026-05-09 Baku · Atlas executed Phase C · daemon now reads cited bytes
+
+### Hypothesis (Atlas, after CEO «реально полезные результаты» question)
+Mechanically swarm здоров — последняя канарейка `2026-05-08-canary-ux-designer-remap` дала 17/17/0 responded, content в каждой perspective JSON. Но `evidence_gate` показал 0 verified, 1 unverified. Корень: existing `_mark_finding_evidence` (line 1290) проверяет (а) что cited path существует на disk и (б) что есть какая-то line/grep ссылка в тексте. Но НЕ открывает файл и НЕ читает что там по факту. Агент пишет «line 181 has rate limit» — daemon ставит verified если path exists и регексп line-ref совпал. Класс 26 (verification-through-claim) на уровне swarm.
+
+### Decision (Atlas, no Codex consultation needed — это quality-fix, не architecture pivot)
+Phase C — daemon-side evidence excerpt fetch. Daemon теперь сам открывает указанный файл на указанной строке и кладёт actual bytes как `evidence_excerpt` рядом с claim'ом. Не auto-rejects при mismatch (это Phase C v2). Surfaces ground truth для reviewer'a — мгновенная FP detection без manual re-read.
+
+### What landed (2 files)
+`scripts/atlas_swarm_daemon.py`:
+- Новый regex `PATH_LINE_RE` который ловит `path:line_no` форму citation в свободном тексте.
+- Helper `_coerce_line_no(value)` — best-effort int extraction из `line` / `line_number` / `start` finding fields, возвращает positive int или None.
+- Helper `_fetch_evidence_excerpt(finding, paths, context=2)` — стратегия из 3 шагов: structured `line` field → `evidence_path_or_command` парсинг → finding text парсинг. Открывает файл, читает [line-2, line+2] окно, prefix'ует line numbers, marks target line с `>>`, capped at 800 chars.
+- `_mark_finding_evidence` теперь вызывает `_fetch_evidence_excerpt` и кладёт `evidence_excerpt` field на finding если success. Existing verified/unverified логика сохранена.
+- Docstring обновлён со ссылкой на codex-loop.md Phase C.
+
+`tests/test_atlas_swarm_daemon_evidence.py` (NEW, 9 тестов, all pass):
+- `test_fetch_excerpt_with_structured_line` — finding имеет `line: 8` + path → возврат excerpt с `>> 8: @limiter.limit(...)` + контекст.
+- `test_fetch_excerpt_with_path_colon_line` — `evidence_path_or_command: "apps/api/main.py:5"` → парсит, открывает строку 5.
+- `test_fetch_excerpt_returns_none_when_no_paths` — нет paths → None.
+- `test_fetch_excerpt_returns_none_when_no_line_anywhere` — есть path но нет line citation в любом виде → None.
+- `test_fetch_excerpt_out_of_range` — line=999 на 10-line файле → возвращает dict с `excerpt_kind="out-of-range"`, error message.
+- `test_fetch_excerpt_rejects_non_int_line` — line="not-a-number" → None.
+- `test_mark_finding_evidence_attaches_excerpt` — integration: full marked finding имеет evidence_excerpt с реальными bytes.
+- `test_mark_finding_evidence_no_excerpt_when_no_line` — verification status preserved (unverified) когда line отсутствует.
+- `test_mark_finding_evidence_unverified_with_no_path` — unverified + no excerpt когда даже path не цитируется.
+
+Tests use `monkeypatch.setattr(daemon, "REPO_ROOT", tmp_path)` plus минимальный fake repo (`apps/api/main.py` с 10 known lines). Не трогает реальный VOLAURA tree.
+
+### Tests
+`pytest tests/test_atlas_swarm_daemon_evidence.py + b3_router + lock + bridge + swarm + adapter` → 107 passed, 1 skipped, 0 failed in 9.94s. (98 → 107: +9 Phase C tests).
+
+### Daemon
+Не перезапускал. Patch на disk, daemon продолжает на коде fc7445a. Phase C value emerges next time daemon выполнит audit task — perspective.json files будут содержать `evidence_excerpt` field с актуальными bytes из cited files. Reviewer открывает result.json и сразу видит «agent claimed X about line N — actual line N says Y». FP detection в один взгляд.
+
+### Why this NOT replacing — это additive
+Existing verified/unverified логика сохранена. Phase C только ДОБАВЛЯЕТ `evidence_excerpt` field когда возможно. Backward compatible с existing tooling, downstream evidence_backed_findings/unverified_findings consumers не сломаны.
+
+### Phase C v2 (later, not now)
+- Auto-reject finding если `evidence_excerpt` text семантически не подтверждает agent claim (нужен NLP / LLM-judge — отдельная работа).
+- Stricter prompt contract: «evidence_path_or_command MUST be in form path:line_no OR exact grep command». Сейчас prompt свободный, строгий контракт повысит structured-line hit rate.
+- Per-task-type prompts (audit vs verify vs implement).
+
+### Open after Phase C
+B3 канарейка отложена — её провести имеет смысл ПОСЛЕ Phase C активации (daemon restart с обоими patches: B3 router fallback + Phase C evidence excerpts). Тогда canary даст signal на обе оси: routing resilience И evidence quality.
+
+### Evidence (this turn)
+- `Bash python -c "...result.json[evidence_gate]"` (последняя канарейка) → 0 verified, 1 unverified.
+- `Bash python -c "...Assessment_Science.json | head -40"` → confirmed perspective output structure with vote/rationale/evidence_path_or_command/confidence.
+- `Read scripts/atlas_swarm_daemon.py:1245-1287` → `_finding_text`, `_existing_evidence_paths`, regex definitions.
+- `Read scripts/atlas_swarm_daemon.py:1285-1308` → existing `_mark_finding_evidence` body — confirmed it does NOT open file or grep, only checks path existence + line-regex match.
+- `Edit scripts/atlas_swarm_daemon.py` → `PATH_LINE_RE` regex + `_coerce_line_no` + `_fetch_evidence_excerpt` + `_mark_finding_evidence` integration.
+- `Write tests/test_atlas_swarm_daemon_evidence.py` → 9 tests.
+- `Bash python -m py_compile` → PY_COMPILE_OK.
+- `Bash python -m pytest <full suite>` → 107 passed, 1 skipped, 0 failed.
+
+---
+
 ## 2026-05-09 Baku · Atlas B3 patch staged · router-as-fallback (canary pending)
 
 ### Critique of original B3 design (Atlas, surfaced before patch)

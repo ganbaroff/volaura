@@ -442,3 +442,130 @@ def test_archive_stale_uses_unique_failed_destination(tmp_path, monkeypatch):
     assert any(s.startswith(f"{task_id}-stale-") for s in siblings), (
         f"unique suffix dir must exist alongside original; got {siblings}"
     )
+
+
+# ── Repo mutation guard tests (CEO directive 2026-05-08) ──────────────────────
+
+
+def _mock_clean_codex_git(monkeypatch):
+    """Helper: mock subprocess so the git checks land on a clean codex/* branch."""
+    import subprocess
+    from types import SimpleNamespace
+
+    def _run(cmd, **_kw):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="codex/test\n", stderr="")
+        if joined.startswith("git status --porcelain"):
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+    monkeypatch.setattr(subprocess, "run", _run)
+
+
+def test_run_swarm_coder_blocked_without_env_flag(monkeypatch):
+    daemon = _load_daemon_module()
+    monkeypatch.delenv("ATLAS_CODE_MUTATIONS_ENABLED", raising=False)
+    result = daemon._exec_run_swarm_coder(proposal_id="abc")
+    assert result["status"] == "blocked"
+    assert "ATLAS_CODE_MUTATIONS_ENABLED" in result["reason"]
+    assert result.get("proposal_id") == "abc"
+
+
+def test_run_swarm_coder_blocked_on_main_branch(monkeypatch):
+    import subprocess
+    from types import SimpleNamespace
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_CODE_MUTATIONS_ENABLED", "true")
+    monkeypatch.delenv("ATLAS_ALLOW_MAIN_GIT_MUTATIONS", raising=False)
+
+    def _run(cmd, **_kw):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="main\n", stderr="")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+    monkeypatch.setattr(subprocess, "run", _run)
+    result = daemon._exec_run_swarm_coder(proposal_id="abc")
+    assert result["status"] == "blocked"
+    assert "main" in result["reason"]
+
+
+def test_run_swarm_coder_blocked_when_manual_lock_fresh(tmp_path, monkeypatch):
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_CODE_MUTATIONS_ENABLED", "true")
+    fake_atlas = tmp_path / "atlas"
+    runtime_dir = fake_atlas / "runtime"
+    runtime_dir.mkdir(parents=True)
+    (runtime_dir / "manual-session.lock").write_text("active", encoding="utf-8")
+    monkeypatch.setattr(daemon, "ATLAS_MEMORY", fake_atlas)
+    _mock_clean_codex_git(monkeypatch)
+
+    result = daemon._exec_run_swarm_coder(proposal_id="abc")
+    assert result["status"] == "blocked"
+    assert "manual_session_lock_active" in result["reason"]
+
+
+def test_run_swarm_coder_blocked_on_dirty_tree(monkeypatch):
+    import subprocess
+    from types import SimpleNamespace
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_CODE_MUTATIONS_ENABLED", "true")
+
+    def _run(cmd, **_kw):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="codex/x\n", stderr="")
+        if joined.startswith("git status --porcelain"):
+            return SimpleNamespace(returncode=0, stdout=" M somefile.py\n", stderr="")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+    monkeypatch.setattr(subprocess, "run", _run)
+    result = daemon._exec_run_swarm_coder(proposal_id="abc")
+    assert result["status"] == "blocked"
+    assert "unrelated" in result["reason"]
+
+
+def test_git_commit_push_blocked_branch_not_in_allowlist(monkeypatch):
+    import subprocess
+    from types import SimpleNamespace
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_GIT_MUTATIONS_ENABLED", "true")
+    monkeypatch.delenv("ATLAS_MUTATION_BRANCH_PATTERN", raising=False)
+
+    def _run(cmd, **_kw):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="random/weird-branch\n", stderr="")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+    monkeypatch.setattr(subprocess, "run", _run)
+    result = daemon._exec_git_commit_push(message="t", files=["a.py"])
+    assert result["status"] == "blocked"
+    assert "does not match" in result["reason"]
+
+
+def test_git_commit_push_main_still_blocked_without_allow(monkeypatch):
+    import subprocess
+    from types import SimpleNamespace
+    daemon = _load_daemon_module()
+    monkeypatch.setenv("ATLAS_GIT_MUTATIONS_ENABLED", "true")
+    monkeypatch.delenv("ATLAS_ALLOW_MAIN_GIT_MUTATIONS", raising=False)
+
+    def _run(cmd, **_kw):
+        joined = " ".join(str(c) for c in cmd[:4])
+        if joined.startswith("git rev-parse --abbrev-ref"):
+            return SimpleNamespace(returncode=0, stdout="main\n", stderr="")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+    monkeypatch.setattr(subprocess, "run", _run)
+    result = daemon._exec_git_commit_push(message="t", files=["a.py"])
+    assert result["status"] == "blocked"
+    assert "main" in result["reason"]
+
+
+def test_aider_instruction_forbids_git_mutations():
+    from pathlib import Path
+    src = Path("C:/Projects/VOLAURA/scripts/swarm_coder.py").read_text(encoding="utf-8")
+    forbidden = [
+        "git checkout", "git pull", "git fetch", "git rebase",
+        "git merge", "git cherry-pick", "git stash", "git reset",
+        "git commit", "git push",
+    ]
+    for cmd in forbidden:
+        assert cmd in src, f"aider instruction must forbid '{cmd}'"

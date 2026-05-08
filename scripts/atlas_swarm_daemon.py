@@ -166,7 +166,7 @@ AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
     "QA Engineer":             ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (RAI content-filter)
     # ── RISK & OVERSIGHT (wave 1-3) ──
     "Risk Manager":            ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep risk analysis
-    "CTO Watchdog":            ("nvidia", "nvidia/llama-3.1-nemotron-nano-8b-v1"),  # Re-routed from Azure (RAI content-filter)
+    "CTO Watchdog":            ("nvidia", "meta/llama-3.3-70b-instruct"),  # Re-routed from Azure (RAI content-filter); nano-8b returned empty, this model proven on Sales Director/Legal Advisor
 }
 
 # Legacy set kept for backward compat — now derived from AGENT_LLM_MAP

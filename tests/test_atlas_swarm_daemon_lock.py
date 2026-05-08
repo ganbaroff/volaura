@@ -235,6 +235,20 @@ def test_ecosystem_auditor_stays_nvidia_heavy():
     assert provider == "nvidia-heavy"
 
 
+def test_cto_watchdog_uses_proven_nvidia_model():
+    """CTO Watchdog must NOT use nemotron-nano-8b (returns empty) and must use the
+    proven nvidia model used by Sales Director / Legal Advisor."""
+    daemon = _load_daemon_module()
+    provider, model = daemon.AGENT_LLM_MAP["CTO Watchdog"]
+    assert provider == "nvidia", f"CTO Watchdog provider must be nvidia, got {provider}"
+    assert "nemotron-nano" not in model, (
+        f"CTO Watchdog must not use empty-returning nano-8b, got {model}"
+    )
+    assert model == "meta/llama-3.3-70b-instruct", (
+        f"CTO Watchdog must use proven nvidia model meta/llama-3.3-70b-instruct, got {model}"
+    )
+
+
 # ── Git mutation safety tests (CEO directive 2026-05-07) ──────────────────────
 
 

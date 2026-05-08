@@ -67,11 +67,21 @@ def _build_model_list(env: dict[str, str] | None = None) -> list[dict[str, Any]]
             },
         })
 
-    # Ollama local — always attempt (no key needed, may be offline)
+    # Ollama local — always attempt (no key needed, may be offline).
+    # Model is configurable via OLLAMA_MODEL because operators frequently pull
+    # different local models. Default `ollama/qwen3:8b` matches the model that
+    # is actually present on VOLAURA's primary workstation as of 2026-05-08
+    # (`curl localhost:11434/api/tags` -> qwen3:8b, gemma4:latest). Without
+    # this env-override the fallback path 404s on `qwen2.5:32b not found`,
+    # which previously masqueraded as "Ollama broken" when the real cause was
+    # a hardcoded model name. See codex-loop.md Phase B2.5 for receipts.
+    ollama_model = env.get("OLLAMA_MODEL", "ollama/qwen3:8b")
+    if not ollama_model.startswith("ollama/"):
+        ollama_model = f"ollama/{ollama_model}"
     model_list.append({
         "model_name": "ollama-fb",
         "litellm_params": {
-            "model": "ollama/qwen2.5:32b",
+            "model": ollama_model,
             "api_base": env.get("OLLAMA_API_BASE", "http://localhost:11434"),
         },
     })

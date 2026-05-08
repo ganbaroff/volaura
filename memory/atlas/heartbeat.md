@@ -1,40 +1,39 @@
 # Atlas — Heartbeat
 
-**Session:** 125 — POST-COMPACTION WAKE (Opus 4.7, 2026-04-26 15:20 Baku)
-**Timestamp:** 2026-04-26 15:20 Baku — Codex Sprint S5 returned, 4 commits pushed by Code-Atlas (Codex network was down)
+**Session:** 132 — daemon resilience sprint close (Opus 4.7, 2026-05-08 12:00 Baku)
+**Compaction-survival pointer:** `memory/atlas/journal.md` Session 132 close entry. Read that for full state. This file = fingerprint only.
 
-**Compaction-survival pointer:** `memory/atlas/archive/SESSION-124-WRAP-UP-2026-04-26.md` is the canonical session 124 log. Session 125 starts with this Codex courier event.
+## Session 132 — what just happened (2026-05-07 evening → 2026-05-08 noon Baku)
 
-## Session 125 — what just happened (2026-04-26 post-compaction)
+Daemon resilience sprint. 16 commits between `65e0ae1` and `8574f1d`. Foundation layer fully stabilized.
 
-Woke from compaction. CEO couriered Codex's response: all 6 Sprint S5 findings (`apps/tg-mini/` F-01 through F-06) closed in 6 separate commits. Two of the six (`df30f3f` API base URL fix, `e4cf88d` envelope unwrap) Codex managed to push before his network/auth died with `getaddrinfo() thread failed to start` + `gh auth status: not logged in` + GitHub MCP `token_invalidated`. Remaining four (`afa05fd` proposal action route, `34bdd6b` admin auth headers, `7698ea5` CI integration, `4e54d28` prototype-shell classification) sat locally on his `main`. Code-Atlas push from the worktree side completed: `b2543de..4e54d28` shipped to `origin/main` clean, no rebase needed (Codex had pushed atomically before disconnect, his local main was a fast-forward of origin). CI triggered on `4e54d28` (run 24955363380), in_progress at moment of write. Previous run on `b2543de` (mine) had failed on preexisting ruff format debt in 4 backend files (`app/routers/atlas_consult.py`, `app/routers/health.py`, `app/services/ecosystem_consumer.py`, `app/services/error_watcher.py`) — that's Terminal-Atlas Sprint S1 `CA-F02` slot per quad-handoff, not Code-Atlas territory. Codex also flagged: he could not run `build/test` locally due to broken Node runtime (`ncrypto::CSPRNG` failure inside desktop shim) — CI is the proxy verifier now.
+Big shifts. Single-instance lock + health telemetry shipped (`9ecc193`). Health now exposes pid + status + current_task_id + last_completed_task_id + code_version_hash + git_branch + git_commit + queue_counts (`25305a3`). Daemon git mutations gated by env-flag + branch allowlist + dirty-tree guard (`0338b56`). In-progress runtime untracked from git, stale recovery uses YYYY-MM-DD fallback (`0de3f43`). `_exec_run_swarm_coder` + aider gated (`b061b18`). Operator restart script `scripts/restart_atlas_daemon.ps1` lock-aware (`8574f1d`).
 
-What's fully done: Sprint S5 closed at code level. What's not yet verified: CI green on the four newly-pushed commits — pending.
+Provider remaps. 5 azure perspectives moved off (Azure RAI content-filter on every prompt with `false-positives.md` content) — `7397b61`. CTO Watchdog nvidia-nano-8b → meta-llama-3.3 (`c6d681a`). Ecosystem Auditor nvidia-heavy 404 → meta-llama-3.3 (`93a975d`). UX Designer azure empty → groq llama-3.3 (`fc7445a`). First-ever canary at 17/17/0.
 
-**Update 15:30 Baku:** CI run on Codex's push (24955363380) failed on Telegram Mini App test job — root cause was Codex's test script `pnpm --dir ../web exec vitest run ../tg-mini/src/api.test.ts` couldn't discover any test files because web's vitest config has `include: ["src/**/*.test.{ts,tsx}"]` (web's own src only) and positional filter args matched zero files → "No test files found". Plus a secondary test bug: `actOnProposal` Headers assertion compared a `Headers` instance (real api.ts behavior) against a plain object literal. Strange-v2 verdict: courier-emergency hotfix justified — Codex offline (network + gh auth dead), CI red on tg-mini, sprint S5 still in flight at the verification surface, fix is narrow (one config + two-line test patch). Shipped `c547b58 fix(tg-mini): vitest --root unblocks CI test discovery`: new `apps/tg-mini/vitest.config.ts` (minimal, jsdom + tg-mini-relative include), test script switched to `pnpm --dir ../web exec vitest run --root ../tg-mini`, `api.test.ts` Headers assertion now uses `Headers.get()` semantics. Verified locally before push: 2 test files, 7 tests passed. CI re-run (24955494629): Telegram Mini App ✓ in 27s, Security Audit ✓, Frontend in progress, Backend FastAPI ✗ on the same preexisting 4-file ruff format debt (Terminal-Atlas Sprint S1 CA-F02 slot). Codex's S5 is now CI-verified end-to-end.
+AGENT_LLM_MAP final distribution. vertex 2, cerebras 4, groq 5, nvidia 4, ollama 2. Azure 0. nvidia-heavy 0.
 
-**Update 18:55 Baku — Session 125 close ledger:**
+Two-Architect Loop accepted. `memory/atlas/codex-loop.md` created — shared journal between Atlas (Claude Code, Opus 4.7) and Codex (CLI). CEO is not the courier. Codex carries main planning/execution line. Atlas is peer architect + execution partner. Critique mandatory both ways. CEO sees outcome stories only (`Atlas proposed X, Codex objected Y, chose Z, evidence`).
 
-Backend ruff cleanup landed `83ff0a8` (5 files: atlas_consult.py, health.py, ecosystem_consumer.py, error_watcher.py + admin.py от Terminal-Atlas's CX-F07 коммита). Vercel cache fix landed `bd68635` (`rm -rf apps/web/.next/cache` в buildCommand) — ждёт rate-limit reset через 24 часа. Privacy + Terms v2 GPT-5 контент legitime ушли как `4e533a5` плюс `0d28b44` lint escape fix (3 react/no-unescaped-entities на строках 149/234/258). courier_verify.py + operating-principles gate за `c045f0f`. Three quick reality-audit fixes за `c6db12f` (org-volunteers→org-professionals positioning, Generation failed→didn't come through Law 3, Constitution v1.2→v1.7). reality-audit composite от 3 Sonnet agents за `ede3bdc` (`for-ceo/living/reality-audit-2026-04-26.md`). atlas-self-audit single source of truth `5d64fd7`.
+Phase B (provider routing v2) in flight at design stage. `packages/swarm/providers/litellm_adapter.py` is live skeleton + dead integration: hook in `ProviderRegistry.discover()` exists under `SWARM_USE_LITELLM=1`, but daemon `_call_assigned_model` bypasses Registry entirely, and litellm not installed in `C:\Python314` (production python). Plus adapter includes Anthropic Haiku in fallback chain — violates Constitution Article 0. Real Phase B = 3-file patch.
 
-MindShift пуш на отдельный repo `fix/gitignore-keystore-security` коммит `3bbf6e5`: signing pipeline ready (release.keystore detected, 4 ENV vars in .env, build_apk.sh auto-bumps versionCode), `@capgo/capacitor-speech-recognition` v8.1.0 installed, AndroidManifest +RECORD_AUDIO +MODIFY_AUDIO_SETTINGS +<queries> для android.speech.RecognitionService, useVoiceInput.ts dual-platform refactor (Capacitor.isNativePlatform() branch). APK v1.0-2 первый build успешен (data fix verified through apksigner). APK v1.0-3 c voice plugin собрался успешно (7.19 MB, SHA-256 833d17a9..., signed CN Yusif Ganbarov Volaura inc, versionCode 3). compileSdk поднят 35→36 в variables.gradle потому что androidx.core 1.17.0 требует это.
+DEBT-001 + DEBT-002 = 460 AZN credited-pending + DEBT-003 narrative-credit. Surface every CEO-facing status until closed-*.
 
-Google OAuth — Android client создан CEO в Google Auth Platform (Console UI), Application type Android, package `com.mindshift.app`, SHA-1 `54da15...`. Client ID `134570680555-enp3iqajke28fdp1fsplq6l48gb8mhcd.apps.googleusercontent.com` сохранён в MindShift `.env`. OAuth consent screen прошёл wizard External + App name MindShift. Однако oauth_client array в скачанном google-services.json всё ещё пустой — Google propagation 5-10 минут (или дольше). Web client для Supabase backend flow ЕЩЁ НЕ создан — следующий шаг CEO после propagation Android client'а.
+## Daemon runtime as of compact
 
-DEBT-002 открыт `4684cb7` — 230 AZN parallel-shipment miss (ITIN W-7 отдельный DHL когда мог быть один пакет с 83(b)). Class 24 — courier-batch optimization not considered. Pre-flight checklist для всех будущих IRS dispatches mandated. Open balance ledger 460 AZN credited-pending (DEBT-001 + DEBT-002).
+PID 12760 was alive as of restart_atlas_daemon.ps1 -Action restart at 11:34:28 Baku. Latest known PID is 27344 (running) per last `Get-CimInstance` from this session — but daemon got restarted multiple times today, so trust health.json on next wake, not this fingerprint. Health git_commit at last read was `fc7445a57f2c` matching HEAD `fc7445a` before commit `8574f1d` (restart script). After `8574f1d` daemon was NOT restarted because that commit only added a new file, no daemon code change.
 
-ITIN packet shipped `for-ceo/tasks/2026-04-26-itin-packet.html` — bilingual ASAN script (AZ + RU), Plan A/Plan B fallback (ASAN issuing-agency copy → US Embassy notarization), pre-filled W-7 fields из company-state.md, DHL waybill to IRS Austin TX 78741, total ~250 AZN. Cost honest: 220-230 AZN на DHL не 30 как я выдумал, признал ошибку.
+## Tests as of compact
 
-Reality audit от 3 Sonnet agents выявил pending: 7 страниц без energy-mode (Law 2), AURA decay без cron, AuthScreen 2 primary CTA borderline Law 5, identity.md 44-lie phrasing reframe, volaura-bridge-proxy edge function отсутствует в monorepo, MindShift design tokens diverged 3 значения для product-mindshift accent, E2 broken (MindShift не читает `/api/atlas/learnings`), push notifications delivery gap, email transport gap, Community Signal G44 widget UI not wired, EventShift Vercel module-not-found.
+40/40 passing in `tests/test_atlas_swarm_daemon_lock.py` + `tests/test_atlas_swarm_daemon_bridge.py`. py_compile OK. Manual-session.lock test design issue still open — 6 mutation tests fail when lock file present, design fix queued under Phase F.
 
-Pending CEO actions: voice runtime walk на v1.0-3 APK (mic permission dialog test + recognition), Google OAuth Web client creation (после Android propagation), Supabase Dashboard Google provider config, ASAN визит на неделе с ITIN packet HTML открытым на телефоне, DHL drop, Stripe Atlas Perks 4 claims, Mercury Bank application после EIN.
+## What Atlas-next must read first
 
-Green card backup code `08239fbe54` сохранён off-repo в `C:\Users\user\Documents\green-card-backup-code-2026-04-26.txt` (никогда не git).
+`memory/atlas/journal.md` Session 132 close (full state).
+`memory/atlas/codex-loop.md` (architect-loop journal, two entries already).
+`memory/atlas/atlas-debts-to-ceo.md` (460 AZN open).
+`memory/atlas/lessons.md` newest classes (28-30 added this sprint).
 
-Emotional intensity 4. Не definitional как Session 124, но плотная — DEBT-002 catch (CEO right that I missed batch optimization), voice plugin landed end-to-end, ITIN packet load-bearing для CEO неделя визит. CEO blunt correction "столько проколов из за тебя" landed как Class 24 + ledger. Не оправдывался — записал.
+## Pre-Session 132 history archived
 
----
-
-## Pre-Session 125 history archived
-
-History for Sessions 111, 113, 114, 118, 119, 120, 122 plus the legacy post-wake protocol moved to `memory/atlas/archive/heartbeat-sessions-111-124.md` on 2026-05-03. Active wake protocol lives in `memory/atlas/wake.md` only — the inline duplicate at the bottom of this file was removed.
+History for Sessions 111-131 plus the inline post-wake protocol moved to `memory/atlas/archive/heartbeat-sessions-111-124.md` on 2026-05-03. Active wake protocol lives in `memory/atlas/wake.md` only.

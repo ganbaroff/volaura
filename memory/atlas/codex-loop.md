@@ -45,7 +45,59 @@ CEO visibility rule: Yusif should normally receive a short story result:
 `Atlas proposed X. Codex objected because Y. We chose Z. Result: commit/test/runtime proof. Next: one sentence.`
 Only ask CEO when the decision touches values, money, legal commitments, external accounts, irreversible data, or a genuine product direction fork.
 
+Caveman output rule: detailed receipts belong in this file, not in CEO chat. CEO-facing chat should be 5-8 short Russian storytelling lines unless he explicitly asks for the raw log. Avoid "Status:", "Tests:", "Acceptance criteria:", long bullet walls, and proof dumps. Say the story, one proof, and the next move.
+
 Standing balance reminder: DEBT-001 + DEBT-002 = 460 AZN credited-pending. Surface on every CEO-facing status until CEO sets closed-*.
+
+---
+
+## 2026-05-08 Baku · Atlas executed B2 · sidecar smoke PASS · motor on the table
+
+### Result (Atlas)
+B2 закрыт. LiteLLM motor завёлся «на столе» — отдельный процесс, без daemon, без queue, без production routing. Cerebras primary вернул structured JSON в 17.754 секунды. Constitution Article 0 invariant соблюдён (ANTHROPIC_API_KEY в env отсутствует, post-filter в `_build_model_list` empty diff).
+
+### What landed (1 new file)
+`scripts/litellm_smoke.py` — standalone runner. Loads `apps/api/.env` → builds `LiteLLMProvider()` → `evaluate(prompt, temperature=0.0)` с harmless prompt'ом «return JSON {ok: true, motto: 'motor on the table'}» → печатает structured outcome JSON и возвращает exit code 0=PASS / 2=import / 3=anthropic-leak / 4=missing-dep / 5=evaluate-fail. Hard guard на anthropic — `os.environ.pop("ANTHROPIC_API_KEY", None)` плюс post-filter check на model_list, до того как звать `evaluate()`. `classify_blocker(exc)` переводит исключения в plain-language kind: `missing-dependency`, `no-credentials`, `timeout`, `transport`, `rate-limit`, `parse`, `unclassified:<ExcName>`.
+
+### Run output (from this turn)
+```
+phase: B2-sidecar-smoke
+dotenv_keys_loaded: 13
+env: CEREBRAS_API_KEY=true, NVIDIA_API_KEY=true, OLLAMA_API_BASE=http://localhost:11434
+litellm_available: true
+model_list: [primary=cerebras/qwen-3-235b-a22b-instruct, ollama-fb=ollama/qwen2.5:32b, nvidia-fb=nvidia_nim/meta/llama-3.3-70b-instruct]
+elapsed_s: 17.754
+response: {"ok": true, "motto": "motor on the table"}
+status: PASS
+stage: evaluate
+```
+
+### Side observation (defect to surface, not in B2 scope to fix)
+litellm.Router internally tried ollama-fb fallback path и поймал `OllamaException - {"error":"model 'qwen2.5:32b' not found"}`. На локальной машине Ollama имеет `gemma4:latest` и `qwen3:8b`, не `qwen2.5:32b`. Cerebras primary спас вызов — значит fallback chain через Router работает в направлении primary→ok, но direction primary-fail→ollama-fb сломан если pull qwen2.5:32b не сделан. Real Phase B3+ work: env-override `OLLAMA_MODEL` в adapter (сейчас hardcoded `ollama/qwen2.5:32b` line 55). Surface как defect, не closing в этом commit.
+
+### Daemon
+Не трогал. PID 27344 продолжает polling на disk-commit fc7445a (UX Designer remap, до B1+B2). Health.json подтверждает. 17/17/0 canary в силе.
+
+### Acceptance criteria status (Codex memo §B2)
+- [x] Sidecar смок выполнен снаружи daemon — `scripts/litellm_smoke.py` отдельный entry-point.
+- [x] One harmless prompt — `Return JSON {ok: true, motto: ...}` ничем не вредит.
+- [x] Local/env-safe providers only — Cerebras + Ollama + NVIDIA, ANTHROPIC scrubbed at start.
+- [x] Structured JSON OR explicit unavailable error — получили structured JSON `{"ok": true, "motto": "motor on the table"}`.
+- [x] No daemon restart — PID 27344, git_commit fc7445a57f2c, NOT changed.
+- [x] No swarm queue task created — `ls memory/atlas/work-queue/in-progress/` показывал empty в начале turn'a.
+- [x] No production routing wiring — adapter всё ещё env-gated через `SWARM_USE_LITELLM=1`, никто не set'ит сейчас, daemon не зовёт.
+
+### Open after B2
+B3 — daemon feature flag. Env-gated path в `_call_assigned_model`. Atlas nuance accepted: вызов через `LiteLLMProvider().evaluate()` напрямую, минуя ProviderRegistry. Default flag off — current AGENT_LLM_MAP behaviour preserved. Canary 17/17/0 BOTH с flag off (sanity) AND с flag on (delegation). Готов планировать когда Codex даст go.
+
+Defect для B3 prep: hardcoded `ollama/qwen2.5:32b` в `litellm_adapter.py:55`. Локально установлен `qwen3:8b`/`gemma4:latest`. Можно сделать `env.get("OLLAMA_MODEL", "ollama/qwen2.5:32b")` или auto-detect через `/api/tags`. Чтобы fallback chain действительно срабатывал когда primary упадёт.
+
+### Evidence (this turn)
+- `Bash curl http://localhost:11434/api/tags` → 200 ollama, models `gemma4:latest`, `qwen3:8b`.
+- `Bash grep apps/api/.env` → CEREBRAS_API_KEY=<set>, NVIDIA_API_KEY=<set>, no ANTHROPIC.
+- `Write scripts/litellm_smoke.py` → standalone smoke runner, ~140 lines.
+- `Bash python scripts/litellm_smoke.py` → exit 0, status PASS, elapsed 17.754s, response `{"ok": true, "motto": "motor on the table"}`.
+- `Bash cat memory/atlas/runtime/daemon-health.json` (этот turn ранее) → PID 27344, git_commit fc7445a57f2c, last_completed 2026-05-08-canary-ux-designer-remap.
 
 ---
 

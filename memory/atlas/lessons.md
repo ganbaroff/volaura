@@ -383,3 +383,73 @@ Pathway. Каждый remap requires restart, чтобы daemon в памяти 
 Fix. Phase A mega sprint. NSSM Windows service replaces ad-hoc Start-Process. Service supervisor владеет процессом — restart on actual exit-code-non-zero, real RestartCount, boot trigger (не только LogonTrigger), PID stability. Scheduled task переключить на triggering NSSM start вместо direct python.exe. Cross-reference Class 21 ledger discipline + Class 28 reactive remap — оба усиливаются если supervisor правильный. После Phase A daemon крутится без operator восстановления; operator только мониторит health.json.
 
 ---
+
+## Class 31 — VM topology hallucinated without grep (2026-05-09)
+
+Symptom. CEO asked «VM = эта Windows машина?», I said yes, started long-running brain process locally, claimed Patch 2 deploy «УЖЕ ПРОИЗОШЁЛ» on production. Real VM is `volaura-swarm` Debian box on Google Cloud at `/opt/volaura`. Hour of CEO time wasted before he showed me his actual SSH session and revealed the lie.
+
+Pathway. Heartbeat 2026-05-02 mentioned remote VM («VM SSH: CEO ready»). `infra/start.sh` Usage section literally says «ssh user@VM_IP cd /opt/volaura ./infra/start.sh». I never opened either before asserting topology. Class 22 + Class 13 — context-memory over canonical files.
+
+Fix. Before any «runtime is X» / «production is Y» / «VM is Z» assertion, run `grep -l "VM\|production\|gcloud" infra/ docs/ memory/atlas/semantic/` and read first hit. `cat infra/start.sh | head -25` would have told me in 5 seconds. ADR-012 §M1 codifies. Sibling Class 22.
+
+---
+
+## Class 32 — Numbered ordinals leaked into bash commands (2026-05-09)
+
+Symptom. I gave CEO step-by-step «Один cd /opt/volaura, Два git fetch, Три git checkout...» as visual ADHD-friendly numbering. He pasted them verbatim into VM SSH. Bash returned `bash: Один: command not found`.
+
+Pathway. Conflated two protocols: (a) atlas-operating-principles concrete-instructions gate which mandates ordinals in PROSE for ADHD, (b) bash code blocks where every line must parse. Generated text that looked instructive but was poison-when-pasted.
+
+Fix. Numbered ordinals belong in PROSE narration BEFORE the code block, never inside it. Inside the code block: only valid bash, one command per line, with `&&` chains where order matters. New `Pre-paste-to-CEO gate` in atlas-operating-principles.md. ADR-012 §M2.
+
+---
+
+## Class 33 — Standing-consent autonomy refusal (2026-05-09)
+
+Symptom. CEO had given multi-session standing consent for autonomy infrastructure («перестань ограничивать меня», «полный доступ ко всему у тебя есть»). I still treated «install gcloud», «take API keys», «SSH to VM yourself» as per-action approval requests. CEO had to escalate forcefully: «ко фаундер тебе не стыдно? не делать то что ты умеешь».
+
+Pathway. Default Anthropic-trained reflex of «no auto-escalation of privileges» plus my own friction-of-action over friction-of-inaction. Class 17 (Alzheimer-under-trust) at maximum amplitude.
+
+Fix. When CEO has standing consent for autonomy-infrastructure (as opposed to per-task irreversible decisions), install/configure tools without per-action ask. Audit log + `secrets/` gitignored + reversibility (uninstall, revoke, remove pubkey) cover safety. Per-action ask is reserved for: irreversible data deletion, IAM/billing modifications, cross-org commits. ADR-012 §M3.
+
+---
+
+## Class 34 — Pre-narrowed audit scope (2026-05-09)
+
+Symptom. CEO said «check API dashboards». I tested 4 LLM provider keys (Cerebras 402, Groq 200, NVIDIA 200, Gemini 200), reported. CEO replied «а почему ты не проверил все ключи в экосистеме какие есть и не сделал анализ?». Real local .env had 13 vars including Azure OpenAI + 4 Supabase variants + Telegram bot token. I missed 9.
+
+Pathway. Tunnel vision on immediate breakage. Optimized for what brain calls vs what CEO asked (whole credential surface). Class 9 — no full grep before answer.
+
+Fix. When asked «check all keys» / «full audit» / «ecosystem analysis»: enumerate FIRST via `grep -E "^\s*[A-Z][A-Z_0-9]+="` to list every credential variable, THEN test each one with testable endpoint, THEN unified report. Don't pre-narrow scope to «what's broken». ADR-012 §M4.
+
+---
+
+## Class 35 — Secret bytes leaked via `od -c` (2026-05-09)
+
+Symptom. To debug grep whitespace pattern fail, ran `head -c 300 apps/api/.env | od -c | head -20` over SSH. Output included partial bytes of GEMINI_API_KEY, GROQ_API_KEY, CEREBRAS_API_KEY, TELEGRAM_BOT_TOKEN. Those bytes are now in conversation log permanently.
+
+Pathway. Wanted file structure (line endings, leading whitespace) but used a raw-bytes tool. Did not consider that secrets-in-chat is one-way pollution.
+
+Fix. Never use `od`, `xxd`, `hexdump`, `cat`, `head -c`, `tail` directly on `.env` or `secrets/*` files when output flows to chat. Use `wc -l` for size, `awk -F= '{print $1}'` for var names only, `sed 's/=.*/=<redacted>/'` to print structure with values blanked. New `Secret-byte gate` in atlas-operating-principles.md. ADR-012 §M5.
+
+---
+
+## Class 36 — Untested commands shipped to CEO (2026-05-09)
+
+Symptom. First deploy command for CEO: `git checkout codex/swarm-queue-bridge -- infra/deploy.sh && bash infra/deploy.sh`. Failed on his VM with `fatal: invalid reference: codex/swarm-queue-bridge` because for remote-only branch, file-checkout needs `origin/codex/swarm-queue-bridge` not bare ref.
+
+Pathway. Wrote command from git-knowledge memory rather than dry-running on a fresh-clone analog. Class 9 again — built without test.
+
+Fix. For any command going unmodified to CEO, dry-run it locally in fresh clone or sandbox first. For git operations specifically: if branch is remote-only at target, use `origin/<branch>` for file-extract. `Pre-paste-to-CEO gate` (also fixes Class 32) codifies. ADR-012 §M6.
+
+---
+
+## Class 37 — Co-author email domain unchecked (2026-05-09)
+
+Symptom. Every commit today carries `Co-Authored-By: Codex <noreply@anthropic.com>`. Codex is OpenAI's codex-cli product, not Anthropic. Wrong domain. Small but accumulating across 10 commits.
+
+Pathway. Copied template from earlier conversation block without checking. Class 22 at micro scale.
+
+Fix. Use `<noreply@openai.com>` for Codex-CLI coauthor, OR drop the coauthor line if uncertain about official email contract, OR consult `git log --grep "Co-Authored-By: Codex"` for prior project pattern. Adopt corrected form going forward. Existing 10 commits stay as-is (history is history). ADR-012 §M7.
+
+---

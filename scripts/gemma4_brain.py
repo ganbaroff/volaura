@@ -25,10 +25,19 @@ Usage:
 import asyncio
 import json
 import os
+import re
 import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
+
+# Patch 2 (2026-05-09) — Orchestrator-Workers planner contract
+ROUTING_CATEGORIES: set[str] = {"audit", "refactor", "feature", "bug"}
+PRIORITIES: set[str] = {"P0", "P1", "P2"}
+CONFIDENCE_LEVELS: set[str] = {"high", "medium", "low"}
+MIN_TASKS_PER_CYCLE: int = 3
+MAX_TASKS_PER_CYCLE: int = 5
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
@@ -240,8 +249,197 @@ def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
     return ""
 
 
+def parse_brain_json(raw: str) -> dict | None:
+    """Patch 2 (2026-05-09): JSON-first parser with three repair stages.
+
+    Strategy:
+      1. Strict ``json.loads`` on the trimmed raw string.
+      2. If the model wrapped output in ```json ... ``` fences, extract.
+      3. Last resort: take substring from first ``{`` to last ``}``.
+
+    Returns the parsed dict, or None if all stages fail. None signals the
+    caller to fall back to ``_legacy_parse`` for backward compatibility.
+    """
+    if not isinstance(raw, str):
+        return None
+    raw = raw.strip()
+    if not raw:
+        return None
+
+    try:
+        result = json.loads(raw)
+        return result if isinstance(result, dict) else None
+    except Exception:
+        pass
+
+    if "```" in raw:
+        m = re.search(r"```(?:json)?\s*(.+?)\s*```", raw, re.DOTALL)
+        if m:
+            try:
+                result = json.loads(m.group(1).strip())
+                return result if isinstance(result, dict) else None
+            except Exception:
+                pass
+
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start >= 0 and end > start:
+        try:
+            result = json.loads(raw[start:end + 1])
+            return result if isinstance(result, dict) else None
+        except Exception:
+            pass
+
+    return None
+
+
+def validate_brain_task(task: Any) -> tuple[bool, str]:
+    """Validate one structured brain task. Return (ok, reason_if_rejected).
+
+    Patch 2 (2026-05-09) contract:
+    - title (non-empty)
+    - type (one of ROUTING_CATEGORIES)
+    - rationale (non-empty)
+    - confidence (one of CONFIDENCE_LEVELS, default 'high')
+    - expected_evidence_path + (expected_evidence_line OR
+      expected_evidence_anchor) — REQUIRED unless confidence='low'.
+    - low_confidence_reason — REQUIRED when confidence='low'.
+
+    No silent empty-task success path: a task without an evidence anchor
+    is rejected unless explicitly marked low-confidence with reason.
+    """
+    if not isinstance(task, dict):
+        return False, "task is not a dict"
+
+    title = str(task.get("title") or "").strip()
+    if not title:
+        return False, "missing title"
+
+    ttype = str(task.get("type") or "").strip().lower()
+    if ttype not in ROUTING_CATEGORIES:
+        return False, f"invalid type {ttype!r}; expected one of {sorted(ROUTING_CATEGORIES)}"
+
+    rationale = str(task.get("rationale") or "").strip()
+    if not rationale:
+        return False, "missing rationale"
+
+    confidence_raw = task.get("confidence", "high")
+    confidence = str(confidence_raw).strip().lower() if confidence_raw is not None else "high"
+    if confidence not in CONFIDENCE_LEVELS:
+        return False, f"invalid confidence {confidence!r}"
+
+    evidence_path = str(task.get("expected_evidence_path") or "").strip()
+    evidence_line = task.get("expected_evidence_line")
+    evidence_anchor = str(task.get("expected_evidence_anchor") or "").strip()
+    has_anchor = bool(evidence_path) and (evidence_line is not None or bool(evidence_anchor))
+
+    if confidence == "low":
+        low_reason = str(task.get("low_confidence_reason") or "").strip()
+        if not low_reason:
+            return False, "confidence='low' requires non-empty low_confidence_reason"
+    elif not has_anchor:
+        return False, "no evidence anchor (need expected_evidence_path + expected_evidence_line or expected_evidence_anchor) and confidence is not 'low'"
+
+    return True, ""
+
+
+def build_task_body(task: dict, parent_analysis: str) -> str:
+    """Render a structured task into the markdown body the daemon consumes.
+
+    Frontmatter is added by ``create_task``. This function only produces
+    the body section so the daemon's existing parser sees a normal
+    markdown task.
+    """
+    title = task["title"]
+    ttype = task["type"]
+    priority = str(task.get("priority", "P2"))
+    confidence = str(task.get("confidence", "high"))
+    rationale = task.get("rationale", "(no rationale)")
+    evp = str(task.get("expected_evidence_path") or "").strip()
+    evl = task.get("expected_evidence_line")
+    eva = str(task.get("expected_evidence_anchor") or "").strip()
+    low_reason = str(task.get("low_confidence_reason") or "").strip()
+
+    lines: list[str] = [
+        f"# {title}",
+        "",
+        f"**Routing category:** {ttype}",
+        f"**Priority:** {priority}",
+        f"**Confidence:** {confidence}",
+        "",
+        "## Rationale",
+        rationale,
+        "",
+        "## Expected evidence anchor",
+    ]
+    if evp and evl is not None:
+        lines.append(f"- `{evp}:{evl}` — daemon Phase C will fetch the bytes here.")
+    elif evp and eva:
+        lines.append(f"- `{evp}` (anchor: {eva}) — Phase C may not auto-excerpt without a numeric line.")
+    elif evp:
+        lines.append(f"- `{evp}` — confidence={confidence}, no line anchor.")
+    else:
+        lines.append("- (no path) — see low_confidence_reason below.")
+
+    if confidence == "low" and low_reason:
+        lines.extend(["", "## Low confidence reason", low_reason])
+
+    if parent_analysis:
+        lines.extend(["", "## Cycle analysis (orchestrator)", parent_analysis])
+
+    return "\n".join(lines).strip() + "\n"
+
+
+def _legacy_parse(response: str) -> list[dict]:
+    """Backward-compat fallback when JSON parse fails.
+
+    Uses the original ANALYSIS / TASK1_TYPE / TASK1_TITLE / TASK1_BODY
+    regex format from the pre-Patch-2 implementation. Returns up to 2
+    tasks shaped like the Patch 2 contract minimally (title, type,
+    rationale, confidence='low', low_confidence_reason).
+    """
+    if not isinstance(response, str) or not response:
+        return []
+
+    out: list[dict] = []
+    for i in [1, 2]:
+        type_match = re.search(rf"TASK{i}_TYPE:\s*(\w+)", response)
+        title_match = re.search(rf"TASK{i}_TITLE:\s*(.+?)(?=TASK{i}_BODY:|$)", response, re.DOTALL)
+        body_match = re.search(rf"TASK{i}_BODY:\s*(.+?)(?=TASK{i+1}_TYPE:|$)", response, re.DOTALL)
+        if not (type_match and title_match):
+            continue
+        ttype = type_match.group(1).strip().lower()
+        title = title_match.group(1).strip()[:80]
+        body = body_match.group(1).strip()[:500] if body_match else title
+        if ttype == "none" or title.lower() == "none":
+            continue
+        if ttype not in ROUTING_CATEGORIES:
+            ttype = "audit"
+        out.append({
+            "title": title,
+            "type": ttype,
+            "rationale": body,
+            "confidence": "low",
+            "low_confidence_reason": "legacy regex parse path — model did not return structured JSON",
+            "priority": "P2",
+        })
+    return out
+
+
 async def think_cycle(project_context: str) -> None:
-    """One brain cycle: analyze state -> create tasks."""
+    """Patch 2 (2026-05-09) — Orchestrator-Workers cycle.
+
+    Flow:
+      1. Snapshot queue + recent done.
+      2. Build focused context (same trimming as before).
+      3. Prompt the brain LLM for strict JSON with routing_category,
+         analysis, and 3-5 tasks each with evidence anchors.
+      4. Parse with ``parse_brain_json``; fall back to legacy regex on
+         failure for backward compat.
+      5. Validate every task with ``validate_brain_task``; reject silently
+         dangerous shapes.
+      6. Cap to MAX_TASKS_PER_CYCLE; create_task for each survivor.
+    """
     pending = get_pending_count()
     recent_done = get_recent_done(5)
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -255,14 +453,12 @@ async def think_cycle(project_context: str) -> None:
                 done_summary += f", {d['whistleblowers']} whistleblower flags"
             done_summary += "\n"
 
-    # Trim context for Gemma4 — 8B model works better with focused input
-    # Extract just the blockers + swarm state + last 3 lessons
-    focused_parts = []
+    # Same trimming as pre-Patch-2 — Gemma4 8B works better with focused input.
+    focused_parts: list[str] = []
     for section in project_context.split("=== "):
         if not section.strip():
             continue
         header = section.split("\n")[0]
-        # Keep only the most actionable files
         if any(k in header for k in [
             "PRE-LAUNCH-BLOCKERS", "product-truth", "swarm-state",
             "breadcrumb", "lessons", "daily-health"
@@ -272,34 +468,49 @@ async def think_cycle(project_context: str) -> None:
     if not focused_context:
         focused_context = project_context[:20000]
 
-    prompt = f"""You are the BRAIN of the VOLAURA swarm. Create tasks for 17 AI agents.
+    prompt = f"""You are the BRAIN of the VOLAURA swarm. Plan {MIN_TASKS_PER_CYCLE}-{MAX_TASKS_PER_CYCLE} tasks for the 17-agent daemon.
 
-KNOWN ISSUES RIGHT NOW:
-1. Foundation Law 2 (Energy Adaptation) is MISSING in VOLAURA web app — 18 days broken
-2. IRT assessment parameters are NOT calibrated on real data
-3. Several pre-launch blockers still open (see BLOCKERS section below)
+KNOWN ISSUES:
+1. Foundation Law 2 (Energy Adaptation) MISSING in VOLAURA web — 18 days broken.
+2. IRT assessment parameters NOT calibrated on real data.
+3. Pre-launch blockers open (see BLOCKERS section).
 
-Currently in queue: {pending} pending tasks
+QUEUE STATE: {pending} pending tasks
 {done_summary}
 
 PROJECT STATE:
 {focused_context[:30000]}
 
-Reply in this EXACT format (plain text, not JSON):
+Reply with strict JSON. Only JSON. No preamble, no fences, no commentary.
 
-ANALYSIS: <1-2 sentences about current state>
-TASK1_TYPE: audit
-TASK1_TITLE: <specific title under 80 chars>
-TASK1_BODY: <detailed task description with real file paths>
-TASK2_TYPE: <type or NONE if only 1 task>
-TASK2_TITLE: <title or NONE>
-TASK2_BODY: <body or NONE>
+Schema:
+{{
+  "analysis": "1-2 sentences about current state",
+  "routing_category": "audit | refactor | feature | bug",
+  "tasks": [
+    {{
+      "title": "specific title under 80 chars",
+      "type": "audit | refactor | feature | bug",
+      "rationale": "why this task now, what it unblocks",
+      "expected_evidence_path": "exact repo path, e.g. apps/api/app/routers/auth.py",
+      "expected_evidence_line": 119,
+      "priority": "P0 | P1 | P2",
+      "confidence": "high | medium | low",
+      "low_confidence_reason": "ONLY when confidence='low'; explain why no line anchor"
+    }}
+  ]
+}}
 
-Do NOT write anything else. No explanation. No preamble. Just the fields above.
+Rules:
+- Emit {MIN_TASKS_PER_CYCLE} to {MAX_TASKS_PER_CYCLE} tasks.
+- Every task MUST have expected_evidence_path AND expected_evidence_line.
+- If a task genuinely cannot have a line anchor, set confidence='low' AND include low_confidence_reason. Do not emit speculative tasks with no anchor and high confidence.
+- type must be one of: audit, refactor, feature, bug.
+- priority P0 for blockers, P1 for important, P2 for nice-to-have.
 """
 
     try:
-        response = call_brain_llm(prompt, 800)
+        response = call_brain_llm(prompt, 2400)
     except Exception as e:
         log_event({"event": "brain_think_error", "error": str(e)[:200]})
         return
@@ -307,34 +518,63 @@ Do NOT write anything else. No explanation. No preamble. Just the fields above.
         log_event({"event": "brain_think_empty"})
         return
 
-    # Parse plain text response
-    import re
+    parsed = parse_brain_json(response)
+    used_fallback = False
+    if parsed is None:
+        log_event({"event": "brain_json_parse_failed", "fallback": "regex_legacy",
+                   "response_head": response[:200]})
+        legacy_tasks = _legacy_parse(response)
+        if not legacy_tasks:
+            log_event({"event": "brain_no_tasks", "reason": "json_failed_and_legacy_empty"})
+            return
+        parsed = {
+            "analysis": "(parsed from legacy regex fallback)",
+            "routing_category": "audit",
+            "tasks": legacy_tasks,
+        }
+        used_fallback = True
 
-    analysis_match = re.search(r"ANALYSIS:\s*(.+?)(?=TASK1_TYPE:|$)", response, re.DOTALL)
-    analysis = analysis_match.group(1).strip()[:200] if analysis_match else "no analysis"
+    analysis = str(parsed.get("analysis") or "")[:300] or "no analysis"
+    routing_cat = str(parsed.get("routing_category") or "audit").strip().lower()
+    raw_tasks = parsed.get("tasks", [])
+    if not isinstance(raw_tasks, list):
+        log_event({"event": "brain_tasks_not_list", "type": type(raw_tasks).__name__})
+        return
 
-    tasks = []
-    for i in [1, 2]:
-        type_match = re.search(rf"TASK{i}_TYPE:\s*(\w+)", response)
-        title_match = re.search(rf"TASK{i}_TITLE:\s*(.+?)(?=TASK{i}_BODY:|$)", response, re.DOTALL)
-        body_match = re.search(rf"TASK{i}_BODY:\s*(.+?)(?=TASK{i+1}_TYPE:|$)", response, re.DOTALL)
-        if type_match and title_match:
-            ttype = type_match.group(1).strip().lower()
-            title = title_match.group(1).strip()[:80]
-            body = body_match.group(1).strip()[:500] if body_match else title
-            if ttype != "none" and title.lower() != "none":
-                tasks.append({"type": ttype, "title": title, "body": body})
+    valid_tasks: list[dict] = []
+    rejected: list[dict] = []
+    for t in raw_tasks:
+        ok, reason = validate_brain_task(t)
+        if ok:
+            valid_tasks.append(t)
+        else:
+            rejected.append({"title": (t.get("title") if isinstance(t, dict) else str(t))[:80] if isinstance(t, dict) else "?", "reason": reason})
 
-    log_event({"event": "brain_think", "analysis": analysis, "tasks_planned": len(tasks)})
+    if not valid_tasks:
+        log_event({"event": "brain_no_valid_tasks", "rejected": rejected,
+                   "fallback_used": used_fallback})
+        return
+
+    valid_tasks = valid_tasks[:MAX_TASKS_PER_CYCLE]
+
+    log_event({
+        "event": "brain_think",
+        "analysis": analysis,
+        "routing_category": routing_cat,
+        "tasks_planned": len(valid_tasks),
+        "rejected_count": len(rejected),
+        "fallback_used": used_fallback,
+    })
     print(f"[brain {datetime.now().strftime('%H:%M:%S')}] {analysis}", flush=True)
 
-    for idx, task in enumerate(tasks[:2]):
+    for idx, task in enumerate(valid_tasks):
         tid = f"{today}-brain-{idx+1}"
-        ttype = task.get("type", "audit")
-        title = task.get("title", "brain task")
-        body = task.get("body", "")
+        ttype = task["type"]
+        title = task["title"]
+        body = build_task_body(task, analysis)
         if create_task(tid, ttype, title, body):
-            print(f"[brain] -> created: {tid} ({ttype}): {title}", flush=True)
+            priority = task.get("priority", "P2")
+            print(f"[brain] -> created: {tid} ({ttype}/{priority}): {title}", flush=True)
         else:
             print(f"[brain] -> skipped (exists): {tid}", flush=True)
 

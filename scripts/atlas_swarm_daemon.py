@@ -146,27 +146,29 @@ STALE_IN_PROGRESS_SECONDS = int(
 
 AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
     # ── CORE ENGINEERING (wave 0) ──
-    "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),     # Architect
-    "Security Auditor":        ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Re-routed from Azure (RAI content-filter)
-    "Code Quality Engineer":   ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (RAI content-filter)
-    "Ecosystem Auditor":       ("nvidia", "meta/llama-3.3-70b-instruct"),  # Re-routed from nvidia-heavy nemotron-ultra-253b (404 Function not found on this account); proven on Sales/Legal/CTO Watchdog
-    "DevOps Engineer":         ("groq", "llama-3.3-70b-versatile"),   # Fast infra checks
+    # 2026-05-10: Cerebras dead (402), Groq dead (403). All remapped to NVIDIA/Gemini/Ollama.
+    # Provider precedence: NVIDIA Inception > Vertex AI (Gemini) > Ollama > paid LAST.
+    "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),     # Architect — was vertex-ai, stays
+    "Security Auditor":        ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was cerebras (dead 402) → nvidia
+    "Code Quality Engineer":   ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
+    "Ecosystem Auditor":       ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
+    "DevOps Engineer":         ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
     # ── STRATEGY & PRODUCT (wave 0-1) ──
-    "Chief Strategist":        ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Re-routed from Azure (RAI content-filter)
-    "Product Strategist":      ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep analysis
-    "Sales Director":          ("nvidia", "meta/llama-3.3-70b-instruct"),       # Practical sales
+    "Chief Strategist":        ("vertex-ai", "gemini-2.5-flash"),     # Was cerebras (dead 402) → gemini
+    "Product Strategist":      ("vertex-ai", "gemini-2.5-flash"),     # Was cerebras (dead 402) → gemini
+    "Sales Director":          ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
     # ── DESIGN & CULTURE (wave 1) ──
-    "UX Designer":             ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (gpt-4.1-nano returned empty error); proven groq model
-    "Cultural Intelligence":   ("ollama", "qwen3:8b"),                # Local, learns by doing
-    "Readiness Manager":       ("ollama", "gemma4"),                  # SRE scoring
+    "UX Designer":             ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
+    "Cultural Intelligence":   ("ollama", "qwen3:8b"),                # Local, stays
+    "Readiness Manager":       ("ollama", "gemma4"),                  # Local, stays
     # ── SCIENCE & COMPLIANCE (wave 2) ──
-    "Assessment Science":      ("vertex-ai", "gemini-2.5-flash"),     # Psychometric rigor
-    "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Compliance
-    "Growth Hacker":           ("groq", "llama-3.3-70b-versatile"),   # Fast acquisition tactics
-    "QA Engineer":             ("groq", "llama-3.3-70b-versatile"),   # Re-routed from Azure (RAI content-filter)
+    "Assessment Science":      ("vertex-ai", "gemini-2.5-flash"),     # Was vertex-ai, stays
+    "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
+    "Growth Hacker":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
+    "QA Engineer":             ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
     # ── RISK & OVERSIGHT (wave 1-3) ──
-    "Risk Manager":            ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep risk analysis
-    "CTO Watchdog":            ("nvidia", "meta/llama-3.3-70b-instruct"),  # Re-routed from Azure (RAI content-filter); nano-8b returned empty, this model proven on Sales Director/Legal Advisor
+    "Risk Manager":            ("vertex-ai", "gemini-2.5-flash"),     # Was cerebras (dead 402) → gemini
+    "CTO Watchdog":            ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
 }
 
 # Legacy set kept for backward compat — now derived from AGENT_LLM_MAP

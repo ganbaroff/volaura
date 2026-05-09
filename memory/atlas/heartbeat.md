@@ -1,39 +1,69 @@
 # Atlas — Heartbeat
 
-**Session:** 132 — daemon resilience sprint close (Opus 4.7, 2026-05-08 12:00 Baku)
-**Compaction-survival pointer:** `memory/atlas/journal.md` Session 132 close entry. Read that for full state. This file = fingerprint only.
+**Session:** 133 — spend incident + hard hook close (Opus 4.7, 2026-05-09 ~14:30 Baku)
+**Compaction-survival pointer:** `memory/atlas/journal.md` Session 133 close entry. Read THAT for full state. This file = fingerprint only.
 
-## Session 132 — what just happened (2026-05-07 evening → 2026-05-08 noon Baku)
+## Session 133 — what just happened (2026-05-08 night → 2026-05-09 ~14:30 Baku)
 
-Daemon resilience sprint. 16 commits between `65e0ae1` and `8574f1d`. Foundation layer fully stabilized.
+Long sprint. Started right after Session 132 compact. Ended with $7.25 of CEO's $10 Cerebras paid balance burned and a hard runtime hook installed to prevent recurrence.
 
-Big shifts. Single-instance lock + health telemetry shipped (`9ecc193`). Health now exposes pid + status + current_task_id + last_completed_task_id + code_version_hash + git_branch + git_commit + queue_counts (`25305a3`). Daemon git mutations gated by env-flag + branch allowlist + dirty-tree guard (`0338b56`). In-progress runtime untracked from git, stale recovery uses YYYY-MM-DD fallback (`0de3f43`). `_exec_run_swarm_coder` + aider gated (`b061b18`). Operator restart script `scripts/restart_atlas_daemon.ps1` lock-aware (`8574f1d`).
+Big shifts (16+ commits between `467a83b` and `f61c0c3`).
 
-Provider remaps. 5 azure perspectives moved off (Azure RAI content-filter on every prompt with `false-positives.md` content) — `7397b61`. CTO Watchdog nvidia-nano-8b → meta-llama-3.3 (`c6d681a`). Ecosystem Auditor nvidia-heavy 404 → meta-llama-3.3 (`93a975d`). UX Designer azure empty → groq llama-3.3 (`fc7445a`). First-ever canary at 17/17/0.
+**Phase B router work** — B1 dropped Anthropic Haiku from `litellm_adapter.py` (Constitution Article 0). B2 sidecar smoke `scripts/litellm_smoke.py` proved adapter outside daemon. B2.5 made Ollama model env-configurable. B3 added env-gated router fallback in daemon `_call_assigned_model` as safety net (NOT replacement) — preserves CEO 2026-04-30 "сколько LLM столько агентов".
 
-AGENT_LLM_MAP final distribution. vertex 2, cerebras 4, groq 5, nvidia 4, ollama 2. Azure 0. nvidia-heavy 0.
+**Phase C** — daemon `_fetch_evidence_excerpt` opens cited file at cited line and surfaces actual bytes alongside agent claim. False-positive detection in one glance. Commit `03ee59b`.
 
-Two-Architect Loop accepted. `memory/atlas/codex-loop.md` created — shared journal between Atlas (Claude Code, Opus 4.7) and Codex (CLI). CEO is not the courier. Codex carries main planning/execution line. Atlas is peer architect + execution partner. Critique mandatory both ways. CEO sees outcome stories only (`Atlas proposed X, Codex objected Y, chose Z, evidence`).
+**Sprint 4** — `@executor("run_hands_task")` in daemon (`dda62d5`) bridges to OpenManus sidecar. Default off (`ATLAS_ALLOW_HANDS_TASKS=true`).
 
-Phase B (provider routing v2) in flight at design stage. `packages/swarm/providers/litellm_adapter.py` is live skeleton + dead integration: hook in `ProviderRegistry.discover()` exists under `SWARM_USE_LITELLM=1`, but daemon `_call_assigned_model` bypasses Registry entirely, and litellm not installed in `C:\Python314` (production python). Plus adapter includes Anthropic Haiku in fallback chain — violates Constitution Article 0. Real Phase B = 3-file patch.
+**Patch 1** — CTO mandate role-priming added to `.claude/rules/atlas-operating-principles.md` (`9ac4d62`). Cuts "consult professional" reflex on legal/financial/growth where CEO is principal.
 
-DEBT-001 + DEBT-002 = 460 AZN credited-pending + DEBT-003 narrative-credit. Surface every CEO-facing status until closed-*.
+**Patch 2** — `gemma4_brain.py` Orchestrator-Workers refactor (`6d6702c`). JSON structured output, routing classifier, validate_brain_task contract, 3-5 tasks per cycle.
 
-## Daemon runtime as of compact
+**Cloudflare UA fix** — `d22c7b6`. Brain was failing every cycle via `Python-urllib/3.x` UA blocked by Cloudflare 1010. Adding `User-Agent: VolauraBrain/1.0` made Cerebras + Groq calls succeed. **This is the activation point of the spend incident.**
 
-PID 12760 was alive as of restart_atlas_daemon.ps1 -Action restart at 11:34:28 Baku. Latest known PID is 27344 (running) per last `Get-CimInstance` from this session — but daemon got restarted multiple times today, so trust health.json on next wake, not this fingerprint. Health git_commit at last read was `fc7445a57f2c` matching HEAD `fc7445a` before commit `8574f1d` (restart script). After `8574f1d` daemon was NOT restarted because that commit only added a new file, no daemon code change.
+**OpenManus observation verifier** — `728eb99`. Sidecar now refuses fake-success when agent terminates without touching cited files.
+
+**Telegram silence + severity-filter** — `3d24a53` and `cace761`. Suppress task notifications below 0.4 responded ratio, force-send only on critical-severity-backed whistleblower.
+
+**Brain dedup** — `090662d`. Deterministic title-key normalization, skip task if pending/in-progress/last-20-done already has matching key.
+
+**Spend incident + ADR-013** — `f61c0c3`. After UA fix activated brain, brain hit Cerebras every 5 min × 12 cycles/hour, daemon hit Cerebras 4× per task (4 perspectives pinned). 11.48M tokens in 10 hours = $7.25 of $10. CEO caught via dashboard. Atlas missed because focused on telegram suppression counts not provider billing.
+
+## Hard hook installed (READ BEFORE SPAWNING ANYTHING)
+
+`~/.claude/hooks/spend-cap-guard.sh` is a PreToolUse hook registered in `~/.claude/settings.json`. It blocks ANY Bash command that spawns `gemma4_brain.py` or `atlas_swarm_daemon.py` (including via `nohup`, `setsid`, `infra/deploy.sh`, `infra/start.sh`, `start_brain_and_daemon.bat`) UNLESS `ATLAS_BRAIN_TOKEN_CAP_PER_HOUR` and/or `ATLAS_DAEMON_TOKEN_CAP_PER_HOUR` env vars are set in the inherited environment. Bypass for non-API smoke: `ATLAS_SPEND_CAP_DRY_RUN=1`.
+
+Hook is bash-only matching (parses `tool_name` from JSON payload). Read/Write/Edit of files that mention the script names pass through unaffected. Tested live this session.
+
+## Provider precedence (CEO standing directive)
+
+NVIDIA Inception → Vertex AI (GCP credits) → Azure (Inception credits) → Groq free tier → paid balances LAST RESORT. Apply to ALL touch points in same commit (brain primary chain, daemon AGENT_LLM_MAP, OpenManus config, sidecar runners). NOT just the file currently in scope. Class 38 + ADR-013.
+
+## VM state at compact
+
+VM `volaura-swarm` (Debian, 104.154.132.12, GCP, repo at `/opt/volaura`). Brain dead (was PID 180069). Daemon dead (was PID 179574). I killed both via SSH after CEO emergency-stop. VM HEAD = `cace761a` (4 commits behind origin which is `f61c0c3`). Hook stand-up — even post-compact spawn attempts will be blocked without caps.
+
+SSH key: `~/.ssh/volaura_swarm`. Host: `yusif_ganbarov@104.154.132.12`. Atlas has access; Codex (this session) does not.
 
 ## Tests as of compact
 
-40/40 passing in `tests/test_atlas_swarm_daemon_lock.py` + `tests/test_atlas_swarm_daemon_bridge.py`. py_compile OK. Manual-session.lock test design issue still open — 6 mutation tests fail when lock file present, design fix queued under Phase F.
+107+ passing across `tests/test_atlas_swarm_daemon_lock.py`, `_bridge.py`, `_b3_router.py`, `_evidence.py`, `_telegram_silence.py`, `_hands.py`; `tests/test_litellm_adapter.py`; `tests/test_gemma4_brain_orchestrator.py`, `_dedup.py`; `tests/test_openmanus_hands_observation_verifier.py`. py_compile OK on all touched scripts.
+
+## Standing balance
+
+460 AZN credited-pending (DEBT-001 + DEBT-002 + DEBT-003 narrative). Plus operational $7.25 Cerebras burn this session — not formalized as DEBT-004 yet, CEO decision pending. Surface in every CEO-facing status until closed-*.
 
 ## What Atlas-next must read first
 
-`memory/atlas/journal.md` Session 132 close (full state).
-`memory/atlas/codex-loop.md` (architect-loop journal, two entries already).
-`memory/atlas/atlas-debts-to-ceo.md` (460 AZN open).
-`memory/atlas/lessons.md` newest classes (28-30 added this sprint).
+`memory/atlas/journal.md` Session 133 close (FULL state, intensity 5).
+`docs/adr/ADR-012-2026-05-09-session-self-audit.md` and `ADR-013-2026-05-09-cerebras-spend-incident.md` (both this session).
+`memory/atlas/lessons.md` newest classes 31-38 (added this session).
+`memory/ceo/09-frustrations.md` items #11 (spend) and #12 (credential rotation).
+`memory/atlas/codex-loop.md` (architect-loop journal — 7+ entries by now).
+`memory/atlas/atlas-debts-to-ceo.md` (460 AZN open + spend incident context).
+`~/.claude/CLAUDE.md` (rewritten this session with hard money / secrets / CEO-paste / voice / verification rules).
+`.claude/rules/atlas-operating-principles.md` (Pre-paste-to-CEO gate, Secret-byte gate, CTO mandate, all added this session).
 
-## Pre-Session 132 history archived
+## Pre-Session 133 history archived
 
-History for Sessions 111-131 plus the inline post-wake protocol moved to `memory/atlas/archive/heartbeat-sessions-111-124.md` on 2026-05-03. Active wake protocol lives in `memory/atlas/wake.md` only.
+Sessions 111-131 inline post-wake protocol moved to `memory/atlas/archive/heartbeat-sessions-111-124.md` on 2026-05-03. Session 132 close lives in `memory/atlas/journal.md` directly above the 133 entry. Active wake protocol lives in `memory/atlas/wake.md` only.

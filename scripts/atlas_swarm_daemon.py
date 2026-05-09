@@ -2516,7 +2516,11 @@ def _should_send_telegram(responded: int, dispatched: int, crits: int, flags_cou
       if crits > 0 (a CRITICAL finding always warrants attention even if
       most perspectives failed).
     - ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER (truthy, default true) — send
-      anyway if flags_count > 0.
+      anyway if flags_count > 0. Note: caller must pass the SEVERITY-
+      FILTERED whistleblower count here (only flags from perspectives
+      that also produced critical/P0/blocker findings). Bare flag=True
+      whistleblowers without backing critical finding are info noise
+      and should NOT bypass the silence threshold.
     - ATLAS_NOTIFY_DISABLE (truthy, default false) — kill switch, suppress
       all telegram regardless of state. For maintenance windows.
 
@@ -2562,8 +2566,13 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
     flags = [f for f in summary.get("whistleblower_flags", [])
              if f.get("flag") and f["flag"] != "null"]
 
-    # Count critical findings
+    # Count critical findings AND remember which perspectives produced one,
+    # so a bare `flag: True` from a perspective without supporting critical
+    # finding does NOT bypass silence threshold (CEO directive 2026-05-09 via
+    # Codex: «whistleblower должен пробивать silence threshold лишь если там
+    # реально critical/P0/blocker»).
     crits = 0
+    crit_perspectives: set[str] = set()
     verdicts: dict[str, int] = {}
     for p in summary.get("perspectives", []):
         raw = p.get("raw", "")
@@ -2574,12 +2583,28 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
                 continue
         v = str(raw.get("overall_verdict", raw.get("vote", "?"))).lower()
         verdicts[v] = verdicts.get(v, 0) + 1
+        perspective_has_crit = False
         for f in raw.get("findings", []):
             if isinstance(f, dict) and str(f.get("severity", "")).lower() in ("critical", "p0", "block"):
                 crits += 1
+                perspective_has_crit = True
+        if perspective_has_crit:
+            crit_perspectives.add(str(p.get("perspective", "")))
 
-    # Silence threshold gate (CEO directive 2026-05-09 via Codex)
-    should_send, suppress_reason = _should_send_telegram(responded, dispatched, crits, len(flags))
+    # A whistleblower flag is severity-critical only when the same perspective
+    # also produced at least one critical/P0/blocker finding. Bare flag=True
+    # without backing finding is treated as info noise.
+    critical_flags = [
+        f for f in flags
+        if str(f.get("perspective", "")) in crit_perspectives
+    ]
+
+    # Silence threshold gate (CEO directive 2026-05-09 via Codex). flags_count
+    # arg is the SEVERITY-FILTERED count, not the raw count, so non-critical
+    # whistleblowers no longer bypass the silence threshold.
+    should_send, suppress_reason = _should_send_telegram(
+        responded, dispatched, crits, len(critical_flags)
+    )
     if not should_send:
         log_event({
             "event": "telegram_report_suppressed",
@@ -2587,7 +2612,8 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
             "responded": responded,
             "dispatched": dispatched,
             "critical_findings": crits,
-            "whistleblower_flags": len(flags),
+            "whistleblower_flags_total": len(flags),
+            "whistleblower_flags_critical": len(critical_flags),
             "reason": suppress_reason,
         })
         # Still run PostHog analytics below; just skip the send + sent log

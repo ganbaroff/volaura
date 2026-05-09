@@ -136,3 +136,57 @@ def test_force_critical_off_allows_suppress(monkeypatch):
     monkeypatch.setenv("ATLAS_NOTIFY_MIN_RESPONDED_RATIO", "0.4")
     ok, _ = daemon._should_send_telegram(responded=2, dispatched=17, crits=10, flags_count=10)
     assert not ok  # critical and whistleblower both ignored, ratio dominates
+
+
+# ── Severity-filtered whistleblower (CEO directive 2026-05-09) ──────────────
+# These tests document the semantic shift: flags_count parameter is now the
+# SEVERITY-FILTERED count of whistleblowers, not the raw count. Bare flag=True
+# from a perspective without backing critical finding does NOT bypass silence
+# threshold anymore.
+
+def test_noncritical_whistleblower_does_not_force_send(monkeypatch):
+    """Caller filters whistleblowers to only those backed by critical
+    findings. If filtered count is 0, the whistleblower override does NOT
+    fire even with force_whistle=true. This is the noise reduction the CEO
+    asked for: Risk Manager / Security Auditor saying flag=True without
+    backing severity does not wake the operator."""
+    daemon = _load_daemon()
+    monkeypatch.delenv("ATLAS_NOTIFY_DISABLE", raising=False)
+    monkeypatch.setenv("ATLAS_NOTIFY_FORCE_ON_CRITICAL", "true")
+    monkeypatch.setenv("ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER", "true")
+    monkeypatch.setenv("ATLAS_NOTIFY_MIN_RESPONDED_RATIO", "0.4")
+    # 4 raw whistleblowers but caller filtered to 0 critical-backed → suppress.
+    # This simulates the daemon's _telegram_report after the new severity
+    # filter: critical_flags = [f for f in flags if perspective in crit_perspectives]
+    ok, reason = daemon._should_send_telegram(
+        responded=4, dispatched=17, crits=0, flags_count=0
+    )
+    assert not ok
+    assert "ratio" in reason
+
+
+def test_critical_backed_whistleblower_forces_send(monkeypatch):
+    """When at least one whistleblower is from a perspective that produced
+    a critical finding, the gate fires per CEO intent."""
+    daemon = _load_daemon()
+    monkeypatch.delenv("ATLAS_NOTIFY_DISABLE", raising=False)
+    monkeypatch.setenv("ATLAS_NOTIFY_FORCE_ON_CRITICAL", "true")
+    monkeypatch.setenv("ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER", "true")
+    # 1 critical-backed flag → send even with very poor responded ratio.
+    ok, _ = daemon._should_send_telegram(
+        responded=2, dispatched=17, crits=0, flags_count=1
+    )
+    assert ok
+
+
+def test_critical_finding_alone_forces_send_even_no_whistleblower(monkeypatch):
+    """If a perspective produced a critical finding without raising a
+    whistleblower flag, force_critical alone still triggers the send."""
+    daemon = _load_daemon()
+    monkeypatch.delenv("ATLAS_NOTIFY_DISABLE", raising=False)
+    monkeypatch.setenv("ATLAS_NOTIFY_FORCE_ON_CRITICAL", "true")
+    monkeypatch.setenv("ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER", "false")
+    ok, _ = daemon._should_send_telegram(
+        responded=1, dispatched=17, crits=1, flags_count=0
+    )
+    assert ok

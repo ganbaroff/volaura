@@ -126,7 +126,89 @@ def filter_agent_tools(agent: Any, allowed_tool_names: set[str]) -> list[str]:
     return sorted(collection.tool_map)
 
 
-async def run_openmanus(task: dict[str, Any], openmanus_root: Path) -> str:
+def _extract_tool_call_trace(agent: Any) -> list[dict[str, Any]]:
+    """Best-effort extraction of tool-call trace from a Manus agent.
+
+    Used by the observation verifier (CEO directive 2026-05-09 "не давать
+    рукам врать"). Manus stores conversation in ``agent.memory.messages``;
+    each message may carry ``tool_calls`` whose name + arguments tell us
+    exactly which tool the model invoked. If the agent terminates without
+    invoking any file-touching tool, we can prove the success was empty.
+
+    Returns a list of {tool, args_excerpt} dicts. Returns empty list on any
+    failure — verifier treats empty trace as "no observation".
+    """
+    out: list[dict[str, Any]] = []
+    try:
+        msgs = getattr(agent, "memory", None)
+        msgs = getattr(msgs, "messages", None) or []
+        for m in msgs:
+            tool_calls = getattr(m, "tool_calls", None) or []
+            for tc in tool_calls:
+                fn = getattr(tc, "function", None)
+                name = getattr(fn, "name", "?") if fn is not None else "?"
+                args = getattr(fn, "arguments", "") if fn is not None else ""
+                out.append({"tool": name, "args_excerpt": str(args)[:300]})
+    except Exception:
+        return []
+    return out
+
+
+_FILE_OBSERVATION_TOOLS: set[str] = {
+    # OpenManus / Manus tool names that actually touch a file or URL.
+    # Anything outside this set does not count as "observation" for the
+    # verifier — terminate, plan, ask_human, etc are bookkeeping not work.
+    "str_replace_editor",
+    "str_replace_based_edit_tool",
+    "browser_use",
+    "python_execute",
+    "web_search",
+    "create_chat_completion",
+}
+
+
+_OBSERVATION_VERBS: tuple[str, ...] = (
+    "read", "open", "observe", "inspect", "load", "fetch", "scan",
+    "summarise", "summarize", "review", "check", "audit", "extract",
+)
+
+
+def verify_observation(task: dict[str, Any], trace: list[dict[str, Any]]) -> tuple[bool, str]:
+    """Decide whether a 'success' actually involved touching the cited objects.
+
+    Returns ``(passed, reason_if_failed)``.
+
+    Heuristic:
+    - If task instruction mentions any observation verb (read/open/etc) AND
+      the trace contains zero file-touching tool calls, the agent lied.
+    - If task explicitly opts out via ``task["skip_observation_verifier"] = True``,
+      always pass.
+    - If instruction has no observation verb (e.g. content-draft tasks where
+      the agent should just write something from prompt context), no
+      observation is required — pass.
+    """
+    if task.get("skip_observation_verifier") is True:
+        return True, ""
+
+    instruction = str(task.get("instruction") or "").lower()
+    if not any(v in instruction for v in _OBSERVATION_VERBS):
+        return True, ""
+
+    file_touch_count = sum(
+        1 for entry in trace if entry.get("tool") in _FILE_OBSERVATION_TOOLS
+    )
+    if file_touch_count == 0:
+        return False, (
+            "required_files_not_observed: instruction asked the agent to "
+            "read/observe a file or URL but the trace contains zero file-touching "
+            "tool calls. Most likely the agent invoked terminate immediately "
+            "without doing the work."
+        )
+    return True, ""
+
+
+async def run_openmanus(task: dict[str, Any], openmanus_root: Path) -> tuple[str, list[dict[str, Any]]]:
+    """Run Manus agent and return (final_text, tool_call_trace)."""
     if not openmanus_root.exists():
         raise FileNotFoundError(f"OpenManus root not found: {openmanus_root}")
     if str(openmanus_root) not in sys.path:
@@ -137,11 +219,15 @@ async def run_openmanus(task: dict[str, Any], openmanus_root: Path) -> str:
     prompt = build_guarded_prompt(task)
     agent = await Manus.create()
     filter_agent_tools(agent, set(task["allowed_tools"]))
+    trace: list[dict[str, Any]] = []
     try:
-        return await asyncio.wait_for(
+        run_text = await asyncio.wait_for(
             agent.run(prompt),
             timeout=float(task.get("max_seconds", 180)),
         )
+        # Capture trace BEFORE cleanup wipes agent.memory.
+        trace = _extract_tool_call_trace(agent)
+        return run_text, trace
     finally:
         with contextlib.suppress(Exception):
             await agent.cleanup()
@@ -161,13 +247,36 @@ async def execute_task(task: dict[str, Any], out_dir: Path, openmanus_root: Path
         "output_dir": str(out_dir),
     }
     try:
-        run_text = await run_openmanus(task, openmanus_root)
-        result.update({
-            "status": "success",
-            "finished_at": utc_now(),
-            "elapsed_s": round(time.time() - started, 3),
-            "result_text": run_text,
-        })
+        run_text, trace = await run_openmanus(task, openmanus_root)
+        # CEO directive 2026-05-09 «не давать рукам врать»: a Manus agent that
+        # calls terminate() without touching any cited file or URL did not
+        # actually do the work. The verifier flips status to failed in that
+        # case so downstream consumers don't treat fake success as real.
+        observed_ok, obs_reason = verify_observation(task, trace)
+        if observed_ok:
+            result.update({
+                "status": "success",
+                "finished_at": utc_now(),
+                "elapsed_s": round(time.time() - started, 3),
+                "result_text": run_text,
+                "trace_summary": trace,
+                "trace_observation_count": sum(
+                    1 for e in trace if e.get("tool") in _FILE_OBSERVATION_TOOLS
+                ),
+                "trace_total_tool_calls": len(trace),
+            })
+        else:
+            result.update({
+                "status": "failed",
+                "finished_at": utc_now(),
+                "elapsed_s": round(time.time() - started, 3),
+                "error_type": "required_files_not_observed",
+                "error": obs_reason,
+                "result_text": run_text,
+                "trace_summary": trace,
+                "trace_observation_count": 0,
+                "trace_total_tool_calls": len(trace),
+            })
         return result
     except Exception as exc:  # noqa: BLE001 - sidecar must classify all failures
         result.update({

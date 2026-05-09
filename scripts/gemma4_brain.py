@@ -146,12 +146,146 @@ def get_recent_done(n: int = 5) -> list[dict]:
     return results
 
 
-def create_task(task_id: str, task_type: str, title: str, body: str) -> bool:
-    """Drop a task file for the daemon to pick up."""
+_DEDUP_STOP_WORDS: set[str] = {
+    # Articles / particles
+    "the", "a", "an", "in", "on", "at", "to", "of", "for", "with", "from",
+    "via", "by", "and", "or", "as", "into", "across", "per",
+    # Weak verbs Brain LLM tends to alternate between cycles
+    "fix", "audit", "verify", "check", "review", "ensure", "restore",
+    "calibrate", "implement", "address", "handle", "resolve", "enforce",
+    "validate", "test", "perform", "do", "make", "ensure",
+    # Soft modifiers and container nouns brain alternates between
+    "compliance", "violation", "issue", "flow", "logic", "rules", "data",
+    "real", "live", "current", "system", "systemic", "core", "main",
+    "section", "checklist", "blockers", "blocker", "task", "tasks",
+    # Platform/UI noise — same task gets phrased "in web" / "in web UI" /
+    # "in VOLAURA web" by the brain LLM across cycles. Treat as noise.
+    "ui", "ux", "web", "frontend", "backend", "volaura", "platform",
+    "app", "application", "component", "components", "page", "pages",
+    "module", "modules",
+    # File-extension token noise after punctuation strip
+    "md", "tsx", "ts", "js", "json", "yaml", "yml", "py", "html", "css",
+    "toml", "config", "configuration",
+}
+
+
+def _normalize_title_key(title: str) -> str:
+    """Deterministic dedup key for a brain task title.
+
+    Lowercase, strip punctuation, drop stop-words and weak verbs, sort the
+    remaining content tokens, and join with single space. Two titles that
+    differ only by article/punctuation/weak-verb wording collapse to the
+    same key. CEO directive 2026-05-09 (Codex relay): tupoy slой first,
+    semantic similarity layered later only if dupes still leak.
+    """
+    if not isinstance(title, str):
+        return ""
+    cleaned = re.sub(r"[^\w\s]", " ", title.lower())
+    tokens = [
+        t.strip()
+        for t in cleaned.split()
+        if t.strip() and t.strip() not in _DEDUP_STOP_WORDS
+    ]
+    return " ".join(sorted(tokens))
+
+
+_DEDUP_DONE_LOOKBACK: int = 20  # last N done dirs to scan
+
+
+def _existing_task_keys() -> set[str]:
+    """Collect normalized title keys from pending, in-progress, and recent done.
+
+    Brain calls this before each create_task to decide whether the proposed
+    task is a near-duplicate of work already on the queue or recently
+    completed. Cheap directory scan, runs once per cycle.
+    """
+    keys: set[str] = set()
+
+    def _harvest_md_dir(d: Path) -> None:
+        if not d.exists():
+            return
+        for p in d.glob("*.md"):
+            try:
+                head = p.read_text(encoding="utf-8")[:500]
+            except Exception:
+                continue
+            for line in head.splitlines():
+                if line.lower().startswith("title:"):
+                    title = line.split(":", 1)[1].strip()
+                    keys.add(_normalize_title_key(title))
+                    break
+
+    _harvest_md_dir(PENDING)
+    in_progress = QUEUE / "in-progress"
+    _harvest_md_dir(in_progress)
+
+    if DONE.exists():
+        for task_dir in sorted(DONE.iterdir(), reverse=True)[:_DEDUP_DONE_LOOKBACK]:
+            # Done directories may store the original task either as
+            # <task_id>.md inside the dir, or under task.json.
+            md = task_dir / f"{task_dir.name}.md"
+            if md.exists():
+                try:
+                    head = md.read_text(encoding="utf-8")[:500]
+                    for line in head.splitlines():
+                        if line.lower().startswith("title:"):
+                            title = line.split(":", 1)[1].strip()
+                            keys.add(_normalize_title_key(title))
+                            break
+                    continue
+                except Exception:
+                    pass
+            tj = task_dir / "task.json"
+            if tj.exists():
+                try:
+                    data = json.loads(tj.read_text(encoding="utf-8"))
+                    title = str(data.get("title", "")).strip()
+                    if title:
+                        keys.add(_normalize_title_key(title))
+                except Exception:
+                    pass
+
+    keys.discard("")
+    return keys
+
+
+def create_task(
+    task_id: str,
+    task_type: str,
+    title: str,
+    body: str,
+    seen_keys: set[str] | None = None,
+) -> bool:
+    """Drop a task file for the daemon to pick up.
+
+    If ``seen_keys`` is provided, the task title's normalized key is checked
+    against that set BEFORE writing. A match → skip the task and emit
+    ``brain_task_dedup_skipped`` event. The caller is expected to update
+    ``seen_keys`` after a successful create so subsequent calls in the same
+    cycle don't emit duplicates either.
+
+    Returns True if the task was newly created, False if skipped (either
+    file already exists or normalized title already in ``seen_keys``).
+    """
     PENDING.mkdir(parents=True, exist_ok=True)
     task_file = PENDING / f"{task_id}.md"
     if task_file.exists():
-        return False  # dedup
+        return False  # exact-id dedup (already on queue)
+
+    if seen_keys is not None:
+        norm = _normalize_title_key(title)
+        if norm and norm in seen_keys:
+            log_event({
+                "event": "brain_task_dedup_skipped",
+                "task_id": task_id,
+                "title": title,
+                "normalized_key": norm,
+                "reason": "title key matches existing pending / in-progress / recent done task",
+            })
+            return False
+        if norm:
+            seen_keys.add(norm)
+
     content = f"""---
 type: {task_type}
 title: {title}
@@ -559,6 +693,11 @@ Rules:
 
     valid_tasks = valid_tasks[:MAX_TASKS_PER_CYCLE]
 
+    # Build the dedup key set ONCE per cycle (CEO directive 2026-05-09 via
+    # Codex: deterministic dedup first, semantic later only if needed).
+    seen_keys = _existing_task_keys()
+    pre_existing = len(seen_keys)
+
     log_event({
         "event": "brain_think",
         "analysis": analysis,
@@ -566,19 +705,30 @@ Rules:
         "tasks_planned": len(valid_tasks),
         "rejected_count": len(rejected),
         "fallback_used": used_fallback,
+        "dedup_existing_keys": pre_existing,
     })
     print(f"[brain {datetime.now().strftime('%H:%M:%S')}] {analysis}", flush=True)
 
+    skipped_dedup = 0
     for idx, task in enumerate(valid_tasks):
         tid = f"{today}-brain-{idx+1}"
         ttype = task["type"]
         title = task["title"]
         body = build_task_body(task, analysis)
-        if create_task(tid, ttype, title, body):
+        if create_task(tid, ttype, title, body, seen_keys=seen_keys):
             priority = task.get("priority", "P2")
             print(f"[brain] -> created: {tid} ({ttype}/{priority}): {title}", flush=True)
         else:
-            print(f"[brain] -> skipped (exists): {tid}", flush=True)
+            skipped_dedup += 1
+            print(f"[brain] -> skipped (dedup or exists): {tid}: {title}", flush=True)
+
+    if skipped_dedup:
+        log_event({
+            "event": "brain_dedup_summary",
+            "tasks_planned": len(valid_tasks),
+            "tasks_skipped": skipped_dedup,
+            "tasks_created": len(valid_tasks) - skipped_dedup,
+        })
 
 
 async def main():

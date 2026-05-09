@@ -298,39 +298,108 @@ perspectives: all
     return True
 
 
-def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
-    """Call brain LLM. Tries: Cerebras (cloud, free) -> Ollama (local) -> Groq (cloud).
+def _try_groq(prompt: str, max_tokens: int) -> str | None:
+    """Provider 1 (default first per ADR-013). Free tier, llama-3.3-70b."""
+    key = os.getenv("GROQ_API_KEY", "")
+    if not key:
+        return None
+    try:
+        import urllib.request
+        payload = json.dumps({
+            "model": "llama-3.3-70b-versatile",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.4,
+            "max_tokens": max_tokens,
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.groq.com/openai/v1/chat/completions",
+            data=payload,
+            headers={"Content-Type": "application/json",
+                     "Authorization": f"Bearer {key}",
+                     "User-Agent": "VolauraBrain/1.0"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = json.loads(resp.read())
+            content = data["choices"][0]["message"]["content"]
+            log_event({"event": "brain_llm_call", "provider": "groq", "model": "llama-3.3-70b"})
+            return content
+    except Exception as e:
+        log_event({"event": "brain_llm_failed", "provider": "groq", "error": str(e)[:150]})
+        return None
 
-    CEO: "без даемона тоже можно" — brain works on VM without GPU via cloud API.
-    """
-    # Try 1: Cerebras (Qwen3-235B, free, smarter than Gemma4 8B)
-    cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
-    if cerebras_key:
-        try:
-            import urllib.request
-            payload = json.dumps({
-                "model": "qwen-3-235b-a22b-instruct-2507",
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.4,
-                "max_tokens": max_tokens,
-            }).encode()
-            req = urllib.request.Request(
-                "https://api.cerebras.ai/v1/chat/completions",
-                data=payload,
-                headers={"Content-Type": "application/json",
-                         "Authorization": f"Bearer {cerebras_key}",
-                         "User-Agent": "VolauraBrain/1.0"},
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                data = json.loads(resp.read())
-                content = data["choices"][0]["message"]["content"]
-                log_event({"event": "brain_llm_call", "provider": "cerebras", "model": "qwen-3-235b"})
+
+def _try_gemini(prompt: str, max_tokens: int) -> str | None:
+    """Provider 2 — Google credits backed (Vertex/Gemini API). Default fallback after Groq."""
+    key = os.getenv("GEMINI_API_KEY", "")
+    if not key:
+        return None
+    try:
+        import urllib.request
+        payload = json.dumps({
+            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": 0.4, "maxOutputTokens": max_tokens},
+        }).encode()
+        url = (
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+            "gemini-2.0-flash:generateContent?key=" + key
+        )
+        req = urllib.request.Request(
+            url,
+            data=payload,
+            headers={"Content-Type": "application/json",
+                     "User-Agent": "VolauraBrain/1.0"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = json.loads(resp.read())
+            candidates = data.get("candidates", [])
+            if not candidates:
+                raise ValueError("no candidates returned")
+            parts = candidates[0].get("content", {}).get("parts", [])
+            content = "".join(p.get("text", "") for p in parts)
+            if content:
+                log_event({"event": "brain_llm_call", "provider": "gemini", "model": "gemini-2.0-flash"})
                 return content
-        except Exception as e:
-            log_event({"event": "brain_llm_failed", "provider": "cerebras", "error": str(e)[:150]})
+            raise ValueError("empty content from gemini")
+    except Exception as e:
+        log_event({"event": "brain_llm_failed", "provider": "gemini", "error": str(e)[:150]})
+        return None
 
-    # Try 2: Ollama local (Gemma4, if available — CEO's RTX 5060)
+
+def _try_nvidia(prompt: str, max_tokens: int) -> str | None:
+    """Provider 3 — NVIDIA Inception credits. Free tier through NIM."""
+    key = os.getenv("NVIDIA_API_KEY", "")
+    if not key:
+        return None
+    try:
+        import urllib.request
+        payload = json.dumps({
+            "model": "meta/llama-3.3-70b-instruct",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.4,
+            "max_tokens": max_tokens,
+        }).encode()
+        req = urllib.request.Request(
+            "https://integrate.api.nvidia.com/v1/chat/completions",
+            data=payload,
+            headers={"Content-Type": "application/json",
+                     "Authorization": f"Bearer {key}",
+                     "User-Agent": "VolauraBrain/1.0"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = json.loads(resp.read())
+            content = data["choices"][0]["message"]["content"]
+            log_event({"event": "brain_llm_call", "provider": "nvidia", "model": "meta-llama-3.3-70b"})
+            return content
+    except Exception as e:
+        log_event({"event": "brain_llm_failed", "provider": "nvidia", "error": str(e)[:150]})
+        return None
+
+
+def _try_ollama(prompt: str, max_tokens: int) -> str | None:
+    """Provider 4 — Ollama local (Gemma4, CEO's RTX 5060 if running locally)."""
     try:
         import urllib.request
         payload = json.dumps({
@@ -353,34 +422,70 @@ def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
                 return content
     except Exception:
         pass
+    return None
 
-    # Try 3: Groq (Llama 70B, free tier)
-    groq_key = os.getenv("GROQ_API_KEY", "")
-    if groq_key:
-        try:
-            import urllib.request
-            payload = json.dumps({
-                "model": "llama-3.3-70b-versatile",
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.4,
-                "max_tokens": max_tokens,
-            }).encode()
-            req = urllib.request.Request(
-                "https://api.groq.com/openai/v1/chat/completions",
-                data=payload,
-                headers={"Content-Type": "application/json",
-                         "Authorization": f"Bearer {groq_key}",
-                         "User-Agent": "VolauraBrain/1.0"},
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                data = json.loads(resp.read())
-                content = data["choices"][0]["message"]["content"]
-                log_event({"event": "brain_llm_call", "provider": "groq", "model": "llama-3.3-70b"})
-                return content
-        except Exception as e:
-            log_event({"event": "brain_llm_failed", "provider": "groq", "error": str(e)[:150]})
 
+def _try_cerebras(prompt: str, max_tokens: int) -> str | None:
+    """Provider LAST — Cerebras paid balance. GATED off by default per ADR-013.
+
+    CEO directive 2026-05-09 after $7.25 of $10 paid balance burned in ten hours:
+    Cerebras must NOT be the first-tried provider. It must NOT be tried at all
+    unless ATLAS_ENABLE_CEREBRAS is explicitly set to "true" in the environment.
+    Default behaviour: silently skip Cerebras even when CEREBRAS_API_KEY is set.
+
+    Reference: docs/adr/ADR-013-2026-05-09-cerebras-spend-incident.md §a
+    """
+    if os.getenv("ATLAS_ENABLE_CEREBRAS", "").strip().lower() != "true":
+        log_event({"event": "brain_llm_skipped", "provider": "cerebras",
+                   "reason": "ATLAS_ENABLE_CEREBRAS not 'true' (ADR-013 default)"})
+        return None
+    key = os.getenv("CEREBRAS_API_KEY", "")
+    if not key:
+        return None
+    try:
+        import urllib.request
+        payload = json.dumps({
+            "model": "qwen-3-235b-a22b-instruct-2507",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.4,
+            "max_tokens": max_tokens,
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.cerebras.ai/v1/chat/completions",
+            data=payload,
+            headers={"Content-Type": "application/json",
+                     "Authorization": f"Bearer {key}",
+                     "User-Agent": "VolauraBrain/1.0"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = json.loads(resp.read())
+            content = data["choices"][0]["message"]["content"]
+            log_event({"event": "brain_llm_call", "provider": "cerebras",
+                       "model": "qwen-3-235b", "gated_by": "ATLAS_ENABLE_CEREBRAS=true"})
+            return content
+    except Exception as e:
+        log_event({"event": "brain_llm_failed", "provider": "cerebras", "error": str(e)[:150]})
+        return None
+
+
+def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
+    """Call brain LLM. Provider precedence per ADR-013 (CEO directive 2026-05-09):
+
+        Groq -> Gemini -> NVIDIA NIM -> Ollama (local) -> Cerebras (GATED)
+
+    Cerebras is paid balance and remains off-by-default to prevent token-burn
+    incidents like the 2026-05-09 $7.25/$10 burn. Set ATLAS_ENABLE_CEREBRAS=true
+    in the environment to permit attempting it as last resort. Default behaviour:
+    Cerebras is never called even when CEREBRAS_API_KEY is set.
+
+    Returns first non-empty content from the chain, or empty string if every
+    provider failed (or was skipped by gating).
+    """
+    for tryer in (_try_groq, _try_gemini, _try_nvidia, _try_ollama, _try_cerebras):
+        content = tryer(prompt, max_tokens)
+        if content:
+            return content
     log_event({"event": "brain_all_providers_failed"})
     return ""
 

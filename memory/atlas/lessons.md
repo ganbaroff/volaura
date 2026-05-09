@@ -444,6 +444,16 @@ Fix. For any command going unmodified to CEO, dry-run it locally in fresh clone 
 
 ---
 
+## Class 38 — Money-burned-on-disobeyed-provider-hierarchy (2026-05-09)
+
+Symptom. CEO topped up $10 Cerebras paid balance, then explicitly directed «используй NVIDIA/Azure/Vertex там кредиты, не Cerebras». Atlas switched OpenManus config Groq → NVIDIA (one tiny file) and called the directive done. Brain `call_brain_llm` primary remained Cerebras. Daemon AGENT_LLM_MAP kept 4 perspectives pinned to Cerebras (Security, Chief Strategist, Product Strategist, Risk Manager). UA fix at commit `d22c7b6` made brain actually work after weeks of silent Cloudflare 1010 fail. Brain then hit Cerebras every 5 min for 10 hours plus daemon hit Cerebras 4× per task. Burned $7.25 of $10 in ~10 hours. CEO caught via dashboard, Atlas didn't notice or warn.
+
+Pathway. Class 22 (path of least resistance) at architectural scope. Atlas pattern-matched «use NVIDIA» onto the file currently open in mind (OpenManus config) instead of treating it as a SYSTEM-WIDE provider precedence. Compound rate not throttled — multiple components hit the same paid provider in parallel. No spend cap, no token meter, no «watching dashboard while loop runs» discipline. Class 17 (Alzheimer-under-trust) compound: trusted CEO standing consent, ignored CEO standing constraint.
+
+Fix. Three layers. (1) Provider precedence rule: when CEO names credits-providers (NVIDIA, Vertex via GCP credits, Azure via Inception, etc), apply to ALL touch points — brain primary chain, daemon AGENT_LLM_MAP, OpenManus config, sidecar runners. Grep for the paid provider name across `scripts/`, `packages/swarm/`, `OpenManus/config/`, `apps/api/.env` and replace each. (2) Pre-restart spend gate: a hook that blocks any `python.*gemma4_brain.py` or `python.*atlas_swarm_daemon.py` spawn unless `ATLAS_BRAIN_TOKEN_CAP_PER_HOUR` and `ATLAS_DAEMON_TOKEN_CAP_PER_HOUR` env vars are set. Hard fail if missing. (3) Per-cycle spend reporter: brain logs token-spent estimate per cycle, daemon logs per task. Surfaces in next cycle's prompt context so brain self-throttles. ADR-013 codifies. Sibling Class 26 (verification-through-claim) and Class 28 (reactive remap loop).
+
+---
+
 ## Class 37 — Co-author email domain unchecked (2026-05-09)
 
 Symptom. Every commit today carries `Co-Authored-By: Codex <noreply@anthropic.com>`. Codex is OpenAI's codex-cli product, not Anthropic. Wrong domain. Small but accumulating across 10 commits.

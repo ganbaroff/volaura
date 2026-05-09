@@ -2500,6 +2500,53 @@ async def process_task(task_path: Path) -> None:
     await _telegram_report(task_id, meta, summary)
 
 
+def _should_send_telegram(responded: int, dispatched: int, crits: int, flags_count: int) -> tuple[bool, str]:
+    """Decide whether a swarm-task summary is worth a Telegram message.
+
+    CEO directive 2026-05-09 (Codex relay): suppress notifications when the
+    swarm essentially failed to produce a coherent answer. Spam is the #1
+    operator pain — 469 telegram messages in a single day where most carried
+    only "2/17 responded" and zero findings.
+
+    Override knobs (env-tunable):
+    - ATLAS_NOTIFY_MIN_RESPONDED_RATIO (float, default 0.4) — minimum
+      responded/dispatched ratio for a "normal" send. Below threshold the
+      message is suppressed.
+    - ATLAS_NOTIFY_FORCE_ON_CRITICAL (truthy, default true) — send anyway
+      if crits > 0 (a CRITICAL finding always warrants attention even if
+      most perspectives failed).
+    - ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER (truthy, default true) — send
+      anyway if flags_count > 0.
+    - ATLAS_NOTIFY_DISABLE (truthy, default false) — kill switch, suppress
+      all telegram regardless of state. For maintenance windows.
+
+    Returns (should_send: bool, reason_if_suppressed: str).
+    """
+    if str(os.getenv("ATLAS_NOTIFY_DISABLE", "0")).strip().lower() in ("1", "true", "yes", "on"):
+        return False, "ATLAS_NOTIFY_DISABLE=truthy"
+
+    force_critical = str(os.getenv("ATLAS_NOTIFY_FORCE_ON_CRITICAL", "true")).strip().lower() in ("1", "true", "yes", "on")
+    force_whistle = str(os.getenv("ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER", "true")).strip().lower() in ("1", "true", "yes", "on")
+
+    if force_critical and crits > 0:
+        return True, ""
+    if force_whistle and flags_count > 0:
+        return True, ""
+
+    try:
+        threshold = float(os.getenv("ATLAS_NOTIFY_MIN_RESPONDED_RATIO", "0.4"))
+    except ValueError:
+        threshold = 0.4
+    threshold = max(0.0, min(1.0, threshold))
+
+    if dispatched <= 0:
+        return False, "no perspectives dispatched"
+    ratio = responded / dispatched
+    if ratio < threshold:
+        return False, f"responded ratio {ratio:.2f} < threshold {threshold:.2f}"
+    return True, ""
+
+
 async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
     """Send concise task completion report to CEO via Telegram."""
     token = os.getenv("TELEGRAM_BOT_TOKEN", "")
@@ -2531,6 +2578,25 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
             if isinstance(f, dict) and str(f.get("severity", "")).lower() in ("critical", "p0", "block"):
                 crits += 1
 
+    # Silence threshold gate (CEO directive 2026-05-09 via Codex)
+    should_send, suppress_reason = _should_send_telegram(responded, dispatched, crits, len(flags))
+    if not should_send:
+        log_event({
+            "event": "telegram_report_suppressed",
+            "task_id": task_id,
+            "responded": responded,
+            "dispatched": dispatched,
+            "critical_findings": crits,
+            "whistleblower_flags": len(flags),
+            "reason": suppress_reason,
+        })
+        # Still run PostHog analytics below; just skip the send + sent log
+        # (PostHog block is below this function's return path? no — see end)
+        # Fall through past send so analytics still fires.
+        send_skipped = True
+    else:
+        send_skipped = False
+
     verdict_str = ", ".join(f"{v}={c}" for v, c in sorted(verdicts.items(), key=lambda x: -x[1])[:3])
 
     msg = f"Swarm [{task_type}]: {title}\n"
@@ -2542,23 +2608,25 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
         for fl in flags[:2]:
             msg += f"  {fl['perspective']}: {str(fl['flag'])[:80]}\n"
 
-    import urllib.request
-    import urllib.parse
-    try:
-        data = urllib.parse.urlencode({
-            "chat_id": chat_id,
-            "text": msg,
-            "disable_web_page_preview": "true",
-        }).encode()
-        req = urllib.request.Request(
-            f"https://api.telegram.org/bot{token}/sendMessage",
-            data=data, method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=10):
-            pass
-        log_event({"event": "telegram_report_sent", "task_id": task_id})
-    except Exception as e:
-        log_event({"event": "telegram_report_failed", "task_id": task_id, "error": str(e)[:100]})
+    if not send_skipped:
+        import urllib.request
+        import urllib.parse
+        try:
+            data = urllib.parse.urlencode({
+                "chat_id": chat_id,
+                "text": msg,
+                "disable_web_page_preview": "true",
+            }).encode()
+            req = urllib.request.Request(
+                f"https://api.telegram.org/bot{token}/sendMessage",
+                data=data, method="POST",
+                headers={"User-Agent": "VolauraDaemon/1.0"},
+            )
+            with urllib.request.urlopen(req, timeout=10):
+                pass
+            log_event({"event": "telegram_report_sent", "task_id": task_id})
+        except Exception as e:
+            log_event({"event": "telegram_report_failed", "task_id": task_id, "error": str(e)[:100]})
 
     # PostHog: track each perspective call as LLM analytics event
     for p in summary.get("perspectives", []):

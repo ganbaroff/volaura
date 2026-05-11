@@ -6,8 +6,8 @@ routing through LiteLLM's Router for unified fallback semantics.
 Enable via env var: SWARM_USE_LITELLM=1
 Disable (default): unset or SWARM_USE_LITELLM=0
 
-Fallback chain mirrors CLAUDE.md hierarchy:
-  Cerebras Qwen3-235B → Ollama local → NVIDIA NIM
+Fallback chain per ADR-013 (2026-05-09):
+  NVIDIA NIM (Inception credits) → Ollama local → Gemini Flash
 
 Constitution Article 0 (atlas_swarm_daemon.py:19): Anthropic Claude is FORBIDDEN
 as a swarm agent. The adapter MUST NOT route any prompt to anthropic/* models,
@@ -58,16 +58,17 @@ def _build_model_list(env: dict[str, str] | None = None) -> list[dict[str, Any]]
     env = env if env is not None else dict(os.environ)
     model_list: list[dict[str, Any]] = []
 
-    if env.get("CEREBRAS_API_KEY"):
+    # Priority 1: NVIDIA NIM (Inception credits, ADR-013 §a)
+    if env.get("NVIDIA_API_KEY"):
         model_list.append({
             "model_name": "primary",
             "litellm_params": {
-                "model": "cerebras/qwen-3-235b-a22b-instruct",
-                "api_key": env["CEREBRAS_API_KEY"],
+                "model": "nvidia_nim/meta/llama-3.3-70b-instruct",
+                "api_key": env["NVIDIA_API_KEY"],
             },
         })
 
-    # Ollama local — always attempt (no key needed, may be offline).
+    # Priority 2: Ollama local — always attempt (no key needed, may be offline).
     # Model is configurable via OLLAMA_MODEL because operators frequently pull
     # different local models. Default `ollama/qwen3:8b` matches the model that
     # is actually present on VOLAURA's primary workstation as of 2026-05-08
@@ -86,14 +87,17 @@ def _build_model_list(env: dict[str, str] | None = None) -> list[dict[str, Any]]
         },
     })
 
-    if env.get("NVIDIA_API_KEY"):
+    # Priority 3: Gemini Flash (Google free tier)
+    if env.get("GEMINI_API_KEY"):
         model_list.append({
-            "model_name": "nvidia-fb",
+            "model_name": "gemini-fb",
             "litellm_params": {
-                "model": "nvidia_nim/meta/llama-3.3-70b-instruct",
-                "api_key": env["NVIDIA_API_KEY"],
+                "model": "gemini/gemini-2.5-flash",
+                "api_key": env["GEMINI_API_KEY"],
             },
         })
+
+    # Cerebras removed — ADR-013 spend incident ($7.25 burn)
 
     # Constitution Article 0 enforcement: drop any anthropic/* even if a future
     # author re-introduces it above. Belt + suspenders.
@@ -121,7 +125,7 @@ def _build_router() -> "Router":
     model_list = _build_model_list()
 
     if not model_list:
-        raise RuntimeError("No LLM credentials found. Set at least one of: CEREBRAS_API_KEY, NVIDIA_API_KEY")
+        raise RuntimeError("No LLM credentials found. Set at least one of: NVIDIA_API_KEY, GEMINI_API_KEY")
 
     primary_name = model_list[0]["model_name"]
     fallback_names = [m["model_name"] for m in model_list[1:]]
@@ -160,7 +164,7 @@ class LiteLLMProvider(LLMProvider):
     def info(self) -> ProviderInfo:
         return ProviderInfo(
             name="litellm",
-            model="router/cerebras→ollama→nvidia",
+            model="router/nvidia→ollama→gemini",
             cost_per_mtok_input=0.0,
             cost_per_mtok_output=0.0,
             rate_limit_rpm=60,

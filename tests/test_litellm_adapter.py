@@ -1,39 +1,42 @@
 """Tests for packages/swarm/providers/litellm_adapter.py.
 
-Phase B1 — Constitution Article 0 enforcement.
+Phase B1 — Constitution Article 0 enforcement + ADR-013 provider hierarchy.
 
 Acceptance criteria (Codex memo 2026-05-08, codex-loop.md):
 - Built router model_list contains no `anthropic/*` model.
 - Router still includes at least one non-Anthropic route when env/local
   routes are available.
+- NVIDIA NIM is primary (ADR-013), Cerebras removed after spend incident.
 - Daemon untouched. Test does not import the daemon module.
 """
 from __future__ import annotations
 
-import importlib.util
 from pathlib import Path
 
 import pytest
 
 
 def _load_adapter_module():
-    """Load packages.swarm.providers.litellm_adapter from absolute path.
+    """Load packages.swarm.providers.litellm_adapter from the repo this test lives in.
 
-    Mirrors the importlib pattern used in test_atlas_swarm_daemon_lock.py so
-    these tests run cleanly from any CWD without requiring the package layout
-    to be on sys.path.
+    Uses the test file's own location to find the repo root, so it works
+    correctly in worktrees and CI — not just from the main repo checkout.
     """
-    repo_root = Path("C:/Projects/VOLAURA")
+    repo_root = Path(__file__).resolve().parent.parent
     script_path = repo_root / "packages" / "swarm" / "providers" / "litellm_adapter.py"
-    # Adapter does ``from ..swarm_types import ProviderInfo`` and
-    # ``from .base import LLMProvider`` — those resolve only when imported as a
-    # package. So go through the canonical package import.
+    assert script_path.exists(), f"Adapter file missing: {script_path}"
+
     import sys
     if str(repo_root) not in sys.path:
         sys.path.insert(0, str(repo_root))
-    from packages.swarm.providers import litellm_adapter as module
-    assert script_path.exists(), f"Adapter file missing: {script_path}"
-    return module
+
+    # Force reimport from the correct repo root
+    import importlib
+    if "packages.swarm.providers.litellm_adapter" in sys.modules:
+        mod = importlib.reload(sys.modules["packages.swarm.providers.litellm_adapter"])
+    else:
+        from packages.swarm.providers import litellm_adapter as mod
+    return mod
 
 
 # ── Pure model_list tests (no Router instantiation) ───────────────────────────
@@ -63,29 +66,39 @@ def test_model_list_with_anthropic_key_only_still_has_no_anthropic():
     assert any(m["model_name"] == "ollama-fb" for m in model_list)
 
 
-def test_model_list_with_cerebras_and_anthropic_keeps_cerebras_drops_anthropic():
+def test_model_list_with_nvidia_and_anthropic_keeps_nvidia_drops_anthropic():
+    """ADR-013: NVIDIA is primary. Anthropic always dropped."""
     adapter = _load_adapter_module()
     model_list = adapter._build_model_list(env={
-        "CEREBRAS_API_KEY": "sk-cb-test",
-        "ANTHROPIC_API_KEY": "sk-ant-test",
-    })
-    model_strings = [m["litellm_params"]["model"] for m in model_list]
-    assert any(s.startswith("cerebras/") for s in model_strings)
-    assert all(not s.startswith("anthropic/") for s in model_strings), model_strings
-
-
-def test_model_list_with_all_keys_has_cerebras_ollama_nvidia_no_anthropic():
-    adapter = _load_adapter_module()
-    model_list = adapter._build_model_list(env={
-        "CEREBRAS_API_KEY": "sk-cb-test",
         "NVIDIA_API_KEY": "nvapi-test",
         "ANTHROPIC_API_KEY": "sk-ant-test",
     })
     model_strings = [m["litellm_params"]["model"] for m in model_list]
-    assert any(s.startswith("cerebras/") for s in model_strings)
-    assert any(s.startswith("ollama/") for s in model_strings)
     assert any(s.startswith("nvidia_nim/") for s in model_strings)
     assert all(not s.startswith("anthropic/") for s in model_strings), model_strings
+
+
+def test_model_list_with_all_keys_has_nvidia_ollama_gemini_no_anthropic():
+    """Full key set: NVIDIA primary, Ollama fallback, Gemini fallback. No Anthropic."""
+    adapter = _load_adapter_module()
+    model_list = adapter._build_model_list(env={
+        "NVIDIA_API_KEY": "nvapi-test",
+        "GEMINI_API_KEY": "AIzaSy-test",
+        "ANTHROPIC_API_KEY": "sk-ant-test",
+    })
+    model_strings = [m["litellm_params"]["model"] for m in model_list]
+    assert any(s.startswith("nvidia_nim/") for s in model_strings)
+    assert any(s.startswith("ollama/") for s in model_strings)
+    assert any(s.startswith("gemini/") for s in model_strings)
+    assert all(not s.startswith("anthropic/") for s in model_strings), model_strings
+
+
+def test_nvidia_is_primary_when_key_set():
+    """ADR-013: NVIDIA NIM must be first (primary) in the model list."""
+    adapter = _load_adapter_module()
+    model_list = adapter._build_model_list(env={"NVIDIA_API_KEY": "nvapi-test"})
+    assert model_list[0]["model_name"] == "primary"
+    assert model_list[0]["litellm_params"]["model"].startswith("nvidia_nim/")
 
 
 def test_ollama_default_is_qwen3_8b():
@@ -122,11 +135,24 @@ def test_model_names_unique():
     """Defensive: prevent duplicate model_name keys that would confuse Router fallback semantics."""
     adapter = _load_adapter_module()
     model_list = adapter._build_model_list(env={
-        "CEREBRAS_API_KEY": "sk-cb-test",
         "NVIDIA_API_KEY": "nvapi-test",
+        "GEMINI_API_KEY": "AIzaSy-test",
     })
     names = [m["model_name"] for m in model_list]
     assert len(names) == len(set(names)), names
+
+
+def test_cerebras_not_in_model_list():
+    """ADR-013: Cerebras removed after spend incident. Even with key set, no cerebras/ entry."""
+    adapter = _load_adapter_module()
+    model_list = adapter._build_model_list(env={
+        "CEREBRAS_API_KEY": "sk-cb-test",
+        "NVIDIA_API_KEY": "nvapi-test",
+    })
+    model_strings = [m["litellm_params"]["model"] for m in model_list]
+    assert all(not s.startswith("cerebras/") for s in model_strings), (
+        f"Cerebras should be removed per ADR-013: {model_strings}"
+    )
 
 
 # ── End-to-end Router build (requires litellm 1.50+ in user-site) ──────────────

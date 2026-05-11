@@ -1,13 +1,17 @@
 """LiteLLM unified completion — multi-provider with automatic fallback.
 
-Provider hierarchy: Cerebras (fast) → Groq (backup) → Ollama (free) → Gemini (fallback)
+Provider hierarchy (ADR-013, 2026-05-09):
+  NVIDIA NIM (Inception credits) → Ollama local (free) → Gemini Flash (free tier)
+  → Groq (free tier, last resort)
+
+Cerebras REMOVED entirely after $7.25 burn incident.
 
 Setup: pip install litellm
-       Set API keys in .env (all have free tiers, no credit card needed):
-       - CEREBRAS_API_KEY  (1M tokens/day free — cloud.cerebras.ai)
-       - GROQ_API_KEY      (rate-limited free — console.groq.com)
+       Set API keys in .env:
+       - NVIDIA_API_KEY    (Inception credits — build.nvidia.com)
        - GEMINI_API_KEY    (250 RPD free — aistudio.google.com)
        - OLLAMA_URL        (default http://localhost:11434, unlimited)
+       - GROQ_API_KEY      (rate-limited free — console.groq.com)
 """
 
 import os
@@ -28,27 +32,18 @@ def _get_router():
 
     model_list = []
 
-    # Priority 1: Cerebras (2000+ tok/sec, 1M tokens/day free)
-    if os.environ.get("CEREBRAS_API_KEY"):
+    # Priority 1: NVIDIA NIM (Inception credits, ADR-013 §a)
+    if os.environ.get("NVIDIA_API_KEY"):
         model_list.append({
             "model_name": "swarm-llm",
             "litellm_params": {
-                "model": "cerebras/llama3.1-8b",
-                "api_key": os.environ["CEREBRAS_API_KEY"],
+                "model": "nvidia_nim/meta/llama-3.3-70b-instruct",
+                "api_key": os.environ["NVIDIA_API_KEY"],
+                "api_base": "https://integrate.api.nvidia.com/v1",
             },
         })
 
-    # Priority 2: Groq (500+ tok/sec, rate-limited free)
-    if os.environ.get("GROQ_API_KEY"):
-        model_list.append({
-            "model_name": "swarm-llm",
-            "litellm_params": {
-                "model": "groq/llama-3.3-70b-versatile",
-                "api_key": os.environ["GROQ_API_KEY"],
-            },
-        })
-
-    # Priority 3: Ollama local (zero cost, zero rate limit)
+    # Priority 2: Ollama local (zero cost, zero rate limit)
     ollama_url = os.environ.get("OLLAMA_URL", "http://localhost:11434")
     model_list.append({
         "model_name": "swarm-llm",
@@ -58,7 +53,7 @@ def _get_router():
         },
     })
 
-    # Priority 4: Gemini Flash (Google fallback)
+    # Priority 3: Gemini Flash (Google free tier)
     if os.environ.get("GEMINI_API_KEY"):
         model_list.append({
             "model_name": "swarm-llm",
@@ -67,6 +62,18 @@ def _get_router():
                 "api_key": os.environ["GEMINI_API_KEY"],
             },
         })
+
+    # Priority 4: Groq (last resort free tier)
+    if os.environ.get("GROQ_API_KEY"):
+        model_list.append({
+            "model_name": "swarm-llm",
+            "litellm_params": {
+                "model": "groq/llama-3.3-70b-versatile",
+                "api_key": os.environ["GROQ_API_KEY"],
+            },
+        })
+
+    # Cerebras removed — ADR-013 spend incident ($7.25 burn)
 
     if not model_list:
         raise RuntimeError("No LLM providers configured. Set at least one API key.")
@@ -88,7 +95,7 @@ async def llm_completion(
 ) -> str:
     """Call LLM with automatic provider fallback.
 
-    Tries: Cerebras → Groq → Ollama → Gemini.
+    Tries: NVIDIA → Ollama → Gemini → Groq (ADR-013).
     Returns the response text.
     """
     router = _get_router()
@@ -101,7 +108,13 @@ async def llm_completion(
         max_tokens=max_tokens,
         temperature=temperature,
     )
-    return response.choices[0].message.content
+    msg = response.choices[0].message
+    # Qwen3 and similar models may put output in reasoning_content when
+    # thinking mode is active, leaving content empty.
+    text = msg.content or ""
+    if not text and hasattr(msg, "reasoning_content") and msg.reasoning_content:
+        text = str(msg.reasoning_content)
+    return text
 
 
 def llm_completion_sync(

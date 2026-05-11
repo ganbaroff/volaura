@@ -1951,7 +1951,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    if not session_result.data:
+    if not session_result or not session_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "SESSION_NOT_FOUND", "message": "Completed assessment not found"},
@@ -1969,7 +1969,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    comp_data = comp_result.data or {}
+    comp_data = (comp_result.data if comp_result else None) or {}
 
     # Badge tier from aura_scores
     aura_result = (
@@ -1979,7 +1979,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    badge_tier = (aura_result.data or {}).get("badge_tier", "none")
+    badge_tier = ((aura_result.data if aura_result else None) or {}).get("badge_tier", "none")
 
     # User display info (public-safe)
     profile_result = (
@@ -1989,7 +1989,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    profile = profile_result.data or {}
+    profile = (profile_result.data if profile_result else None) or {}
 
     return PublicVerificationOut(
         session_id=session_id,

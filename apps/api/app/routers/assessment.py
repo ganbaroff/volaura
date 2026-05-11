@@ -197,7 +197,7 @@ async def start_assessment(
         )
         # Fail-closed: if no profile row exists (shouldn't happen post-onboarding),
         # block by default. A missing profile is not a free pass to unlimited assessments.
-        if not sub_result.data:
+        if not sub_result or not sub_result.data:
             raise HTTPException(
                 status_code=402,
                 detail={
@@ -550,7 +550,7 @@ async def submit_answer(
         sub_result = (
             await db_user.table("profiles").select("subscription_status").eq("id", user_id).maybe_single().execute()
         )
-        if not sub_result.data:
+        if not sub_result or not sub_result.data:
             raise HTTPException(
                 status_code=402,
                 detail={
@@ -1681,7 +1681,7 @@ async def get_coaching(
         .maybe_single()
         .execute()
     )
-    if not session_result.data:
+    if not session_result or not session_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "SESSION_NOT_FOUND", "message": "Completed session not found"},
@@ -1710,8 +1710,9 @@ async def get_coaching(
     comp_result = (
         await db_admin.table("competencies").select("name_en, slug").eq("id", competency_id).maybe_single().execute()
     )
-    comp_name = comp_result.data.get("name_en", "this competency") if comp_result.data else "this competency"
-    comp_slug = comp_result.data.get("slug", "") if comp_result.data else ""
+    comp_data = (comp_result.data if comp_result else None) or {}
+    comp_name = comp_data.get("name_en", "this competency")
+    comp_slug = comp_data.get("slug", "")
 
     score = round(theta_to_score(session.get("theta_estimate", 0.0)), 2)
 
@@ -1766,7 +1767,7 @@ async def get_assessment_info(
         .maybe_single()
         .execute()
     )
-    if not comp_result.data:
+    if not comp_result or not comp_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "COMPETENCY_NOT_FOUND", "message": f"Competency '{competency_slug}' not found"},
@@ -1859,7 +1860,7 @@ async def get_question_breakdown(
         .maybe_single()
         .execute()
     )
-    if not session_result.data:
+    if not session_result or not session_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "SESSION_NOT_FOUND", "message": "Completed session not found"},
@@ -1888,7 +1889,7 @@ async def get_question_breakdown(
     comp_result = (
         await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).maybe_single().execute()
     )
-    comp_slug = comp_result.data["slug"] if comp_result.data else "unknown"
+    comp_slug = (comp_result.data["slug"] if (comp_result and comp_result.data) else "unknown")
 
     # Build per-question results — IRT params mapped to labels, raw_score → boolean
     questions_out: list[QuestionResultOut] = []

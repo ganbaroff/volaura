@@ -291,15 +291,43 @@ async def start_assessment(
     except Exception:
         is_admin = False  # fail-closed — unknown = treat as regular user
 
-    # Auto-expire stale in_progress sessions (>24 h) before conflict check.
-    # Any session abandoned for over a day is clearly not resumable.
-    stale_cutoff = (datetime.now(UTC) - timedelta(hours=24)).isoformat()
+    # Auto-expire stale in_progress sessions before conflict check.
+    # Two tiers:
+    #   - Zero-answer sessions (user peeked but never answered): expire after 1 hour.
+    #     These are the "curiosity peek" sessions that trap first-time users.
+    #   - Sessions with answers: expire after 24 hours (preserves resumability).
+    stale_24h = (datetime.now(UTC) - timedelta(hours=24)).isoformat()
+    stale_1h = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
+
+    # Tier 1: expire zero-answer sessions older than 1 hour
+    zero_answer_stale = (
+        await db_admin.table("assessment_sessions")
+        .select("id")
+        .eq("volunteer_id", user_id)
+        .eq("status", "in_progress")
+        .eq("current_question_idx", 0)
+        .lt("created_at", stale_1h)
+        .execute()
+    )
+    if zero_answer_stale.data:
+        await (
+            db_admin.table("assessment_sessions")
+            .update({"status": "abandoned"})
+            .eq("volunteer_id", user_id)
+            .eq("status", "in_progress")
+            .eq("current_question_idx", 0)
+            .lt("created_at", stale_1h)
+            .execute()
+        )
+        logger.info("Auto-abandoned zero-answer stale sessions", user_id=user_id, count=len(zero_answer_stale.data))
+
+    # Tier 2: expire sessions with answers older than 24 hours
     stale_check = (
         await db_admin.table("assessment_sessions")
         .select("id")
         .eq("volunteer_id", user_id)
         .eq("status", "in_progress")
-        .lt("created_at", stale_cutoff)
+        .lt("created_at", stale_24h)
         .execute()
     )
     if stale_check.data:
@@ -308,7 +336,7 @@ async def start_assessment(
             .update({"status": "expired"})
             .eq("volunteer_id", user_id)
             .eq("status", "in_progress")
-            .lt("created_at", stale_cutoff)
+            .lt("created_at", stale_24h)
             .execute()
         )
         logger.info("Auto-expired stale sessions", user_id=user_id, count=len(stale_check.data))
@@ -332,10 +360,23 @@ async def start_assessment(
             },
         )
 
-    # SECURITY: Rapid-restart cooldown — 30 minutes between ANY starts (including abandoned).
+    # SECURITY: Rapid-restart cooldown — 30 minutes between starts.
     # Prevents answer-fishing: start → see hard question → abandon → restart to cherry-pick.
-    # The 7-day cooldown below only gates COMPLETED sessions; this gates ALL starts.
-    # Platform admins bypass — needed for QA, calibration runs, and CEO smoke tests.
+    # EXCEPTION: Users who have NEVER completed this competency are exempt.
+    # Rationale: a first-time user who peeked and left should not be punished.
+    # Anti-gaming only matters once a user has seen enough questions to game them,
+    # which requires at least one completed session.
+    # Platform admins also bypass — needed for QA, calibration runs, and CEO smoke tests.
+    has_ever_completed = (
+        await db_user.table("assessment_sessions")
+        .select("id", count="exact")
+        .eq("volunteer_id", user_id)
+        .eq("competency_id", competency_id)
+        .eq("status", "completed")
+        .execute()
+    )
+    ever_completed = bool(has_ever_completed.count and has_ever_completed.count > 0)
+
     recent_start = (
         await db_user.table("assessment_sessions")
         .select("started_at, status")
@@ -346,7 +387,7 @@ async def start_assessment(
         .limit(1)
         .execute()
     )
-    if recent_start.data and recent_start.data[0].get("started_at") and not is_admin:
+    if recent_start.data and recent_start.data[0].get("started_at") and not is_admin and ever_completed:
         try:
             last_start = datetime.fromisoformat(recent_start.data[0]["started_at"].replace("Z", "+00:00"))
         except (ValueError, TypeError):

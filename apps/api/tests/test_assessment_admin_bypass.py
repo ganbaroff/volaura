@@ -6,11 +6,14 @@ the conflict-check so the endpoint terminates with 409.
 
 Call order inside start_assessment (with payment_enabled=False):
   1. get_competency_id(db_admin, slug)          → db_admin call #1
-  2. Admin check  db_user.profiles              → db_user call #1
-  3. Stale check  db_admin.assessment_sessions  → db_admin call #2  (always)
-  4. Stale update db_admin.assessment_sessions  → db_admin call #3  (if stale rows)
-  5. Conflict check db_user.assessment_sessions → db_user call #2
-  6. ...session creation (not reached in most tests)
+  2. GDPR policy_versions select                → db_admin call #2
+  3. GDPR consent_events insert                 → db_admin call #3
+  4. Zero-answer stale check (idx=0, <1h)       → db_admin call #4
+  5. Zero-answer stale update (if rows)         → db_admin call #5
+  6. 24h stale check                            → db_admin call #5/6
+  7. 24h stale update (if rows)                 → db_admin call #6/7
+  8. Conflict check db_user.assessment_sessions → db_user call #2
+  9. ...session creation (not reached in most tests)
 """
 
 from __future__ import annotations
@@ -115,10 +118,18 @@ async def test_stale_cleanup_runs_for_non_admin():
     async def admin_side_effect(*_a, **_kw):
         admin_call_n["n"] += 1
         if admin_call_n["n"] == 1:
+            # get_competency_id
             return _result({"id": COMPETENCY_UUID})
+        # Note: GDPR consent uses .is_() which is not in _chainable(),
+        # so those calls run on a broken MagicMock chain and don't hit this side_effect.
         if admin_call_n["n"] == 2:
-            return _result(stale_rows)
+            # zero-answer stale check — no zero-answer stale rows
+            return _result([])
         if admin_call_n["n"] == 3:
+            # 24h stale check — return stale rows
+            return _result(stale_rows)
+        if admin_call_n["n"] == 4:
+            # 24h stale update
             return _result(stale_rows)
         return _result(None)
 
@@ -149,10 +160,10 @@ async def test_stale_cleanup_runs_for_non_admin():
             )
 
     assert resp.status_code == 409
-    assert admin_call_n["n"] == 3, (
-        f"Expected 3 admin calls (competency + stale_check + update), got {admin_call_n['n']}"
+    assert admin_call_n["n"] == 4, (
+        f"Expected 4 admin calls (competency + zero-stale + 24h-stale + update), got {admin_call_n['n']}"
     )
-    mock_logger.info.assert_called_once_with(
+    mock_logger.info.assert_called_with(
         "Auto-expired stale sessions",
         user_id=USER_ID,
         count=len(stale_rows),
@@ -170,10 +181,16 @@ async def test_no_stale_sessions_skips_update():
     async def admin_side_effect(*_a, **_kw):
         admin_call_n["n"] += 1
         if admin_call_n["n"] == 1:
+            # get_competency_id
             return _result({"id": COMPETENCY_UUID})
+        # GDPR consent uses .is_() not in _chainable — skipped here
         if admin_call_n["n"] == 2:
+            # zero-answer stale check — empty
             return _result([])
-        raise AssertionError("Unexpected admin call #3: update ran with no stale rows")
+        if admin_call_n["n"] == 3:
+            # 24h stale check — empty (no stale rows)
+            return _result([])
+        raise AssertionError(f"Unexpected admin call #{admin_call_n['n']}: update ran with no stale rows")
 
     mock_admin.execute = AsyncMock(side_effect=admin_side_effect)
 
@@ -201,7 +218,7 @@ async def test_no_stale_sessions_skips_update():
         )
 
     assert resp.status_code == 409
-    assert admin_call_n["n"] == 2, f"Expected 2 admin calls (competency + stale_check), got {admin_call_n['n']}"
+    assert admin_call_n["n"] == 3, f"Expected 3 admin calls (competency + zero-stale + 24h-stale), got {admin_call_n['n']}"
 
 
 @pytest.mark.asyncio
@@ -219,9 +236,14 @@ async def test_admin_with_stale_sessions_calls_update_and_logs():
         admin_call_n["n"] += 1
         if admin_call_n["n"] == 1:
             return _result({"id": COMPETENCY_UUID})
+        # GDPR consent uses .is_() not in _chainable — skipped
         if admin_call_n["n"] == 2:
-            return _result(stale_rows)
+            # zero-answer stale check — empty
+            return _result([])
         if admin_call_n["n"] == 3:
+            # 24h stale check — return stale rows
+            return _result(stale_rows)
+        if admin_call_n["n"] == 4:
             update_called["called"] = True
             return _result(stale_rows)
         return _result(None)
@@ -254,9 +276,9 @@ async def test_admin_with_stale_sessions_calls_update_and_logs():
 
     assert resp.status_code == 409
     assert update_called["called"], "Stale update was never executed"
-    assert admin_call_n["n"] == 3
+    assert admin_call_n["n"] == 4
 
-    mock_logger.info.assert_called_once_with(
+    mock_logger.info.assert_called_with(
         "Auto-expired stale sessions",
         user_id=USER_ID,
         count=len(stale_rows),
@@ -317,9 +339,13 @@ async def test_stale_cutoff_is_24_hours():
 
     after = datetime.now(UTC) - timedelta(hours=24)
 
-    assert len(captured_lt_args) >= 1, "lt('created_at', ...) was never called"
+    # Multiple lt("created_at", ...) calls: 1h tier (check+update) then 24h tier (check+update).
+    # The 24h cutoff is the last unique value.
+    assert len(captured_lt_args) >= 2, (
+        f"Expected at least 2 lt('created_at', ...) calls, got {len(captured_lt_args)}"
+    )
 
-    cutoff_str = captured_lt_args[0]
+    cutoff_str = captured_lt_args[-1]  # last call = 24h cutoff (check or update)
     cutoff_dt = datetime.fromisoformat(cutoff_str)
 
     tolerance = timedelta(seconds=5)

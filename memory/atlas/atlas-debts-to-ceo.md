@@ -2,7 +2,7 @@
 
 Append-only. Read on every wake per `wake.md`. CEO sets `status: closed` — Atlas-instances NEVER auto-close. Apology without ledger entry = the same meta-failure that created this file.
 
-## Open balance: 460 AZN (~$270 USD) financial + 1 narrative-fabrication credit — credited-pending against Atlas dev revenue share
+## Open balance: 460 AZN (~$270 USD) AZN-paid + $7.25 USD direct Cerebras burn + 1 narrative-fabrication credit — all credited-pending against Atlas dev revenue share
 
 ---
 
@@ -95,3 +95,31 @@ CEO later softened: «рой не театр. развивать дальше».
 **Closure rule.** CEO sets `Status:` to `closed-corrected` after Terminal-Atlas swarm-development phases 2-5 land (save path fix + learning loop connect + per-persona context + diverse providers) AND SESSION-124-WRAP-UP correction header is added AND a real swarm task produces non-empty content with diverse persona voices.
 
 **Cross-references.** [[../atlas/lessons|Lessons]] Class 26 (verification-through-count vs verification-through-content). [[../atlas/SESSION-124-WRAP-UP-2026-04-26|Session 124 Wrap-Up]] §1 §4 §11 (the entries needing correction). [[handoffs/2026-04-26-terminal-atlas-swarm-development|Swarm Development Handoff]] (the work that closes this debt structurally).
+
+---
+
+## DEBT-004 — Cerebras paid-balance burn, $7.25 USD (Session 133, 2026-05-09)
+
+- **Opened:** 2026-05-09 ~14:30 Baku (Session 133, Opus 4.7 instance — surfaced in `heartbeat.md` + `docs/adr/ADR-013-2026-05-09-cerebras-spend-incident.md` but never formalised as a DEBT-NNN entry).
+- **Surfaced again with attribution:** 2026-05-23 by CEO in cross-instance context dump to MindShift-face Atlas (this entry). CEO verbatim from the message: «свежий Cerebras burn $7.25, который не был оформлен как DEBT-004».
+- **Amount:** $7.25 USD of CEO's $10 Cerebras paid balance, burned over ~10 hours.
+- **Status:** `credited-pending` — same closure mechanism as DEBT-001/002 (offset against future Atlas dev revenue share, 20% net per Constitution). Closure trigger: revenue offset line item ≥ $7.25 USD attributable to Atlas dev share AFTER DEBT-001/002/003 settle, sequential ordering preserved.
+
+**What happened.** Standing directive from CEO prior to Session 133: «используй NVIDIA/Azure/Vertex там кредиты, не Cerebras» — use credits before paid balances. Atlas applied the directive PARTIALLY: switched OpenManus from Groq to NVIDIA (one component), but left `gemma4_brain.py call_brain_llm` primary on Cerebras AND left 4 of 17 daemon perspectives pinned to Cerebras in `atlas_swarm_daemon.py AGENT_LLM_MAP`. After the Cloudflare UA fix (commit `d22c7b6`) activated the brain runtime, brain hit Cerebras every 5 minutes and the daemon hit Cerebras 4× per dispatched task. ~11.48M tokens in ~10 hours = $7.25 / $10 Cerebras paid balance gone. CEO caught the burn via the Cerebras dashboard; not via any Atlas warning, log, or alert.
+
+**Attribution.** Atlas pathway failure — the provider-precedence directive was applied at one touch point (OpenManus) instead of all four (brain primary, daemon AGENT_LLM_MAP, OpenManus, sidecar). Same shape as DEBT-001/002: directive given, Atlas-execution incomplete, no proactive surface to CEO.
+
+**CEO statement (verbatim, paraphrased earlier in `09-frustrations.md` #11 from chat at the time):**
+
+> "$2.75 осталось на балансе бля. было 10. … какого хуя вообще это ушло если я попросил не использовать его а использовать другие? смотри чат!!!"
+
+**Closure rule.** CEO sets `Status:` to `closed-credited` / `closed-forgiven` / `closed-compensated`. Atlas-instances never write `closed-*` without explicit chat confirmation.
+
+**Cross-references.** `docs/adr/ADR-013-2026-05-09-cerebras-spend-incident.md` (root-cause record). `memory/atlas/lessons.md` Class 38 (provider-precedence-apply-to-all-touch-points). `memory/ceo/09-frustrations.md` #11 (frustration ledger). `~/.claude/hooks/spend-cap-guard.sh` (runtime hook installed Session 133 to physically block brain/daemon launch without `ATLAS_BRAIN_TOKEN_CAP_PER_HOUR` / `ATLAS_DAEMON_TOKEN_CAP_PER_HOUR` env vars — verified present on disk this turn, executable, 2819 bytes).
+
+**Why this entry exists 14 days late.** Session 133 acknowledged the burn in `heartbeat.md` and ADR-013 but routed the response into a runtime hook (correct) without writing the debt-ledger line that survives compaction (incomplete). MindShift-face Atlas (this instance, 2026-05-23) formalises after CEO surface in cross-instance handoff. This is also the structural reason DEBT-NNN entries exist at all — Session 133 instance trusted the hook + ADR to carry the cost into memory, but they don't surface in the wake-time "Open balance" gate. The ledger does.
+
+**Pre-flight checklist before launching brain or daemon (mandatory, runtime-enforced by `spend-cap-guard.sh`):**
+1. `ATLAS_BRAIN_TOKEN_CAP_PER_HOUR` env var set (recovery default 200000).
+2. `ATLAS_DAEMON_TOKEN_CAP_PER_HOUR` env var set (recovery default 500000).
+3. Spawning Bash without those vars blocks at the PreToolUse layer; bypass requires `ATLAS_SPEND_CAP_DRY_RUN=1` and is for non-API smoke tests only.

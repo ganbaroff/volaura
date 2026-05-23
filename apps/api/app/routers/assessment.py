@@ -375,7 +375,8 @@ async def start_assessment(
         .eq("status", "completed")
         .execute()
     )
-    ever_completed = bool(has_ever_completed.count and has_ever_completed.count > 0)
+    completed_count = getattr(has_ever_completed, "count", 0)
+    ever_completed = isinstance(completed_count, int) and completed_count > 0
 
     recent_start = (
         await db_user.table("assessment_sessions")

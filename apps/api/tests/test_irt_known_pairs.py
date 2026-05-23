@@ -479,29 +479,36 @@ class TestStoppingCriteria:
 class TestSubmitResponse:
     """Validate response recording and theta update via submit_response."""
 
+    # Since commit 672c537 ("fix(assessment): Preserve BARS ordinal signal",
+    # 2026-05-06), raw_score is mapped to a 4-bucket ordinal:
+    #   response = min(int(raw_score * 4), 3)
+    # 0.0 -> 0, 0.25 -> 1, 0.5 -> 2, 0.75 -> 3, 1.0 -> 3.
+    # Method names kept for git-blame continuity; semantics are now ordinal,
+    # not binary.
+
     def test_binarise_above_threshold(self):
-        """raw_score >= 0.5 → binary response = 1."""
+        """raw_score = 0.5 → ordinal bucket 2 (was binary 1)."""
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.5, 5000)
-        assert state.items[0].response == 1
+        assert state.items[0].response == 2
 
     def test_binarise_below_threshold(self):
-        """raw_score < 0.5 → binary response = 0."""
+        """raw_score = 0.49 → ordinal bucket 1 (was binary 0)."""
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.49, 5000)
-        assert state.items[0].response == 0
+        assert state.items[0].response == 1
 
     def test_binarise_exactly_zero(self):
-        """raw_score = 0.0 → binary response = 0."""
+        """raw_score = 0.0 → ordinal bucket 0 (unchanged from binary)."""
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.0, 5000)
         assert state.items[0].response == 0
 
     def test_binarise_exactly_one(self):
-        """raw_score = 1.0 → binary response = 1."""
+        """raw_score = 1.0 → ordinal bucket 3, clamped from int(4.0) (was binary 1)."""
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 1.0, 5000)
-        assert state.items[0].response == 1
+        assert state.items[0].response == 3
 
     def test_correct_answers_on_hard_items_increase_theta(self):
         """Correct answers on items harder than ability → theta must increase."""

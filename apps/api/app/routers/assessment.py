@@ -197,7 +197,7 @@ async def start_assessment(
         )
         # Fail-closed: if no profile row exists (shouldn't happen post-onboarding),
         # block by default. A missing profile is not a free pass to unlimited assessments.
-        if not sub_result.data:
+        if not sub_result or not sub_result.data:
             raise HTTPException(
                 status_code=402,
                 detail={
@@ -291,15 +291,43 @@ async def start_assessment(
     except Exception:
         is_admin = False  # fail-closed — unknown = treat as regular user
 
-    # Auto-expire stale in_progress sessions (>24 h) before conflict check.
-    # Any session abandoned for over a day is clearly not resumable.
-    stale_cutoff = (datetime.now(UTC) - timedelta(hours=24)).isoformat()
+    # Auto-expire stale in_progress sessions before conflict check.
+    # Two tiers:
+    #   - Zero-answer sessions (user peeked but never answered): expire after 1 hour.
+    #     These are the "curiosity peek" sessions that trap first-time users.
+    #   - Sessions with answers: expire after 24 hours (preserves resumability).
+    stale_24h = (datetime.now(UTC) - timedelta(hours=24)).isoformat()
+    stale_1h = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
+
+    # Tier 1: expire zero-answer sessions older than 1 hour
+    zero_answer_stale = (
+        await db_admin.table("assessment_sessions")
+        .select("id")
+        .eq("volunteer_id", user_id)
+        .eq("status", "in_progress")
+        .eq("current_question_idx", 0)
+        .lt("created_at", stale_1h)
+        .execute()
+    )
+    if zero_answer_stale.data:
+        await (
+            db_admin.table("assessment_sessions")
+            .update({"status": "abandoned"})
+            .eq("volunteer_id", user_id)
+            .eq("status", "in_progress")
+            .eq("current_question_idx", 0)
+            .lt("created_at", stale_1h)
+            .execute()
+        )
+        logger.info("Auto-abandoned zero-answer stale sessions", user_id=user_id, count=len(zero_answer_stale.data))
+
+    # Tier 2: expire sessions with answers older than 24 hours
     stale_check = (
         await db_admin.table("assessment_sessions")
         .select("id")
         .eq("volunteer_id", user_id)
         .eq("status", "in_progress")
-        .lt("created_at", stale_cutoff)
+        .lt("created_at", stale_24h)
         .execute()
     )
     if stale_check.data:
@@ -308,7 +336,7 @@ async def start_assessment(
             .update({"status": "expired"})
             .eq("volunteer_id", user_id)
             .eq("status", "in_progress")
-            .lt("created_at", stale_cutoff)
+            .lt("created_at", stale_24h)
             .execute()
         )
         logger.info("Auto-expired stale sessions", user_id=user_id, count=len(stale_check.data))
@@ -332,10 +360,24 @@ async def start_assessment(
             },
         )
 
-    # SECURITY: Rapid-restart cooldown — 30 minutes between ANY starts (including abandoned).
+    # SECURITY: Rapid-restart cooldown — 30 minutes between starts.
     # Prevents answer-fishing: start → see hard question → abandon → restart to cherry-pick.
-    # The 7-day cooldown below only gates COMPLETED sessions; this gates ALL starts.
-    # Platform admins bypass — needed for QA, calibration runs, and CEO smoke tests.
+    # EXCEPTION: Users who have NEVER completed this competency are exempt.
+    # Rationale: a first-time user who peeked and left should not be punished.
+    # Anti-gaming only matters once a user has seen enough questions to game them,
+    # which requires at least one completed session.
+    # Platform admins also bypass — needed for QA, calibration runs, and CEO smoke tests.
+    has_ever_completed = (
+        await db_user.table("assessment_sessions")
+        .select("id", count="exact")
+        .eq("volunteer_id", user_id)
+        .eq("competency_id", competency_id)
+        .eq("status", "completed")
+        .execute()
+    )
+    completed_count = getattr(has_ever_completed, "count", 0)
+    ever_completed = isinstance(completed_count, int) and completed_count > 0
+
     recent_start = (
         await db_user.table("assessment_sessions")
         .select("started_at, status")
@@ -346,7 +388,7 @@ async def start_assessment(
         .limit(1)
         .execute()
     )
-    if recent_start.data and recent_start.data[0].get("started_at") and not is_admin:
+    if recent_start.data and recent_start.data[0].get("started_at") and not is_admin and ever_completed:
         try:
             last_start = datetime.fromisoformat(recent_start.data[0]["started_at"].replace("Z", "+00:00"))
         except (ValueError, TypeError):
@@ -550,7 +592,7 @@ async def submit_answer(
         sub_result = (
             await db_user.table("profiles").select("subscription_status").eq("id", user_id).maybe_single().execute()
         )
-        if not sub_result.data:
+        if not sub_result or not sub_result.data:
             raise HTTPException(
                 status_code=402,
                 detail={
@@ -1681,7 +1723,7 @@ async def get_coaching(
         .maybe_single()
         .execute()
     )
-    if not session_result.data:
+    if not session_result or not session_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "SESSION_NOT_FOUND", "message": "Completed session not found"},
@@ -1710,8 +1752,9 @@ async def get_coaching(
     comp_result = (
         await db_admin.table("competencies").select("name_en, slug").eq("id", competency_id).maybe_single().execute()
     )
-    comp_name = comp_result.data.get("name_en", "this competency") if comp_result.data else "this competency"
-    comp_slug = comp_result.data.get("slug", "") if comp_result.data else ""
+    comp_data = (comp_result.data if comp_result else None) or {}
+    comp_name = comp_data.get("name_en", "this competency")
+    comp_slug = comp_data.get("slug", "")
 
     score = round(theta_to_score(session.get("theta_estimate", 0.0)), 2)
 
@@ -1766,7 +1809,7 @@ async def get_assessment_info(
         .maybe_single()
         .execute()
     )
-    if not comp_result.data:
+    if not comp_result or not comp_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "COMPETENCY_NOT_FOUND", "message": f"Competency '{competency_slug}' not found"},
@@ -1859,7 +1902,7 @@ async def get_question_breakdown(
         .maybe_single()
         .execute()
     )
-    if not session_result.data:
+    if not session_result or not session_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "SESSION_NOT_FOUND", "message": "Completed session not found"},
@@ -1888,7 +1931,7 @@ async def get_question_breakdown(
     comp_result = (
         await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).maybe_single().execute()
     )
-    comp_slug = comp_result.data["slug"] if comp_result.data else "unknown"
+    comp_slug = comp_result.data["slug"] if (comp_result and comp_result.data) else "unknown"
 
     # Build per-question results — IRT params mapped to labels, raw_score → boolean
     questions_out: list[QuestionResultOut] = []
@@ -1951,7 +1994,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    if not session_result.data:
+    if not session_result or not session_result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "SESSION_NOT_FOUND", "message": "Completed assessment not found"},
@@ -1969,7 +2012,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    comp_data = comp_result.data or {}
+    comp_data = (comp_result.data if comp_result else None) or {}
 
     # Badge tier from aura_scores
     aura_result = (
@@ -1979,7 +2022,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    badge_tier = (aura_result.data or {}).get("badge_tier", "none")
+    badge_tier = ((aura_result.data if aura_result else None) or {}).get("badge_tier", "none")
 
     # User display info (public-safe)
     profile_result = (
@@ -1989,7 +2032,7 @@ async def verify_assessment(
         .maybe_single()
         .execute()
     )
-    profile = profile_result.data or {}
+    profile = (profile_result.data if profile_result else None) or {}
 
     return PublicVerificationOut(
         session_id=session_id,

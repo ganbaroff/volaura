@@ -22,6 +22,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from app.routers import auth as auth_router
 from app.routers.auth import (
     AuthResponse,
     MeResponse,
@@ -39,6 +40,12 @@ _VALID_PW = "TestPass1"  # noqa: S105 — not a real credential
 _FAKE_REQUEST = MagicMock()
 _FAKE_REQUEST.client.host = "127.0.0.1"
 _FAKE_REQUEST.headers = {"user-agent": "test-agent", "authorization": f"Bearer {_ACCESS_TOKEN}"}
+
+
+@pytest.fixture(autouse=True)
+def _open_signup_for_register_tests(monkeypatch):
+    """Keep legacy register minimisation tests focused on payload shape, not beta gating."""
+    monkeypatch.setattr(auth_router.settings, "open_signup", True)
 
 
 def _result(data=None) -> MagicMock:

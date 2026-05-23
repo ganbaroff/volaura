@@ -132,7 +132,8 @@ async def test_start_assessment_returns_first_question():
     admin = _build_chainable(
         [
             {"id": COMP_ID},  # competency id lookup
-            [],  # stale session check (none found)
+            [],  # zero-answer stale select (df3db64) — none
+            [],  # 24h stale session check — none
             [MCQ_QUESTION],  # questions list
         ]
     )
@@ -141,6 +142,7 @@ async def test_start_assessment_returns_first_question():
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
             {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no existing in-progress session
+            MagicMock(data=[], count=0),  # ever_completed count (df3db64) — first-time user
             [],  # rapid-restart cooldown check (no recent abandoned sessions)
             [],  # retest cooldown check (no completed sessions)
             MagicMock(data=[], count=0),  # abuse monitoring count query

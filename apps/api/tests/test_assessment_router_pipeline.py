@@ -530,11 +530,12 @@ async def test_start_7day_cooldown_returns_429() -> None:
     admin_m.table = MagicMock(side_effect=_admin_table)
 
     # Use a single chainable mock for user_m with a call-counter on execute.
-    # The /start endpoint calls db_user.table("assessment_sessions").execute() 3 times:
-    #   1. existing in_progress check → empty (no conflict)
-    #   2. recent_start check (non-completed) → empty (no rapid restart)
-    #   3. recent completed check → 3 days ago (triggers 7-day cooldown)
-    # Profiles call returns non-admin.
+    # After df3db64, the /start endpoint calls db_user.execute() in this order:
+    #   1. profiles admin check
+    #   2. assessment_sessions in_progress conflict check → empty (no conflict)
+    #   3. assessment_sessions ever_completed count (df3db64 cooldown gate)
+    #   4. assessment_sessions recent_start check → empty (no rapid restart)
+    #   5. assessment_sessions recent completed → 3 days ago (triggers 7-day cooldown)
     user_exec_call_n = {"n": 0}
 
     async def _user_execute_side_effect(*args, **kwargs):
@@ -547,9 +548,12 @@ async def test_start_7day_cooldown_returns_429() -> None:
             # existing in-progress conflict check → empty
             return MagicMock(data=[], count=0)
         if n == 3:
+            # ever_completed count (df3db64) — user has 1 completed session
+            return MagicMock(data=[], count=1)
+        if n == 4:
             # recent_start check → empty (no rapid restart)
             return MagicMock(data=[], count=0)
-        if n == 4:
+        if n == 5:
             # recent completed → 3 days ago → triggers 7-day cooldown
             return MagicMock(data=[{"completed_at": three_days_ago}], count=1)
         return MagicMock(data=[], count=0)
@@ -1833,6 +1837,9 @@ async def test_start_rapid_restart_cooldown_returns_429() -> None:
             # existing in-progress conflict check → empty (no current conflict)
             return MagicMock(data=[], count=0)
         if n == 3:
+            # ever_completed count (df3db64) — must be >0 so rapid-restart cooldown applies
+            return MagicMock(data=[], count=1)
+        if n == 4:
             # recent_start check → 10 minutes ago → triggers 30-min rapid-restart
             return MagicMock(data=[{"started_at": ten_min_ago, "status": "expired"}], count=1)
         return MagicMock(data=[], count=0)
@@ -2035,9 +2042,12 @@ async def test_start_naive_datetime_in_cooldown() -> None:
                 # in_progress check → none
                 return MagicMock(data=[], count=0)
             elif n == 3:
+                # ever_completed count (df3db64) — user has 1 completed session
+                return MagicMock(data=[], count=1)
+            elif n == 4:
                 # rapid-restart check → no recent starts (allow past this gate)
                 return MagicMock(data=[], count=0)
-            elif n == 4:
+            elif n == 5:
                 # completed sessions for 7-day cooldown → naive datetime 3 days ago
                 return MagicMock(data=[{"completed_at": naive_completed}])
             return MagicMock(data=[], count=0)

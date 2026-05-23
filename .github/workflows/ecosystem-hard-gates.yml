@@ -45,7 +45,7 @@ jobs:
           pytest apps/api/tests/test_auth.py apps/api/tests/test_auth_router.py apps/api/tests/test_grievance_router.py apps/api/tests/test_assessment_router.py apps/api/tests/test_assessment_completion_reconciler.py apps/api/tests/test_events_endpoints.py -q
 
       - name: Frontend launch-critical web tests
-        run: pnpm --dir apps/web vitest run src/hooks/__tests__/use-grievance.test.ts src/hooks/__tests__/use-events.test.ts src/hooks/__tests__/use-organizations.test.ts src/lib/api/types.test.ts 'src/app/[locale]/(dashboard)/auth-recovery.test.ts' 'src/app/[locale]/(dashboard)/discover/error-state.test.ts' 'src/app/[locale]/callback/route-decision.test.ts' 'src/app/[locale]/(dashboard)/assessment/[sessionId]/resume.test.tsx' 'src/app/[locale]/(dashboard)/profile/edit/page.test.tsx'
+        run: pnpm --dir apps/web exec vitest run src/hooks/__tests__/use-grievance.test.ts src/hooks/__tests__/use-events.test.ts src/hooks/__tests__/use-organizations.test.ts src/lib/api/types.test.ts 'src/app/[locale]/(dashboard)/auth-recovery.test.ts' 'src/app/[locale]/(dashboard)/discover/error-state.test.ts' 'src/app/[locale]/callback/route-decision.test.ts' 'src/app/[locale]/(dashboard)/assessment/[sessionId]/resume.test.tsx' 'src/app/[locale]/(dashboard)/profile/edit/page.test.tsx'
 
       - name: E2E ownership note
         run: echo "Full E2E journey is owned by .github/workflows/e2e.yml"

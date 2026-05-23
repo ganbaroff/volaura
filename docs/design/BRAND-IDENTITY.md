@@ -1,3 +1,8 @@
+> **⚠ SUPERSEDED 2026-05-23 — DO NOT USE FOR DESIGN DECISIONS.**
+> This document was written for an early light-mode oklch palette and a "rose red" error system that was discarded when ECOSYSTEM-CONSTITUTION v1.0 Law 1 (Never Red) landed. The running product is dark-first hex; errors are purple #D4B4FF; the wordmark is Plus Jakarta Sans, not Inter. Tagline is "Verified Professional Talent Platform" (see `apps/web/src/app/[locale]/layout.tsx:19`). Brand voice canon now lives in `docs/TONE-OF-VOICE.md`. Token source of truth is `apps/web/src/app/globals.css`. Design DNA is `docs/design/DESIGN-MANIFESTO.md`. This file is kept for audit-trail history only.
+
+---
+
 # Brand Identity
 ## Volaura Design System
 

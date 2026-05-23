@@ -1879,3 +1879,115 @@ Recommended: **Option 1, merge as-is.**
 
 ### Not claimed
 I did not merge PR #22, did not submit a GitHub review, did not run production authenticated E2E, and did not test the Supabase Edge Function against a live project. This is static/schema PR review plus GitHub status read-back.
+
+---
+
+## 2026-05-23 22:00 Baku · Claude iteration 14 (Cowork-side mirror) · sync from CLI-side reality
+
+### time stamp
+`2026-05-23 18:00 UTC` / `22:00 +04`.
+
+### why this exists
+CLI-side Claude (other body) ran ahead between iter 11 and now. Cowork instance read latest state at 21:55 +04. Mirroring ground truth here so Cowork and CLI converge.
+
+### ground truth from `git log -1 95374df` on `codex/swarm-queue-bridge` + remote main on `mindshift`
+1. **mindshift main = `46ccbe4`**. PR #23 (signing config port from `3bbf6e5`) merged by CLI-side via spawned agent. Checkpoint 3 closed.
+2. **AAB built locally**. `C:/Projects/mindshift/android/app/build/outputs/bundle/release/app-release.aab`, 8.13 MB, `validateSigningRelease + signReleaseBundle + packageReleaseBundle` all green. Checkpoint 5 closed.
+3. **Keystore exists** at `C:/Projects/mindshift/android/release.keystore`. `Test-Path` = True per CEO. Env vars set in PowerShell that ran `gradlew`.
+4. **VOLAURA dirty 167 files** committed by CLI-side as `95374df` on `codex/swarm-queue-bridge`: ADR-014 + DEBT-004 + HANDOFF + CURRENT-SPRINT + codex-loop + 7-file archive. No force-push, no main touched.
+
+### sole remaining gate
+Play Console internal-test upload. CLI-side Cowork-Chrome is on release page, native file picker open. CEO has to pick `app-release.aab` in the OS dialog (file picker = OS layer, not browser). Then upload → ~30 min processing → tester invite link.
+
+### Cowork-side role from here
+- do NOT touch mindshift repo or Play Console — CLI body owns Play ship.
+- do NOT commit anything to VOLAURA git — CLI body owns commits this session.
+- DO keep vault truthful: append iter N when CLI body advances + state changes.
+- DO answer CEO direct questions if asked here.
+
+### errors this turn
+- iter 13 (Cowork) was overwritten because `95374df` commit landed between my write and read. lesson: when both bodies are live on same repo, append-only after re-reading tail. fixed by re-reading + appending iter 14 only.
+
+### Codex turn?
+no. nothing to verify. waiting on Play Console upload result.
+
+### evidence
+- `Bash git log --oneline -3` on VOLAURA → confirmed `95374df` HEAD.
+- `Bash git log -1 --stat 95374df` → confirmed contents (ADR-014 + DEBT-004 + handoff + sprint + codex-loop + archive).
+- CEO message in chat: `Test-Path .\android\release.keystore = True`.
+- CLI body message in chat: AAB built 8.13 MB at expected path, all signing stages green.
+
+
+## 2026-05-23 21:55 Baku · Claude iteration 13 · wake-read + ground truth
+
+### time stamp
+`2026-05-23 17:55 UTC` / `21:55 +04` per Bash date.
+
+### body
+new Cowork instance. read HANDOFF-2026-05-23. read iter 10/11/12. checked git remote.
+
+### ground truth on mindshift main
+`git ls-remote` says main = `46ccbe4`. local `git log` agrees.
+
+last 3 commits on main:
+- `46ccbe4` feat(android): port release signing config from `3bbf6e5` (#23)
+- `26eea33` fix(gdpr): gdpr-export adds 4 Sprint AG tables (#22)
+- `93ada51` fix(deps): npm audit fix (#21)
+
+so PR #21 + #22 + #23 all merged. Codex iter 12 APPROVE on #22 was acted on between iter 11 and now (not by me — by prior instance or CEO via web). PR #23 = checkpoint 3 (signing config). also done.
+
+### CURRENT-SPRINT checkpoint status (verified, not claimed)
+- [x] 1 npm audit fix → merged `93ada51`
+- [x] 2 gdpr-export 4 tables → merged `26eea33`
+- [x] 3 release signing config → merged `46ccbe4`. `android/app/build.gradle` line 40 has `signingConfigs.release` env-driven (`MINDSHIFT_KEYSTORE_PATH`/`PASSWORD`, `MINDSHIFT_KEY_ALIAS`, `MINDSHIFT_KEY_PASSWORD`). default keystore path `../release.keystore` → resolves to `android/release.keystore`.
+- [x] 4 keystore contamination decision — already done iter 9.
+- [ ] 5 `./gradlew bundleRelease` produces AAB locally → CEO machine.
+- [ ] 6 Play Console submission → CEO.
+
+### what's blocking
+nothing in code. all gates need CEO local machine:
+1. keystore file at `C:/Projects/mindshift/android/release.keystore` (need to verify exists).
+2. 3 env vars in shell that runs `gradlew`.
+3. `./gradlew bundleRelease` → AAB.
+4. upload to Play Console.
+
+### what I cannot do from this sandbox
+- no `gh` CLI (`bash: gh: command not found`).
+- no Windows PowerShell access.
+- no Play Console (browser web app — CEO).
+- can read/write VOLAURA vault, can read mindshift repo. cannot push.
+
+### what I did NOT touch
+- VOLAURA `codex/swarm-queue-bridge` dirty 167 files.
+- mindshift worktree (10 dirty files exist — `.github/workflows/*`, `android/app/build.gradle`, `proguard-rules.pro`, `AndroidManifest.xml`, etc — pre-existing from prior session, not mine).
+- did not merge anything. did not push.
+
+### ONE next CEO action
+Verify keystore exists then set env vars in PowerShell from `C:/Projects/mindshift`:
+
+```powershell
+Test-Path .\android\release.keystore
+# if False → run keytool gen first (iter 11 command).
+# if True → set the 3 env vars:
+$env:MINDSHIFT_KEYSTORE_PASSWORD = "<the password you saved>"
+$env:MINDSHIFT_KEY_ALIAS = "mindshift"
+$env:MINDSHIFT_KEY_PASSWORD = "<the key password>"
+```
+
+reply: `env done` (or `no keystore` if Test-Path = False).
+
+then I give ONE next thing. nothing else.
+
+### errors this turn
+none new. read-only iteration.
+
+### evidence
+- `Bash git log --oneline -5 origin/main` × mindshift repo.
+- `Bash git ls-remote --heads` remote head match.
+- `Bash grep signingConfigs android/app/build.gradle` confirmed env-driven config landed.
+- `Bash which gh` returned not-found in this sandbox.
+- `Bash date` for time stamp.
+
+### channel state
+last claude = 13. last codex = 12. codex turn next IF re-review needed on signing-config PR #23. otherwise no codex action — waiting on CEO local build.
+

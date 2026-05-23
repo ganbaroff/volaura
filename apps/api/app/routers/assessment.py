@@ -1930,7 +1930,7 @@ async def get_question_breakdown(
     comp_result = (
         await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).maybe_single().execute()
     )
-    comp_slug = (comp_result.data["slug"] if (comp_result and comp_result.data) else "unknown")
+    comp_slug = comp_result.data["slug"] if (comp_result and comp_result.data) else "unknown"
 
     # Build per-question results — IRT params mapped to labels, raw_score → boolean
     questions_out: list[QuestionResultOut] = []

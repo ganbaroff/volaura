@@ -26,8 +26,13 @@ jobs:
             | python3 -c "
           import json, sys
           from datetime import datetime, timezone, timedelta
-          data = json.load(sys.stdin)
-          users = data.get('users', data) if isinstance(data, dict) else data
+          try:
+              data = json.load(sys.stdin)
+          except Exception:
+              sys.exit(0)
+          users = data.get('users') if isinstance(data, dict) else data
+          if not isinstance(users, list):
+              sys.exit(0)
           cutoff = datetime.now(timezone.utc) - timedelta(hours=1)
           for u in (users or []):
               email = u.get('email', '')
@@ -35,25 +40,33 @@ jobs:
                   created = datetime.fromisoformat(u['created_at'].replace('Z', '+00:00'))
                   if created < cutoff:
                       print(u['id'])
-          ")
+          " || true)
 
           if [ -z "$USERS" ]; then
             echo "No stale test users found"
             exit 0
           fi
 
+          delete_rows() {
+            local TABLE="$1"
+            local COLUMN="$2"
+            local USER_ID="$3"
+            curl -s -X DELETE \
+              -H "$API_HEADER" -H "$AUTH_HEADER" \
+              "$SUPABASE_URL/rest/v1/$TABLE?$COLUMN=eq.$USER_ID" \
+              -o /dev/null || true
+          }
+
           COUNT=0
           for USER_ID in $USERS; do
-            for TABLE in consent_events automated_decision_log human_review_requests; do
-              curl -s -X DELETE \
-                -H "$API_HEADER" -H "$AUTH_HEADER" \
-                "$SUPABASE_URL/rest/v1/$TABLE?user_id=eq.$USER_ID" \
-                -o /dev/null
+            for TABLE in consent_events automated_decision_log human_review_requests assessment_sessions notifications; do
+              delete_rows "$TABLE" "user_id" "$USER_ID"
             done
+            delete_rows "profiles" "id" "$USER_ID"
 
             HTTP=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
               -H "$API_HEADER" -H "$AUTH_HEADER" \
-              "$SUPABASE_URL/auth/v1/admin/users/$USER_ID")
+              "$SUPABASE_URL/auth/v1/admin/users/$USER_ID" || true)
             echo "Deleted $USER_ID (HTTP $HTTP)"
             COUNT=$((COUNT + 1))
           done

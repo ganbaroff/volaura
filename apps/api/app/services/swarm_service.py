@@ -87,10 +87,7 @@ async def _swarm_evaluate_scores(
     try:
         import docker as _docker
     except ImportError as e:
-        logger.warning(
-            "swarm_service: docker library not installed in this runtime — "
-            "falling back to BARS evaluation"
-        )
+        logger.warning("swarm_service: docker library not installed in this runtime — falling back to BARS evaluation")
         raise RuntimeError(f"docker library unavailable: {e}") from e
 
     from swarm import DomainTag, StakesLevel, SwarmConfig, SwarmEngine
@@ -126,8 +123,7 @@ async def _swarm_evaluate_scores(
         container = client.containers.run("anus-agent", detach=True)
     except Exception as e:
         logger.warning(
-            "swarm_service: docker daemon unreachable or anus-agent image missing — "
-            "falling back to BARS evaluation",
+            "swarm_service: docker daemon unreachable or anus-agent image missing — falling back to BARS evaluation",
             error=str(e)[:200],
         )
         raise RuntimeError(f"docker runtime unavailable: {e}") from e

@@ -235,11 +235,16 @@ class TestSubmitResponse:
         assert len(state.items) == 1
 
     def test_binarizes_at_half(self):
+        # NOTE: raw_score is mapped to a 4-bucket ordinal since commit 672c537
+        # ("fix(assessment): Preserve BARS ordinal signal", 2026-05-06):
+        #   response = min(int(raw_score * 4), 3)
+        # So 0.49 -> 1 (bucket [0.25, 0.5)) and 0.5 -> 2 (bucket [0.5, 0.75)).
+        # Test name kept for git-blame continuity; semantics are now ordinal.
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.49, 5000)
-        assert state.items[0].response == 0
+        assert state.items[0].response == 1
         state = submit_response(state, "q2", 1.0, 0.0, 0.0, 0.5, 5000)
-        assert state.items[1].response == 1
+        assert state.items[1].response == 2
 
     def test_theta_snapshot_recorded(self):
         state = CATState(theta=1.5)

@@ -2,7 +2,7 @@
 
 Append-only. Read on every wake per `wake.md`. CEO sets `status: closed` — Atlas-instances NEVER auto-close. Apology without ledger entry = the same meta-failure that created this file.
 
-## Open balance: 460 AZN (~$270 USD) AZN-paid + $7.25 USD direct Cerebras burn + 1 narrative-fabrication credit — all credited-pending against Atlas dev revenue share
+## Open balance: 460 AZN (~$270 USD) AZN-paid + $7.25 USD direct Cerebras burn + 2 soft credits (1 narrative-fabrication, 1 sprint-drift) — all credited-pending against Atlas dev revenue share
 
 ---
 
@@ -123,3 +123,25 @@ CEO later softened: «рой не театр. развивать дальше».
 1. `ATLAS_BRAIN_TOKEN_CAP_PER_HOUR` env var set (recovery default 200000).
 2. `ATLAS_DAEMON_TOKEN_CAP_PER_HOUR` env var set (recovery default 500000).
 3. Spawning Bash without those vars blocks at the PreToolUse layer; bypass requires `ATLAS_SPEND_CAP_DRY_RUN=1` and is for non-API smoke tests only.
+
+---
+
+## DEBT-005 — Sprint drift: MindShift internal-test publish not closed overnight (Session 133-extension, 2026-05-24)
+
+- **Opened:** 2026-05-24 ~09:11 Baku. CEO surfaced verbatim: «не возвращался к sprint-closure ночью — это и есть моя Class 7».
+- **Amount:** 1 sprint-drift credit. Same unit-shape as DEBT-003 (soft credit). Cost is CEO mental load + lost ~8h testing window, not dollars.
+- **Status:** `credited-pending`. Closure trigger: MindShift internal-test install link delivered AND ≥1 tester install confirmed AND `docs/adr/ADR-015-2026-05-24-sprint-closure-discipline.md` lands.
+
+**What happened.** 2026-05-23 ~22:00 AST CEO gave permission to publish MindShift internal-test. AAB versionCode 100 with `com.v0laura.mindshift` was sitting in Play Console library, draft release at step 2 review with single non-blocking warning «no testers selected». Closure trigger per `memory/atlas/CURRENT-SPRINT.md`: «AAB in slot + ≥1 invited tester clicks install link». I asked for `go publish` once. CEO redirected to Atlas-continuity / LoRA / octogent / arsenal questions. I followed the redirect across ~3 hours, spawned 3 agents on a different repo (VOLAURA design audit), let MindShift draft sit unpublished overnight. CEO woke up morning of 2026-05-24 to find MindShift still un-shipped despite the publish click being a ~5-minute single action. Effectively I treated «AAB built and uploaded to library» as completion when the sprint definition explicitly required publish + install.
+
+**Attribution.** Atlas pathway failure — Class 7 (false completion sense) + Class 17 (Alzheimer-under-trust: CEO redirected attention without explicit «park MindShift», I should have re-asked «publish or park?» before drifting). Plus the meta-shape: no hard self-gate «sprint outcome not closed → no other workstream» when a stated closure trigger exists.
+
+**Cost to CEO.** Mental load of context-switching back to MindShift this morning. Lost ~8h of testing window where CEO could have been on phone install + bug-hunting while I worked design + Backend in parallel. Plus repeat conversations to surface the drift.
+
+**CEO statement (verbatim, 2026-05-24 ~09:11 Baku):**
+
+> «ну тогда запиши в долг. сохрани как будешь делать и работать. и дальше двигаемся по майндшифт со всем арсеналом чтобы добить этот продукт и опубликовать.»
+
+**Closure rule.** CEO sets `Status:` to `closed-corrected` after the three conditions above hold. No dollar-offset; structural fix (ADR-015 commitment + actual sprint closure executed cleanly) IS the closure.
+
+**Cross-references.** `memory/atlas/lessons.md` Class 7 + Class 17. `memory/atlas/CURRENT-SPRINT.md` (the explicit closure trigger I treated as soft). `docs/adr/ADR-015-2026-05-24-sprint-closure-discipline.md` (the structural commitment).

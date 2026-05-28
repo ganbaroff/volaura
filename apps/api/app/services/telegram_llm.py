@@ -6,9 +6,10 @@ Tries providers in order:
      emotional state adaptation, long-context persona adherence).
   1. Vertex AI Gemini 2.5 Flash — second fallback, $300 GCP credits, very fast
   2. OpenRouter Claude Sonnet — third fallback (proxy path, used if direct Anthropic hits rate limit)
-  3. Gemini 2.0 Flash direct — free tier fallback
-  4. NVIDIA NIM llama-3.3-70b — hardware fallback (weakest persona adherence)
-  (Groq removed 2026-04-20 — org spend-limit blocked account-wide)
+  3. FreeTheAi OpenAI-compatible API — free fallback, Discord key required
+  4. Gemini 2.0 Flash direct — free tier fallback
+  5. NVIDIA NIM llama-3.3-70b — hardware fallback (weakest persona adherence)
+  6. Groq — last fallback if enabled
 
 Returns (reply_text, provider_name) so callers can log which provider answered.
 
@@ -23,6 +24,8 @@ days of runway; before the $20 depletes the chain naturally falls through to Ver
 
 from __future__ import annotations
 
+import os
+
 import httpx
 from loguru import logger
 
@@ -33,9 +36,11 @@ async def generate_atlas_response(
     anthropic_key: str | None = None,
     vertex_key: str | None = None,
     openrouter_key: str | None = None,
+    freetheai_key: str | None = None,
     gemini_key: str | None = None,
     nvidia_key: str | None = None,
     groq_key: str | None = None,
+    max_tokens: int = 500,
 ) -> tuple[str, str]:
     """Try LLM providers in order. Returns (reply_text, provider_name)."""
 
@@ -47,6 +52,7 @@ async def generate_atlas_response(
         al=len(anthropic_key or ""),
         vl=len(vertex_key or ""),
         ol=len(openrouter_key or ""),
+        fl=len(freetheai_key or os.environ.get("FREETHEAI_API_KEY", "")),
         gl=len(gemini_key or ""),
     )
 
@@ -66,7 +72,7 @@ async def generate_atlas_response(
                         # 500 tokens ≈ 350-400 Russian chars after tokenization.
                         # Upper bound kept loose to allow emotional-nuance replies
                         # while system prompt enforces the 700-char one-bubble rule.
-                        "max_tokens": 500,
+                        "max_tokens": max_tokens,
                         "temperature": 0.7,
                         "system": system_prompt,
                         "messages": [
@@ -97,7 +103,7 @@ async def generate_atlas_response(
                     json={
                         "contents": [{"role": "user", "parts": [{"text": user_message}]}],
                         "system_instruction": {"parts": [{"text": system_prompt}]},
-                        "generation_config": {"max_output_tokens": 500, "temperature": 0.7},
+                        "generation_config": {"max_output_tokens": max_tokens, "temperature": 0.7},
                     },
                 )
                 if r.status_code == 200:
@@ -134,7 +140,7 @@ async def generate_atlas_response(
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": user_message},
                         ],
-                        "max_tokens": 500,
+                        "max_tokens": max_tokens,
                         "temperature": 0.7,
                     },
                 )
@@ -146,7 +152,47 @@ async def generate_atlas_response(
         except Exception as e_or:
             logger.warning("OpenRouter failed, trying Gemini: {e}", e=str(e_or)[:100])
 
-    # ── 2. Gemini Flash fallback (free tier) ──
+    # ── 3. FreeTheAi fallback (OpenAI-compatible, Discord key required) ──
+    if not reply:
+        free_the_ai_key = freetheai_key or os.environ.get("FREETHEAI_API_KEY", "")
+        if free_the_ai_key:
+            try:
+                base_url = os.environ.get("FREETHEAI_BASE_URL", "https://api.freetheai.xyz/v1").rstrip("/")
+                model = os.environ.get("FREETHEAI_MODEL", "bbg/moonshotai/Kimi-K2.5")
+                async with httpx.AsyncClient(timeout=30) as hc:
+                    r = await hc.post(
+                        f"{base_url}/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {free_the_ai_key}",
+                            "Content-Type": "application/json",
+                        },
+                        json={
+                            "model": model,
+                            "messages": [
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": user_message},
+                            ],
+                            "max_tokens": max_tokens,
+                            "temperature": 0.7,
+                        },
+                    )
+                    if r.status_code == 200:
+                        candidate_text = (
+                            r.json()
+                            .get("choices", [{}])[0]
+                            .get("message", {})
+                            .get("content", "")
+                            .strip()
+                        )
+                        if candidate_text:
+                            reply = candidate_text
+                            provider = "freetheai"
+                    else:
+                        logger.warning("FreeTheAi {s}: {b}", s=r.status_code, b=r.text[:200])
+            except Exception as e_ft:
+                logger.warning("FreeTheAi failed, trying Gemini: {e}", e=str(e_ft)[:100])
+
+    # ── 4. Gemini Flash fallback (free tier) ──
     if not reply:
         try:
             from google import genai
@@ -157,7 +203,7 @@ async def generate_atlas_response(
                 contents=user_message,
                 config=genai.types.GenerateContentConfig(
                     system_instruction=system_prompt,
-                    max_output_tokens=500,
+                    max_output_tokens=max_tokens,
                     temperature=0.7,
                 ),
             )
@@ -168,7 +214,7 @@ async def generate_atlas_response(
         except Exception as e_gm:
             logger.warning("Gemini fallback failed: {e}", e=str(e_gm)[:100])
 
-    # ── 3. NVIDIA NIM fallback (free, weaker persona adherence) ──
+    # ── 5. NVIDIA NIM fallback (free, weaker persona adherence) ──
     if not reply and nvidia_key:
         try:
             async with httpx.AsyncClient(timeout=25) as hc:
@@ -181,7 +227,7 @@ async def generate_atlas_response(
                             {"role": "system", "content": system_prompt[:4000]},
                             {"role": "user", "content": user_message},
                         ],
-                        "max_tokens": 500,
+                        "max_tokens": max_tokens,
                         "temperature": 0.7,
                     },
                 )
@@ -193,7 +239,7 @@ async def generate_atlas_response(
         except Exception as e_nv:
             logger.warning("NVIDIA NIM failed: {e}", e=str(e_nv)[:100])
 
-    # ── 4. Groq (last fallback) ──
+    # ── 6. Groq (last fallback) ──
     if not reply and groq_key:
         try:
             async with httpx.AsyncClient(timeout=15) as hc:
@@ -206,7 +252,7 @@ async def generate_atlas_response(
                             {"role": "system", "content": system_prompt[:3000]},
                             {"role": "user", "content": user_message},
                         ],
-                        "max_tokens": 500,
+                        "max_tokens": max_tokens,
                         "temperature": 0.7,
                     },
                 )
@@ -217,6 +263,6 @@ async def generate_atlas_response(
             logger.warning("Groq failed: {e}", e=str(e_gr)[:100])
 
     if not reply:
-        return ("Все провайдеры недоступны. Сообщение сохранено.", "none")
+        return ("LLM недоступен. Все провайдеры недоступны. Сообщение сохранено.", "none")
 
     return (reply, provider)

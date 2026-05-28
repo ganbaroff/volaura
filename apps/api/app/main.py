@@ -81,6 +81,23 @@ from app.routers import (
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker
 
+_TELEGRAM_WEBHOOK_REASSERT_SECONDS = 300
+
+
+async def _telegram_webhook_watchdog() -> None:
+    """Periodically re-assert the Telegram webhook in production.
+
+    Telegram only allows one delivery mode per bot token. If a stale long-polling
+    consumer clears the webhook, this watchdog restores the Railway webhook so the
+    live chat path stays usable.
+    """
+    while True:
+        try:
+            await telegram_webhook.ensure_telegram_webhook()
+        except Exception as exc:
+            logger.warning("Telegram webhook watchdog failed: {e}", e=str(exc)[:200])
+        await asyncio.sleep(_TELEGRAM_WEBHOOK_REASSERT_SECONDS)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -93,6 +110,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     for warning in validate_production_settings():
         logger.warning(warning)
 
+    # Re-assert the Telegram webhook on every boot so a stale polling consumer
+    # cannot leave the bot disconnected from Railway.
+    with suppress(Exception):
+        await telegram_webhook.ensure_telegram_webhook()
+
+    telegram_watchdog_task = None
+    if settings.telegram_bot_token and settings.telegram_webhook_secret:
+        telegram_watchdog_task = asyncio.create_task(
+            _telegram_webhook_watchdog(),
+            name="telegram_webhook_watchdog",
+        )
+
     # Start async re-evaluation worker (ADR-010: keyword_fallback → LLM upgrade queue)
     reeval_task = asyncio.create_task(run_reeval_worker(), name="reeval_worker")
 
@@ -102,9 +131,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     yield
 
     # Graceful shutdown: cancel background workers and wait for them to stop
+    if telegram_watchdog_task:
+        telegram_watchdog_task.cancel()
     reeval_task.cancel()
     video_task.cancel()
-    for task in (reeval_task, video_task):
+    for task in tuple(t for t in (telegram_watchdog_task, reeval_task, video_task) if t):
         with suppress(asyncio.CancelledError, TimeoutError):
             await asyncio.wait_for(asyncio.shield(task), timeout=5.0)
 

@@ -63,18 +63,25 @@ def test_model_list_with_anthropic_key_only_still_has_no_anthropic():
     assert any(m["model_name"] == "ollama-fb" for m in model_list)
 
 
-def test_model_list_with_cerebras_and_anthropic_keeps_cerebras_drops_anthropic():
+def test_model_list_drops_cerebras_and_anthropic():
+    """ADR-013: Cerebras fully removed from adapter. Anthropic blocked by
+    Constitution Article 0. Neither should appear in model_list."""
     adapter = _load_adapter_module()
     model_list = adapter._build_model_list(env={
         "CEREBRAS_API_KEY": "sk-cb-test",
         "ANTHROPIC_API_KEY": "sk-ant-test",
     })
     model_strings = [m["litellm_params"]["model"] for m in model_list]
-    assert any(s.startswith("cerebras/") for s in model_strings)
+    assert all(not s.startswith("cerebras/") for s in model_strings), (
+        f"Cerebras must be removed (ADR-013): {model_strings}"
+    )
     assert all(not s.startswith("anthropic/") for s in model_strings), model_strings
+    # Ollama always present as the no-key local fallback.
+    assert any(s.startswith("ollama/") for s in model_strings)
 
 
-def test_model_list_with_all_keys_has_cerebras_ollama_nvidia_no_anthropic():
+def test_model_list_with_all_keys_has_nvidia_ollama_no_cerebras_no_anthropic():
+    """With all keys present, nvidia + ollama expected, cerebras + anthropic excluded."""
     adapter = _load_adapter_module()
     model_list = adapter._build_model_list(env={
         "CEREBRAS_API_KEY": "sk-cb-test",
@@ -82,7 +89,9 @@ def test_model_list_with_all_keys_has_cerebras_ollama_nvidia_no_anthropic():
         "ANTHROPIC_API_KEY": "sk-ant-test",
     })
     model_strings = [m["litellm_params"]["model"] for m in model_list]
-    assert any(s.startswith("cerebras/") for s in model_strings)
+    assert all(not s.startswith("cerebras/") for s in model_strings), (
+        f"Cerebras must be removed (ADR-013): {model_strings}"
+    )
     assert any(s.startswith("ollama/") for s in model_strings)
     assert any(s.startswith("nvidia_nim/") for s in model_strings)
     assert all(not s.startswith("anthropic/") for s in model_strings), model_strings

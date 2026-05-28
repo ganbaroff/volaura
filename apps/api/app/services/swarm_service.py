@@ -19,6 +19,8 @@ from loguru import logger
 from app.config import settings
 from app.core.assessment.bars import EvaluationResult
 
+docker: Any | None = None
+
 
 async def evaluate_answer(
     question_en: str,
@@ -84,11 +86,16 @@ async def _swarm_evaluate_scores(
 
     # Lazy import — fails closed with a RuntimeError that the outer
     # evaluate_answer try/except converts into a BARS fallback.
-    try:
-        import docker as _docker
-    except ImportError as e:
-        logger.warning("swarm_service: docker library not installed in this runtime — falling back to BARS evaluation")
-        raise RuntimeError(f"docker library unavailable: {e}") from e
+    global docker
+    if docker is None:
+        try:
+            import docker as _docker
+        except ImportError as e:
+            logger.warning(
+                "swarm_service: docker library not installed in this runtime — falling back to BARS evaluation"
+            )
+            raise RuntimeError(f"docker library unavailable: {e}") from e
+        docker = _docker
 
     from swarm import DomainTag, StakesLevel, SwarmConfig, SwarmEngine
 
@@ -119,7 +126,7 @@ async def _swarm_evaluate_scores(
     # if the daemon is unreachable (e.g. Railway container has no Docker daemon).
     # Caught and re-raised as RuntimeError so the outer fallback engages.
     try:
-        client = _docker.from_env()
+        client = docker.from_env()
         container = client.containers.run("anus-agent", detach=True)
     except Exception as e:
         logger.warning(

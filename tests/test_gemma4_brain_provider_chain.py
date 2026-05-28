@@ -73,7 +73,8 @@ def _request_url(req) -> str:
 
 def test_default_chain_does_not_call_cerebras(monkeypatch):
     """With default env (no ATLAS_ENABLE_CEREBRAS), Cerebras URL must not
-    appear in any urlopen call even when CEREBRAS_API_KEY is present."""
+    appear in any urlopen call even when CEREBRAS_API_KEY is present.
+    Provider precedence: nvidia first (Inception credits), then ollama/gemini/groq."""
     brain = _load_brain()
 
     monkeypatch.setenv("CEREBRAS_API_KEY", "fake-cerebras-key")
@@ -85,14 +86,14 @@ def test_default_chain_does_not_call_cerebras(monkeypatch):
     def fake_urlopen(req, timeout=None):
         url = _request_url(req)
         called_urls.append(url)
-        return _openai_shape("hello-from-mock-groq")
+        return _openai_shape("hello-from-mock-nvidia")
 
     with patch("urllib.request.urlopen", fake_urlopen):
         out = brain.call_brain_llm("test prompt", max_tokens=100)
 
-    assert out == "hello-from-mock-groq"
-    assert any("groq.com" in u for u in called_urls), (
-        f"Groq must be called first when key present, got URLs: {called_urls}"
+    assert out == "hello-from-mock-nvidia"
+    assert any("nvidia.com" in u for u in called_urls), (
+        f"NVIDIA must be called first (provider precedence), got URLs: {called_urls}"
     )
     assert not any("cerebras.ai" in u for u in called_urls), (
         f"Cerebras MUST NOT be called by default (ADR-013), got URLs: {called_urls}"
@@ -183,8 +184,10 @@ def test_cerebras_skipped_when_env_flag_random_truthy(monkeypatch):
 # ── ADR-013 §a — Cerebras attempted only when explicitly enabled ─────────────
 
 
-def test_cerebras_attempted_when_env_flag_true_and_others_fail(monkeypatch):
-    """Cerebras becomes last-resort fallback when ATLAS_ENABLE_CEREBRAS=true."""
+def test_cerebras_fully_removed_from_brain_chain(monkeypatch):
+    """ADR-013: Cerebras was removed from call_brain_llm entirely after $7.25
+    burn incident. Even with ATLAS_ENABLE_CEREBRAS=true, Cerebras must not
+    appear in the provider chain. If all free providers fail, brain returns empty."""
     brain = _load_brain()
 
     monkeypatch.setenv("CEREBRAS_API_KEY", "fake-cerebras-key")
@@ -198,32 +201,24 @@ def test_cerebras_attempted_when_env_flag_true_and_others_fail(monkeypatch):
     def fake_urlopen(req, timeout=None):
         url = _request_url(req)
         called_urls.append(url)
-        if "cerebras.ai" in url:
-            return _openai_shape("from-cerebras-paid")
         raise Exception(f"simulated free-provider failure for {url}")
 
     with patch("urllib.request.urlopen", fake_urlopen):
         out = brain.call_brain_llm("test prompt", max_tokens=100)
 
-    assert out == "from-cerebras-paid"
-    assert any("cerebras.ai" in u for u in called_urls), (
-        f"Cerebras must be reachable when ATLAS_ENABLE_CEREBRAS=true and "
-        f"every free provider fails; URLs: {called_urls}"
-    )
-    # Cerebras must be LAST in the order — every free provider tried first
-    cerebras_idx = next(
-        (i for i, u in enumerate(called_urls) if "cerebras.ai" in u), -1
-    )
-    assert cerebras_idx == len(called_urls) - 1, (
-        f"Cerebras must be last attempted, not first; URLs: {called_urls}"
+    assert out == ""  # all providers failed, brain returns empty
+    assert not any("cerebras.ai" in u for u in called_urls), (
+        f"Cerebras must NOT appear in chain even with ATLAS_ENABLE_CEREBRAS=true "
+        f"(ADR-013 full removal); URLs: {called_urls}"
     )
 
 
 # ── ADR-013 §a — provider order ──────────────────────────────────────────────
 
 
-def test_provider_order_groq_first(monkeypatch):
-    """First provider tried must be Groq (per CEO directive 2026-05-09)."""
+def test_provider_order_nvidia_first(monkeypatch):
+    """First provider tried must be NVIDIA (provider precedence:
+    NVIDIA Inception credits first, per CEO standing directive)."""
     brain = _load_brain()
 
     monkeypatch.setenv("GROQ_API_KEY", "fake")
@@ -241,17 +236,19 @@ def test_provider_order_groq_first(monkeypatch):
     with patch("urllib.request.urlopen", fake_urlopen):
         brain.call_brain_llm("test", 50)
 
-    assert called_urls and "groq.com" in called_urls[0], (
-        f"First call must be Groq, got: {called_urls}"
+    assert called_urls and "nvidia.com" in called_urls[0], (
+        f"First call must be NVIDIA (provider precedence), got: {called_urls}"
     )
 
 
-def test_falls_back_to_gemini_when_groq_fails(monkeypatch):
-    """Provider chain step 2: Groq fail -> try Gemini next (cerebras off)."""
+def test_falls_back_through_chain_when_nvidia_fails(monkeypatch):
+    """Provider chain: nvidia fail -> ollama fail -> gemini succeeds.
+    Current order: nvidia → ollama → gemini → groq."""
     brain = _load_brain()
 
     monkeypatch.setenv("GROQ_API_KEY", "fake")
     monkeypatch.setenv("GEMINI_API_KEY", "fake")
+    monkeypatch.setenv("NVIDIA_API_KEY", "fake")
     monkeypatch.delenv("ATLAS_ENABLE_CEREBRAS", raising=False)
 
     called_urls: list[str] = []
@@ -259,17 +256,17 @@ def test_falls_back_to_gemini_when_groq_fails(monkeypatch):
     def fake_urlopen(req, timeout=None):
         url = _request_url(req)
         called_urls.append(url)
-        if "groq.com" in url:
-            raise Exception("groq down")
+        if "nvidia.com" in url:
+            raise Exception("nvidia down")
         if "generativelanguage" in url:
             return _gemini_shape("from-gemini")
-        raise Exception(f"unexpected url {url}")
+        raise Exception(f"simulated failure for {url}")
 
     with patch("urllib.request.urlopen", fake_urlopen):
         out = brain.call_brain_llm("test", 50)
 
     assert out == "from-gemini"
-    assert "groq.com" in called_urls[0]
+    assert "nvidia.com" in called_urls[0]
     assert any("generativelanguage" in u for u in called_urls)
 
 

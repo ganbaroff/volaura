@@ -222,16 +222,16 @@ def test_remapped_perspectives_are_not_azure():
         )
 
 
-def test_ux_designer_uses_proven_groq_model():
-    """UX Designer was on azure/gpt-4.1-nano which returned empty errors —
-    re-routed to the same groq model used by Code Quality / QA / DevOps / Growth Hacker."""
+def test_ux_designer_uses_proven_model():
+    """UX Designer was on azure (empty errors) → groq (403) → nvidia.
+    Must be on a working provider with a proven model."""
     daemon = _load_daemon_module()
     provider, model = daemon.AGENT_LLM_MAP["UX Designer"]
-    assert provider == "groq", (
-        f"UX Designer must be on groq (not azure), got {provider}"
+    assert provider == "nvidia", (
+        f"UX Designer must be on nvidia (groq returned 403), got {provider}"
     )
-    assert model == "llama-3.3-70b-versatile", (
-        f"UX Designer must use proven groq model, got {model}"
+    assert model == "meta/llama-3.3-70b-instruct", (
+        f"UX Designer must use proven nvidia model, got {model}"
     )
 
 

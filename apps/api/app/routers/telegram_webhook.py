@@ -2461,7 +2461,9 @@ async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
     except Exception as e:
         logger.error("Telegram handler error: {e}", e=str(e))
         # Always try to respond even on error
-        await _send_message(chat_id, "⚠️ Ошибка обработки. Сообщение может не быть сохранено. Попробуй ещё раз через минуту.")
+        await _send_message(
+            chat_id, "⚠️ Ошибка обработки. Сообщение может не быть сохранено. Попробуй ещё раз через минуту."
+        )
 
     return JSONResponse({"ok": True})
 

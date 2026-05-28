@@ -93,7 +93,7 @@ def _is_regression_event(payload: dict[str, Any]) -> bool:
     We also accept action == 'resolved' reversed (reopened).
     """
     action = payload.get("action", "")
-    if action in {"unresolved", "reopened"}:
+    if action in {"unresolved", "reopened", "resolved"}:
         return True
     data = payload.get("data", {}) or {}
     issue = data.get("issue") or {}

@@ -23,16 +23,14 @@ from app.services.video_generation_worker import (
 
 
 def _make_db():
-    """Build mock AsyncClient with synchronous schema().table() chain.
+    """Build mock AsyncClient with synchronous table() chain.
 
-    Supabase fluent API: db.schema("x").table("y").update({}).eq("k","v").execute()
+    Supabase fluent API: db.table("y").update({}).eq("k","v").execute()
     Only .execute() is awaited. Everything else is synchronous chaining.
     """
     db = MagicMock()
-    schema_mock = MagicMock()
-    db.schema.return_value = schema_mock
     table_mock = MagicMock()
-    schema_mock.table.return_value = table_mock
+    db.table.return_value = table_mock
     return db, table_mock
 
 
@@ -50,27 +48,22 @@ def _wire_chain(start, methods: list[str], result_data):
 
 
 def _make_process_db():
-    """Build db mock for _process_job that routes schema() calls to separate tables.
+    """Build db mock for _process_job that routes table() calls to separate tables.
 
-    _process_job calls db.schema("brandedby") multiple times:
-      1st: .table("ai_twins") for twin lookup
-      2nd+: .table("generations") for _mark_completed/_mark_failed
+    _process_job calls db.table("brandedby_ai_twins") and db.table("brandedby_generations").
     """
     db = MagicMock()
     twin_table = MagicMock()
     gen_table = MagicMock()
-    call_count = {"n": 0}
 
-    def schema_side_effect(name):
-        call_count["n"] += 1
-        s = MagicMock()
-        if call_count["n"] == 1:
-            s.table.return_value = twin_table
-        else:
-            s.table.return_value = gen_table
-        return s
+    def table_side_effect(name):
+        if name == "brandedby_ai_twins":
+            return twin_table
+        if name == "brandedby_generations":
+            return gen_table
+        raise AssertionError(f"Unexpected table name: {name}")
 
-    db.schema.side_effect = schema_side_effect
+    db.table.side_effect = table_side_effect
     return db, twin_table, gen_table
 
 
@@ -111,7 +104,7 @@ class TestRecoverStaleJobs:
 
         await _recover_stale_jobs(db)
 
-        db.schema.assert_called_with("brandedby")
+        db.table.assert_called_with("brandedby_generations")
         table.update.assert_called_once()
         payload = table.update.call_args[0][0]
         assert payload["status"] == "queued"

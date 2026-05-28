@@ -664,7 +664,8 @@ async def _handle_backlog(db, chat_id: int | str) -> None:
             msg += f"{i}. [{ts}] {item['message'][:100]}\n"
         await _send_message(chat_id, msg)
     except Exception as e:
-        await _send_message(chat_id, f"Ошибка чтения бэклога: {str(e)[:100]}")
+        logger.warning("backlog read failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось прочитать backlog. Попробуй ещё раз через минуту.")
 
 
 async def _handle_proposals(db, chat_id: int | str) -> None:
@@ -705,7 +706,8 @@ async def _handle_proposals(db, chat_id: int | str) -> None:
         keyboard = {"inline_keyboard": buttons}
         await _send_message(chat_id, msg, reply_markup=keyboard)
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ Ошибка чтения proposals: {str(e)[:100]}")
+        logger.warning("proposals read failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось прочитать proposals. Попробуй ещё раз через минуту.")
 
 
 async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_id: str) -> None:
@@ -758,7 +760,8 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
             await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден. Используйте /proposals.")
 
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ Ошибка: {str(e)[:100]}")
+        logger.warning("proposal action failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось обработать proposal. Попробуй ещё раз через минуту.")
 
 
 async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
@@ -835,7 +838,8 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
             )
 
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ Execute error: {str(e)[:150]}")
+        logger.warning("execute proposal failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось запустить execution. Попробуй ещё раз через минуту.")
 
 
 async def _trigger_autonomous_work(chat_id: int | str) -> None:
@@ -877,7 +881,8 @@ async def _trigger_autonomous_work(chat_id: int | str) -> None:
                 f"Попробуй: `gh workflow run 'Swarm Daily Autonomy'`",
             )
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ Trigger error: {str(e)[:150]}")
+        logger.warning("autonomous work trigger failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось запустить рой. Попробуй позже.")
 
 
 async def _handle_agents(chat_id: int | str) -> None:
@@ -919,10 +924,6 @@ async def _handle_agent_task(db, chat_id: int | str, agent_id: str, task: str) -
         await _send_message(chat_id, f"⚠️ Агент `{agent_id}` не найден.\n\nДоступные ID:\n{keys}")
         return
 
-    if not settings.gemini_api_key:
-        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
-        return
-
     # Load agent's live state for context
     live = _load_agent_state()
     agent_state = live.get(normalized, {})
@@ -936,16 +937,7 @@ async def _handle_agent_task(db, chat_id: int | str, agent_id: str, task: str) -
 
     stats = await _get_project_stats(db)
     ecosystem = _get_ecosystem_context()
-
-    try:
-        from google import genai
-
-        client = genai.Client(api_key=settings.gemini_api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=task,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=f"""Ты — {perspective} в Atlas swarm.
+    system_prompt = f"""Ты — {perspective} в Atlas swarm.
 CEO Юсиф даёт тебе конкретную задачу через Telegram.{state_ctx}
 
 Контекст проекта:
@@ -959,14 +951,13 @@ CEO Юсиф даёт тебе конкретную задачу через Tele
 - Конкретно: файлы, строки кода, числа, риски с оценкой
 - Если задача вне твоей экспертизы — скажи какому агенту передать
 - Заканчивай: что нужно сделать дальше и кто
-- На русском""",
-                max_output_tokens=2000,
-                temperature=0.7,
-            ),
-        )
-        reply = f"🤖 *{normalized.title()} Agent:*\n\n{response.text.strip()}"
-    except Exception as e:
-        reply = f"⚠️ Agent `{normalized}` не смог ответить: {str(e)[:100]}"
+- На русском"""
+
+    reply_text, provider = await _generate_fallback_llm_reply(system_prompt, task, max_tokens=2000)
+    if provider == "none":
+        reply = f"⚠️ Agent `{normalized}` пока не смог ответить. Попробуй ещё раз через минуту."
+    else:
+        reply = f"🤖 *{normalized.title()} Agent:*\n\n{reply_text}"
 
     await _save_message(db, "bot_to_ceo", f"[task→{normalized}] {reply}", "agent_task")
     await _send_message(chat_id, reply)
@@ -983,15 +974,12 @@ async def _handle_queue(chat_id: int | str) -> None:
             msg += "\n\n_...показаны первые 2000 символов_"
         await _send_message(chat_id, msg)
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ Не удалось прочитать очередь: {str(e)[:100]}")
+        logger.warning("queue read failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось прочитать очередь. Попробуй ещё раз через минуту.")
 
 
 async def _handle_swarm(db, chat_id: int | str, task: str) -> None:
     """Broadcast task to top 3 most relevant agents and synthesize their responses."""
-    if not settings.gemini_api_key:
-        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
-        return
-
     await _send_message(chat_id, f"🔄 Рою задача: _{task}_\n\nОпрашиваю агентов...")
 
     stats = await _get_project_stats(db)
@@ -1031,44 +1019,28 @@ async def _handle_swarm(db, chat_id: int | str, task: str) -> None:
         ]
 
     responses: list[str] = []
-    from google import genai
-
-    client = genai.Client(api_key=settings.gemini_api_key)
 
     for agent_id, perspective in selected:
-        try:
-            resp = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=task,
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=f"""Ты — {perspective}.
+        system_prompt = f"""Ты — {perspective}.
 CEO дал задачу всему рою. Дай ответ строго со своей перспективы.
 Проект: {stats}
 Экосистема: {ecosystem}
-Максимум 300 слов. Конкретно. На русском.""",
-                    max_output_tokens=600,
-                    temperature=0.7,
-                ),
-            )
-            responses.append(f"🤖 *{agent_id.title()}:*\n{resp.text.strip()}")
-        except Exception as e:
-            responses.append(f"⚠️ {agent_id}: {str(e)[:80]}")
+Максимум 300 слов. Конкретно. На русском."""
+        resp_text, provider = await _generate_fallback_llm_reply(system_prompt, task, max_tokens=600)
+        if provider == "none":
+            responses.append(f"⚠️ {agent_id}: пока не смог ответить")
+        else:
+            responses.append(f"🤖 *{agent_id.title()}:*\n{resp_text}")
 
     # Synthesize
     combined = "\n\n".join(responses)
-    try:
-        synthesis = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=f"Синтезируй эти 3 ответа агентов по задаче '{task}' в одно краткое решение:\n\n{combined}",
-            config=genai.types.GenerateContentConfig(
-                system_instruction="Ты CTO-синтезатор. Один абзац: что делаем, кто отвечает, риски. Без повторений.",
-                max_output_tokens=400,
-                temperature=0.4,
-            ),
-        )
-        synth_text = f"\n\n✅ *Синтез:*\n{synthesis.text.strip()}"
-    except Exception:
-        synth_text = ""
+    synthesis_prompt = "Ты CTO-синтезатор. Один абзац: что делаем, кто отвечает, риски. Без повторений."
+    synthesis_text, synthesis_provider = await _generate_fallback_llm_reply(
+        synthesis_prompt,
+        f"Синтезируй эти 3 ответа агентов по задаче '{task}' в одно краткое решение:\n\n{combined}",
+        max_tokens=400,
+    )
+    synth_text = f"\n\n✅ *Синтез:*\n{synthesis_text}" if synthesis_provider != "none" else ""
 
     full_reply = combined + synth_text
     await _save_message(db, "bot_to_ceo", f"[swarm] {full_reply[:500]}", "swarm_response")
@@ -1087,36 +1059,21 @@ async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: s
             await _send_message(chat_id, f"⚠️ Agent `{agent_name}` не найден.\n\nДоступные:\n{agents_list}")
             return
 
-    if not settings.gemini_api_key:
-        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
-        return
-
     stats = await _get_project_stats(db)
     perspective = _FULL_AGENT_MAP[agent_name]
-
-    try:
-        from google import genai
-
-        client = genai.Client(api_key=settings.gemini_api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=question,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=f"""Ты — {perspective} в swarm команде Volaura.
+    system_prompt = f"""Ты — {perspective} в swarm команде Volaura.
 CEO (Юсиф) задаёт тебе прямой вопрос через Telegram.
 
 Проект: verified professional platform, 51 API route, 512 tests, $50/mo budget.
 Stats: {stats}
 
 Отвечай от своей роли. Развёрнуто и подробно. На русском. Честно — если не знаешь, скажи.
-Если вопрос вне твоей экспертизы — скажи какого агента спросить.""",
-                max_output_tokens=1500,
-                temperature=0.5,
-            ),
-        )
-        reply = f"🤖 *{agent_name.title()} Agent:*\n\n{response.text.strip()}"
-    except Exception as e:
-        reply = f"⚠️ Agent `{agent_name}` не смог ответить: {str(e)[:100]}"
+Если вопрос вне твоей экспертизы — скажи какого агента спросить."""
+    reply_text, provider = await _generate_fallback_llm_reply(system_prompt, question, max_tokens=1500)
+    if provider == "none":
+        reply = f"⚠️ Agent `{agent_name}` пока не смог ответить. Попробуй ещё раз через минуту."
+    else:
+        reply = f"🤖 *{agent_name.title()} Agent:*\n\n{reply_text}"
 
     await _save_message(db, "bot_to_ceo", f"[{agent_name}] {reply}", "agent_response")
     await _send_message(chat_id, reply)
@@ -1145,38 +1102,24 @@ async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, questio
         await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден. Используйте /proposals.")
         return
 
-    if not settings.gemini_api_key:
-        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
-        return
-
-    try:
-        from google import genai
-
-        client = genai.Client(api_key=settings.gemini_api_key)
-        context = (
-            f"Agent: {found.get('agent', '?')}\n"
-            f"Severity: {found.get('severity', '?')}\n"
-            f"Title: {found.get('title', '?')}\n"
-            f"Content: {found.get('content', '')[:800]}"
-        )
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=question,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=f"""Ты — CTO-бот. CEO задаёт уточняющий вопрос по конкретному proposal от swarm.
+    context = (
+        f"Agent: {found.get('agent', '?')}\n"
+        f"Severity: {found.get('severity', '?')}\n"
+        f"Title: {found.get('title', '?')}\n"
+        f"Content: {found.get('content', '')[:800]}"
+    )
+    system_prompt = f"""Ты — CTO-бот. CEO задаёт уточняющий вопрос по конкретному proposal от swarm.
 
 PROPOSAL:
 {context}
 
 Отвечай строго по контексту proposal. Развёрнуто. На русском.
-Если вопрос требует кода или файлов — скажи CEO что нужно запустить сессию CTO.""",
-                max_output_tokens=1500,
-                temperature=0.4,
-            ),
-        )
-        reply = f"🔍 *По proposal `{proposal_id}`:*\n\n{response.text.strip()}"
-    except Exception as e:
-        reply = f"⚠️ Не смог ответить по proposal: {str(e)[:100]}"
+Если вопрос требует кода или файлов — скажи CEO что нужно запустить сессию CTO."""
+    reply_text, provider = await _generate_fallback_llm_reply(system_prompt, question, max_tokens=1500)
+    if provider == "none":
+        reply = f"⚠️ Не смог ответить по proposal `{proposal_id}`. Попробуй ещё раз через минуту."
+    else:
+        reply = f"🔍 *По proposal `{proposal_id}`:*\n\n{reply_text}"
 
     await _save_message(db, "bot_to_ceo", reply, "proposal_followup")
     await _send_message(chat_id, reply)
@@ -1272,7 +1215,8 @@ async def _handle_findings(chat_id: int | str, limit: int = 5) -> None:
         await _send_message(chat_id, "\n".join(lines))
 
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ Ошибка чтения findings: {str(e)[:100]}")
+        logger.warning("findings read failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось прочитать findings. Попробуй ещё раз через минуту.")
 
 
 async def _handle_simulate(chat_id: int | str) -> None:
@@ -1315,7 +1259,8 @@ async def _handle_simulate(chat_id: int | str) -> None:
         await _send_message(chat_id, "\n".join(lines))
 
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ Симуляция не удалась: {str(e)[:150]}")
+        logger.warning("simulation failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Симуляция не удалась. Попробуй ещё раз через минуту.")
 
 
 def _detect_emotional_state(text: str) -> str:
@@ -1632,6 +1577,35 @@ async def _create_github_issue(text: str, label: str = "atlas-telegram-request")
     return None
 
 
+async def _generate_fallback_llm_reply(system_prompt: str, user_message: str, max_tokens: int = 500) -> tuple[str, str]:
+    """Use the shared fallback chain without surfacing provider errors to Telegram."""
+    from app.services.telegram_llm import generate_atlas_response
+
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    vertex_key = os.environ.get("VERTEX_API_KEY", "")
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    freetheai_key = os.environ.get("FREETHEAI_API_KEY", "")
+    gemini_key = os.environ.get("GEMINI_API_KEY", "") or settings.gemini_api_key
+    nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
+    groq_key = os.environ.get("GROQ_API_KEY", "")
+
+    if not any([anthropic_key, vertex_key, openrouter_key, freetheai_key, gemini_key, nvidia_key, groq_key]):
+        return ("LLM недоступен. Все провайдеры недоступны. Сообщение сохранено.", "none")
+
+    return await generate_atlas_response(
+        system_prompt=system_prompt,
+        user_message=user_message,
+        anthropic_key=anthropic_key,
+        vertex_key=vertex_key,
+        openrouter_key=openrouter_key,
+        freetheai_key=freetheai_key,
+        gemini_key=gemini_key,
+        nvidia_key=nvidia_key,
+        groq_key=groq_key,
+        max_tokens=max_tokens,
+    )
+
+
 def _char_similarity(a: str, b: str) -> float:
     """DEPRECATED (2026-04-15) — kept only for backwards compatibility.
 
@@ -1754,7 +1728,8 @@ async def _handle_proposal_card_callback(
                     return
             await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден.")
         except Exception as e:
-            await _send_message(chat_id, f"⚠️ details: {str(e)[:100]}")
+            logger.warning("proposal details failed: {e}", e=str(e)[:200])
+            await _send_message(chat_id, "⚠️ Не удалось открыть details. Попробуй ещё раз через минуту.")
         return
 
     if action not in action_to_status:
@@ -1767,7 +1742,8 @@ async def _handle_proposal_card_callback(
         with open(proposals_path, encoding="utf-8") as f:
             data = _json.load(f)
     except Exception as e:
-        await _send_message(chat_id, f"⚠️ proposals.json unreadable: {str(e)[:100]}")
+        logger.warning("proposals.json unreadable: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось прочитать proposals.json. Попробуй ещё раз через минуту.")
         return
 
     found = None
@@ -1827,7 +1803,8 @@ async def _handle_proposal_card_callback(
         if os.path.exists(tmp_path):
             with contextlib.suppress(Exception):
                 os.remove(tmp_path)
-        await _send_message(chat_id, f"⚠️ proposals write failed: {str(e)[:100]}")
+        logger.warning("proposals write failed: {e}", e=str(e)[:200])
+        await _send_message(chat_id, "⚠️ Не удалось сохранить proposal decision. Попробуй ещё раз через минуту.")
         return
 
     # Edit original card — strip buttons, show decision
@@ -2068,25 +2045,7 @@ Sign: "— Атлас" """
         await _send_message(chat_id, reply_text)
         return
 
-    if not settings.gemini_api_key and not settings.vertex_api_key:
-        await _send_message(
-            chat_id,
-            "Атлас здесь. LLM недоступен — сообщение сохранено.\n\n— Атлас",
-        )
-        return
-
-    from app.services.telegram_llm import generate_atlas_response
-
-    reply, provider = await generate_atlas_response(
-        system_prompt=system,
-        user_message=text,
-        anthropic_key=os.environ.get("ANTHROPIC_API_KEY", ""),  # NEW 2026-04-20: Sonnet 4.5 primary
-        vertex_key=os.environ.get("VERTEX_API_KEY", ""),
-        openrouter_key=os.environ.get("OPENROUTER_API_KEY", ""),
-        gemini_key=os.environ.get("GEMINI_API_KEY", "") or settings.gemini_api_key,
-        nvidia_key=os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", ""),
-        groq_key=os.environ.get("GROQ_API_KEY", ""),
-    )
+    reply, provider = await _generate_fallback_llm_reply(system, text, max_tokens=500)
     logger.info("Atlas replied via {p}", p=provider)
 
     # ── Anti-loop post-check: multi-signal circuit breaker (Pattern 1) ──
@@ -2444,9 +2403,12 @@ async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
             await _handle_atlas(db, chat_id, text)
 
     except Exception as e:
-        logger.error("Telegram handler error: {e}", e=str(e))
+        logger.error("Telegram handler error", error=str(e), exc_info=True)
         # Always try to respond even on error
-        await _send_message(chat_id, f"⚠️ Ошибка обработки. Сообщение может не быть сохранено.\n{str(e)[:100]}")
+        await _send_message(
+            chat_id,
+            "⚠️ Ошибка обработки. Сообщение может не быть сохранено. Попробуйте еще раз позже.",
+        )
 
     return JSONResponse({"ok": True})
 
@@ -2470,20 +2432,46 @@ async def setup_webhook(request: Request) -> JSONResponse:
     if not settings.telegram_webhook_secret or admin_secret != settings.telegram_webhook_secret:
         return JSONResponse({"ok": False, "error": "Unauthorized"}, status_code=403)
 
+    ok, description = await _register_telegram_webhook()
+
+    # HIGH-02 FIX: Don't log full API response (may contain bot token)
+    logger.info("Telegram webhook setup: ok={ok}", ok=ok)
+    return JSONResponse({"ok": ok, "description": description})
+
+
+async def ensure_telegram_webhook() -> bool:
+    """Re-assert the Telegram webhook on app startup.
+
+    This is a defensive self-heal: if some stale polling consumer clears the webhook,
+    the next Railway restart will restore the live webhook route automatically.
+    """
+    ok, description = await _register_telegram_webhook()
+    if ok:
+        logger.info("Telegram webhook ensured on startup")
+    else:
+        logger.warning("Telegram webhook ensure failed: {description}", description=description)
+    return ok
+
+
+async def _register_telegram_webhook() -> tuple[bool, str]:
+    if not settings.telegram_bot_token:
+        return False, "TELEGRAM_BOT_TOKEN not set"
+    if not settings.telegram_webhook_secret:
+        return False, "TELEGRAM_WEBHOOK_SECRET not set"
+
     webhook_url = "https://volauraapi-production.up.railway.app/api/telegram/webhook"
 
     import httpx
 
-    payload: dict = {"url": webhook_url}
-    if settings.telegram_webhook_secret:
-        payload["secret_token"] = settings.telegram_webhook_secret
-    async with httpx.AsyncClient() as client:
+    payload: dict = {
+        "url": webhook_url,
+        "secret_token": settings.telegram_webhook_secret,
+    }
+    async with httpx.AsyncClient(timeout=15) as client:
         resp = await client.post(
             f"https://api.telegram.org/bot{settings.telegram_bot_token}/setWebhook",
             json=payload,
         )
         result = resp.json()
 
-    # HIGH-02 FIX: Don't log full API response (may contain bot token)
-    logger.info("Telegram webhook setup: ok={ok}", ok=result.get("ok"))
-    return JSONResponse({"ok": result.get("ok"), "description": result.get("description", "")})
+    return bool(result.get("ok")), str(result.get("description", ""))

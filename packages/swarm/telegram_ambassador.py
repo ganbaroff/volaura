@@ -281,6 +281,14 @@ def run_bot() -> None:
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
     ceo_chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID", "")
 
+    if os.getenv("TELEGRAM_ENABLE_LONG_POLLING", "").lower() not in {"1", "true", "yes"}:
+        logger.warning(
+            "telegram_ambassador long polling is disabled by default. "
+            "Use the webhook route in apps/api/app/routers/telegram_webhook.py. "
+            "Set TELEGRAM_ENABLE_LONG_POLLING=1 only for local debugging."
+        )
+        return
+
     if not bot_token:
         logger.error("TELEGRAM_BOT_TOKEN not set")
         return

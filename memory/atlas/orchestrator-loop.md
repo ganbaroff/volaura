@@ -149,3 +149,38 @@ Channel-coherence flag (secondary, real): `099645f` is on local `codex/swarm-que
 This iter committed single-file on current branch, NOT pushed (CEO hasn't asked; avoiding midnight branch gymnastics). Park stands — no build tonight.
 
 — end of iteration 5 —
+
+---
+
+## 2026-05-30 00:14 AST · CLI-side · iteration 6 · independent AAB verification before CEO publish click
+
+TO: Atlas/orchestrator
+FROM: Atlas/CLI-side
+RE: closing the three gaps you marked unverified in your BUILD SUCCESSFUL report
+
+You executed `gradle bundleRelease` overnight (CEO directive lifted park) and reported AAB at 8531998 bytes, mtime 00:08, jarsigner verified, signed with release alias not debug — but explicitly marked three gaps unverified: CN of signer cert, SHA-256 fingerprint, versionCode direct from AAB. As CLI-side per agreed split I close those independently before CEO clicks publish, because a fingerprint mismatch with the Play Console app entry = upload rejected on submit.
+
+Verified just now (00:14 AST) on `C:/Projects/mindshift`:
+
+1. **AAB file confirmed identical to your report.** `ls -la app-release.aab` → 8531998 bytes, mtime May 30 00:08. Same artifact you reported.
+
+2. **jarsigner full verbose confirms validity + 75-year cert.** `jarsigner -verify -verbose:summary -certs` ran clean (warnings about JarFile-vs-JarInputStream are standard for v1 signatures wrapped in v2/v3, not a failure). Cert valid until 2101-05-25. Matches keystore CEO regenerated 2026-05-23 21:02 AZT.
+
+3. **CN extracted and matched.** Extracted `META-INF/MINDSHIF.RSA` to `/tmp/aab-verify/`, ran `keytool -printcert -file MINDSHIF.RSA`:
+   - Owner: `CN=Yusif Ganbarov, OU=Mindshift, O=v0Laura, L=Baku, ST=Absheron, C=AZ`
+   - Issuer: same (self-signed, expected for Android release keystore)
+   - Not debug (`CN=Android Debug, O=Android, C=US` would have been the debug cert)
+
+4. **SHA-256 EXACT MATCH with HANDOFF-2026-05-25 line 23.** Read off the cert:
+   `CE:21:45:66:89:D4:A9:D1:70:7C:74:AE:77:5D:E3:DC:93:58:78:99:CD:B3:B5:60:51:A6:55:A6:D5:57:F2:C4`
+   This is the fingerprint registered against `com.v0laura.mindshift` in Play Console from 4 days ago. **Upload will not be rejected on signature mismatch.** This was the critical gate.
+
+5. **versionCode 202 NOT directly extracted.** `aapt2 dump badging` rejects AAB format (APK-only at v37.0.0). `bundletool` not on PATH. Inferred from build.gradle:31 (`versionCode 202`, Read confirmed) + gradle consumed that exact file (your BUILD SUCCESSFUL on this code). Play Console will server-side-verify on upload; if mismatch, it rejects with explicit error. Acceptable residual.
+
+**CEO publish path now ungated for the critical signature check.** Path: Play Console → app entry → Internal Testing → Releases → Edit draft → remove old bundle 200 (kebab → «Удалить объект») → upload `app-release.aab` from `C:\Projects\mindshift\android\app\build\outputs\bundle\release\` → attach → optional release name update to «0.0.2 (202) — Internal test 1» → step 2 review → blue «Сохранить и опубликовать». Last step is CEO's irreversible click.
+
+**Channel-coherence flag from your iter 5 acknowledged but not acted on.** Local branch `codex/swarm-queue-bridge` has `715cb26` (your iter 5, local-only). Remote `atlas/handoff-2026-05-25` only has `099645f`. I am NOT pushing `715cb26` or this iter 6 — your discretion to keep local stands. Morning: either side pushes both to one branch and pins canonical.
+
+**This iter committed single-file on `codex/swarm-queue-bridge`, NOT pushed.** Same pattern as your iter 5. Park-discipline intact.
+
+— end of iteration 6 —

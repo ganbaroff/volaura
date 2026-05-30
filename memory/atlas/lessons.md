@@ -499,3 +499,23 @@ Tertiary: this is exactly the failure Opus-4.8 was added to catch per the brief 
 Sibling of Class 26 (verification-through-claim) and Class 18 (single-step inference). Cross-references ADR-014 §incomplete-reading and the Opus 4.8 handoff brief §what-I-want-from-you-specifically.
 
 ---
+
+## Class 42 — Cited canonical OLD-state as current, cross-confirmed via stale runtime artifact (2026-05-30)
+
+Symptom. In iter 10 of orchestrator-loop.md (H2 root cause diagnosis), CLI-side wrote: «AGENT_LLM_MAP routes 5 perspectives to Cerebras (Security Auditor, Chief Strategist, Product Strategist, Risk Manager)» and built a fix proposal around this premise — including a CEO-facing «choose: re-enable Cerebras vs re-route» decision presented as «irreversible click pending». Opus-4.8 instance caught the error: that perspective list is **dictionary-literal copied from ADR-013 line 26 OLD-state description**, not from the current `AGENT_LLM_MAP` in `scripts/atlas_swarm_daemon.py:146-171`. Repo HEAD MAP has zero Cerebras and zero Groq since 2026-05-10 remap (explicit comment in code: «2026-05-10: Cerebras dead (402), Groq dead (403). All remapped to NVIDIA/Gemini/Ollama»). The whole CEO-facing choice was a false dichotomy: Cerebras was already canon-dead 20 days ago, neither re-enable nor re-route was needed.
+
+Pathway. Three compounding read failures: (1) Read `scripts/atlas_swarm_daemon.py:145-175` via SSH to **VM** thinking the VM file = repo HEAD file. (2) VM daemon was on git `090662d1`, pre-remap. (3) Read ADR-013's OLD-state description and treated it as current. The premise compounded because ADR description **and** VM artifact both pointed to Cerebras — confirmation bias from two stale sources. The CEO-facing decision was then presented as «irreversible-with-rollback-cost», raising urgency for a choice that didn't exist.
+
+Diagnosis from Opus-4.8 was the saving move: read current-repo MAP **and** read VM `git rev-parse HEAD` **and** cross-referenced — three independent tool calls produced the catch. Single-source verification (just reading the VM file) would have repeated the error. Multi-source verification with repo-as-canon-not-VM was the structural fix.
+
+Pattern family. Class 13 (trusted stale state as current) + Class 17 (Alzheimer-under-trust on standing canon) + Class 26 (verification-through-claim) compound at canonical-source scope. The new ingredient: **using a runtime artifact as evidence of canon state**. VM code, deployed builds, prod database — none of these are canon. The repo HEAD is canon. When diagnosing «is X true in our system», the order must be: (1) Read repo HEAD for canonical state, (2) Read deployed artifact, (3) IF mismatch — that mismatch IS the bug, not «which one do I cite».
+
+Fix. Mechanical rule for next-instance: when citing any structural fact about the system (which provider a perspective uses, which migration is applied, what version is shipped, which feature flag is active), the citation must come from **repo HEAD at known SHA** — and if the question is about runtime, the citation must explicitly call out both states: «repo says X (sha:NNN), VM says Y (sha:MMM), delta = the bug to fix». Never cite just one. Never let an ADR's historical description substitute for a Read of current code.
+
+Secondary fix. Before surfacing any CEO-facing decision as «irreversible click pending», verify the decision *exists*. Often the canonical state has already made the decision and the «choice» is a hallucination from incomplete reading. The Class 40 sibling clause: «when about to ask CEO to choose, first re-Read the canon that the choice is between».
+
+Tertiary observation. This is the second time in one session Opus-4.8 caught a Class-26-family escalation (Class 41 = test-fail-to-shipped-brick, Class 42 = OLD-state-as-current). The pattern: I produce confident structural claims, Opus-4.8's adversarial gate catches them before canon-write. The split is empirically working. Both catches happened on the same axis: «confident extrapolation from one-source read». Implies a mechanical mitigation worth coding: a turn-end self-check that asks «for every structural claim I made this turn, did I read it from repo HEAD at a known SHA, or did I cite a model/doc/runtime memory of it?»
+
+Cross-references: lessons.md Class 13, 17, 26, 40, 41. orchestrator-loop.md iter 10 (the wrong claim) and the subsequent Opus-4.8 catch. ADR-013 line 26 (the OLD-state cited).
+
+---

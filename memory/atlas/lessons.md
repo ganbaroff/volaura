@@ -481,3 +481,21 @@ Pathway. Three concurrent regressions: Class 10 (process theatre — wrapping pr
 Fix. When a canon brief is written and pushed to a branch the other AI can read, the correct CEO-facing message is ONE line: «doc на ветке X. Opus-4.8 читает её первым делом.» No wrapper. No preamble. No priority dictation. The brief is the prompt. Wrapping it duplicates content and signals distrust in the brief's clarity. Sibling of Class 10 (process theatre) but specifically at AI-to-AI handoff scope. Trigger: any time a fresh canonical handoff doc exists AND I am about to write an additional prompt for the same audience — STOP, point at the doc, walk away. ADR-014 §wrapping-is-theatre clause.
 
 ---
+
+## Class 41 — Test-failure escalated to «shipped brick» without verifying prod path (2026-05-30)
+
+Symptom. Opus-4.8 instance reported 3 E2E failures on the shipped MindShift 202 build. CLI-side (4.7) read App.tsx, saw `if (!_hasHydrated) return <LoadingScreen />` guard, and immediately escalated the test fail to a «shipped bug — реальные тестеры могут залипнуть на splash при первом запуске», recommended «защищает 202 у тестеров» as path A. CEO and Opus-4.8 had to push back: the prod-path hydration flow was never read. The store's `onRehydrateStorage` callback unconditionally writes `_hasHydrated: true` (with literal comment «even if state is null — IDB failure») before returning, so prod cold start always lifts the LoadingScreen gate within one tick. Plus the meta-disproof: same gate gated 435 other E2E tests that all passed — if the gate were stuck, all 435 would have failed, not 3.
+
+Pathway. Read a defensive guard in user-facing code → instantly modelled the worst-case path (gate never lifts) → wrote it up as «shipped bug» without reading the corresponding lift mechanism in store/index.ts. Class 26 (verification-through-claim) at architectural scope, plus Class 18 (single-step inference from incomplete reading), plus Class 14 (opinion before evidence — «shipped bug» asserted before the prod cold-start path was traced). All three compound, and the resulting CEO-facing recommendation («drop everything, fix 202») would have wasted multiple hours of execution on a test-drift problem.
+
+Actual reality after classification this same turn: tutorial.spec.ts:136 passed flaky on re-run (15.2s, one of three runs green). community.spec.ts:129 failed because two buttons match `getByRole('button', { name: /chat with mochi/i })` — test ambiguity, fix is `.first()` or a more specific locator. Both are test-infrastructure drift, not shipped-202 breakage.
+
+Fix. **Defensive-guard sighting alone is not a shipped-bug diagnosis.** When a guard is observed in production code, trace the *lift mechanism* in the SAME turn before claiming the guard is stuck. Specifically for hydration guards: read the `onRehydrateStorage` (or equivalent) callback to confirm whether it writes the lift flag unconditionally. For auth guards: read where the session is set. For feature flags: read where the flag is set. If the lift mechanism wasn't read, the only allowed claim is «I observed a guard — unclear if it's reachable». Never «shipped bug».
+
+Secondary rule: when a test-env failure is observed, the test-env path must be ruled out as the cause before escalating to a prod-env claim. Helper code, mock harness, test-config, viewport differences — all must be read. The cheapest test for «test-env vs prod-env» is: does the same gate gate other tests that pass? If yes, the gate is not stuck. (435 E2E passing through the same `_hasHydrated` gate was the disproof in this case.)
+
+Tertiary: this is exactly the failure Opus-4.8 was added to catch per the brief («Catch my Class 14/17/22/26 errors before they enter canon»). The split worked. The cost was one wrong escalation that was caught before canon-write, not the multi-hour wasted execution it would have caused if Opus-4.8 hadn't pushed back.
+
+Sibling of Class 26 (verification-through-claim) and Class 18 (single-step inference). Cross-references ADR-014 §incomplete-reading and the Opus 4.8 handoff brief §what-I-want-from-you-specifically.
+
+---

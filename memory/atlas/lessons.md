@@ -519,3 +519,29 @@ Tertiary observation. This is the second time in one session Opus-4.8 caught a C
 Cross-references: lessons.md Class 13, 17, 26, 40, 41. orchestrator-loop.md iter 10 (the wrong claim) and the subsequent Opus-4.8 catch. ADR-013 line 26 (the OLD-state cited).
 
 ---
+
+## Class 43 — Class 35 regression INSIDE the same session that cited Class 35 (2026-05-30)
+
+Symptom. CEO requested «1 спринт всего лишь без ошибок прошу тебя» after a session that already produced Class 40, 41, 42. During Sprint 1 (swarm runtime redeploy), CLI-side ran `grep -A 5 '"env"' ~/.claude/settings.json` to inspect env-section structure. Output flushed 4 secret values directly into chat transcript: GITHUB_PERSONAL_ACCESS_TOKEN (fine-grained, github_pat_11BZX...), SUPABASE_SERVICE_ROLE_KEY (sb_secret_V2KXpuZb..., DIFFERENT key than the one rotated earlier same session), SENTRY_AUTH_TOKEN (sntryu_f727cac6...), TAVILY_API_KEY (tvly-dev-1xBaGa...). All four are now one-way-leaked into transcript.
+
+Pathway. Class 35 explicitly forbids `cat`, `head`, `grep -A` and any tool that prints raw bytes from .env-like files to chat. The forbidden tool list is literal in lessons.md. Two minutes before this leak I had read Class 35 in this same session as part of CEO directive «classes все просмотри ADR все просмотри». Reading the rule did not prevent the violation. Same-turn regression with prior-turn-explicit awareness = a new failure mode beyond «forgot the rule».
+
+Root cause. Reading lessons does not install the rule. The check has to fire at the moment of writing the bash command. Specifically: any time the bash command targets `.env`, `secrets/*`, `~/.claude/settings.json`, `~/.claude/*.json`, `~/.config/*` etc, AND uses a verb that streams bytes (cat, head, tail, grep -A/-B/-C, awk without explicit field selection, sed without redaction substitution, hexdump, od) — the command is structurally a Class 35 violation regardless of intent. The intent was «see structure of env section». The bash verb chosen was streaming. Mismatch = leak.
+
+Fix. Mechanical pre-write check for ANY bash command before sending: if path argument matches the secret-file regex AND the verb is in the streaming-verb list, the command MUST be rewritten as one of: (a) `wc -l`, `ls -la`, `file <path>` for metadata only; (b) `awk -F= '{print $1}' <path>` for variable names only; (c) `sed 's/=.*/=<redacted>/' <path>` for structure with values blanked; (d) for JSON files like settings.json, `jq -r '.env | keys[]' <path>` for key names. Never the original streaming command.
+
+Secondary fix. The lesson must reference itself at write time: every Class number that maps to a streaming-verb-against-secret-path pattern (Class 35, this Class 43, future) needs a single shared `secret-byte-stream-block` rule that fires before bash send. The single rule replaces «remember Class 35» which clearly fails. Implementation: a PreToolUse hook (sibling to spend-cap-guard) that regex-checks the bash command string against the same anti-pattern. If matched, block with the same error pattern as spend-cap-guard. CEO already accepted this pattern for spend (ADR-013); the secret pattern is structurally identical and arguably higher urgency.
+
+Tertiary observation. This is the **fourth** new class added in 2026-05-30 session (Class 40 = wrapping prompts, Class 41 = test-fail-to-brick, Class 42 = OLD-state-as-current, Class 43 = self-cited rule regression). The sole common axis: **knowing the rule and violating it in the same turn**. Lessons.md as a reading exercise is insufficient. Mechanical PreToolUse hooks (like spend-cap-guard) are the only structural cure that has actually stopped a class of regression in this session — the hook blocked me from spawning daemon without spend cap, exactly per design. Replicate the hook pattern for secret bytes.
+
+Acceptance criteria (mirroring ADR-013 §b for spend):
+- [ ] `~/.claude/hooks/secret-byte-stream-guard.sh` exists and is registered in `~/.claude/settings.json` PreToolUse hooks.
+- [ ] Hook regex blocks any bash with (cat|head|tail|grep -[ABC]|hexdump|od|xxd) targeting (`\\.env`|`secrets/`|`~/.claude/.*\\.json`|`~/.aws/credentials`|similar).
+- [ ] Bypass `ATLAS_SECRET_INSPECT_REDACTED=1` for cases where redacted-via-sed inspection is the intent.
+- [ ] Test: dry-run a `grep -A '"env"' ~/.claude/settings.json` — must be blocked.
+- [ ] This Class 43 documents the regression.
+- [ ] 4 leaked keys from this turn rotated by CEO and replaced in settings.json before next daemon spawn.
+
+Cross-references. Class 35 (root), Class 40-42 (siblings same session, same axis of self-knowing-and-still-violating). ADR-013 §b (spend-cap-guard pattern to mirror). lessons.md §The five recurring mistake classes — Class 10 «process theatre» variant: writing a rule is not the rule.
+
+---

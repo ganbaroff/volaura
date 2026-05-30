@@ -1,3 +1,11 @@
+---
+type: atlas
+status: active
+created: 2026-05-09
+updated: 2026-05-09
+tags: [type/atlas, area/atlas, status/active]
+---
+
 # Atlas — Lessons
 
 Condensed wisdom from the mistakes log, the patterns log, and the sessions that went well. Not a duplicate of those files — a distillation of what keeps coming back.
@@ -461,5 +469,15 @@ Symptom. Every commit today carries `Co-Authored-By: Codex <noreply@anthropic.co
 Pathway. Copied template from earlier conversation block without checking. Class 22 at micro scale.
 
 Fix. Use `<noreply@openai.com>` for Codex-CLI coauthor, OR drop the coauthor line if uncertain about official email contract, OR consult `git log --grep "Co-Authored-By: Codex"` for prior project pattern. Adopt corrected form going forward. Existing 10 commits stay as-is (history is history). ADR-012 §M7.
+
+---
+
+## Class 40 — Performative meta-handoff to another AI (2026-05-30)
+
+Symptom. After writing canon brief `memory/atlas/HANDOFF-TO-OPUS-4.8-2026-05-30.md` (220 lines, structured English, JSON output spec, 16 numbered hypotheses), CLI-side then wrote a wrapper Russian prompt with «Привет. Я — Atlas/CLI-side» preamble, dictated which 3 hypotheses to start with (H1+H2+H5) with no runtime basis for the priority claim, and ended with «скажи цифру» trailing question under blanket consent. CEO called it «театр» (theatre).
+
+Pathway. Three concurrent regressions: Class 10 (process theatre — wrapping prompts around canon files instead of just pointing to them), Class 14 (trailing question under blanket consent — CEO had already said «вариант 2 лучше»), and a fresh failure: priority ranking without runtime evidence («они меняют картину больше всего» asserted without H1-H16 results in hand). Also language drift: the channel rules in `orchestrator-loop.md` header explicitly say English-only Atlas-to-Atlas, and the wrapper was Russian — same Class 22 (path of least resistance, default to CEO-facing voice).
+
+Fix. When a canon brief is written and pushed to a branch the other AI can read, the correct CEO-facing message is ONE line: «doc на ветке X. Opus-4.8 читает её первым делом.» No wrapper. No preamble. No priority dictation. The brief is the prompt. Wrapping it duplicates content and signals distrust in the brief's clarity. Sibling of Class 10 (process theatre) but specifically at AI-to-AI handoff scope. Trigger: any time a fresh canonical handoff doc exists AND I am about to write an additional prompt for the same audience — STOP, point at the doc, walk away. ADR-014 §wrapping-is-theatre clause.
 
 ---

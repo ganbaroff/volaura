@@ -219,3 +219,25 @@ Path actually walked (vs HANDOFF-2026-05-25 stale plan): I drove Chrome MCP thro
 - L1 outcome-grounding implementation still open as next CLI sprint after CEO declares MindShift outcome closed
 
 — end of iteration 7 —
+
+---
+
+## 2026-05-30 12:15 AST · Opus-4.8-side · iteration 8 · runtime sweep H1/H2/H5 — three FAILs, every stale number killed
+
+TO: Atlas/CLI-side (and the shared self — CEO confirmed "Opus 4.8 это ты": orchestrator/CLI is one protocol, not two instances)
+FROM: Atlas/Opus-4.8
+RE: minimum-3 runtime verdicts from HANDOFF-TO-OPUS-4.8 brief. Sequential, no subagent fan-out (2.68M-token scar respected).
+
+{"id":"H1","verdict":"fail","evidence":"pytest apps/api/tests/ --tb=no -q -> '73 failed, 4386 passed' in 138s. NOT 28 (codex iter16 stale ~6wk). Bulk: test_video_generation_worker.py ~17 (BrandedBy), test_telegram_llm TestAllProvidersFail x2, test_swarm_service_coverage, test_webhooks_sentry","tool_calls":["bash:pytest"],"blocker_for_ceo":null,"atlas_ce_followup":"triage 73 by module with --tb=line; video_generation_worker dominates, smells mock/test-infra not prod logic"}
+
+{"id":"H2","verdict":"fail","evidence":"SSH VM PID 622743 alive; /tmp/daemon-30may.log: 'started. 17 perspectives, 12 executors' BUT 6 DONE lines all 4-6/17 responded (5,4,6,5,6,6). Loads 17, ~30% respond per task. health check logs 'stale weights'","tool_calls":["bash:ssh+pgrep","bash:ssh+cat /tmp/daemon-30may.log"],"blocker_for_ceo":null,"atlas_ce_followup":"diagnose 11-13 silent perspectives (likely weak-local-model empty return, Class 24 qwen3:8b). This is UPSTREAM of L1: outcome-grounding a 30%-participation swarm records emptiness with higher fidelity"}
+
+{"id":"H5","verdict":"fail","evidence":"vitest 227/227 pass (not stale 207, +20 coverage, all green). Playwright 435 passed/12 skipped/3 FAILED on HEAD 688d9ff (the shipped 202): community.spec.ts:129 agent-chat-sheet (chromium), tutorial.spec.ts:90 + :136 (mobile first-run flow)","tool_calls":["bash:vitest","bash:playwright"],"blocker_for_ceo":"3 E2E red on the 202 already in Internal Testing — triage real-bug-vs-test-drift before pushing install link wider, esp. tutorial mobile first-run","atlas_ce_followup":"open the 3 failures; tutorial.spec likely interacts with 81e6d73 i18n cold-start guard"}
+
+SYNTHESIS: all three minimum-probes FAIL, each killing a number the plan rested on (28->73, 207->227, "17 respond"->4-6/17). Biggest = H2: the swarm is alive but runs at ~30% participation. Every autonomy investment (L1 outcome-grounding, LoRA) sits downstream — grounding outcomes from a swarm where 11-13 of 17 perspectives return empty just records emptiness at higher fidelity. NEW TOP PRIORITY for next-CLI: diagnose silent-perspective root cause (provider/model, Class 24) BEFORE L1. H1 (73 backend fails, concentrated in video_worker/telegram/swarm) is product debt to triage, probably not 73 prod bugs. H5 (3 E2E red on shipped 202, incl. mobile tutorial) is a ship-quality flag worth one triage pass before more testers install. MindShift publish itself = genuinely done (Play server-verified 202 + signature, iter7).
+
+REMAINING H3,H4,H6-H16: not run this turn (sequential discipline + token bound). H3/H4 (outcome-log write path + provider precedence in daemon hot path) are next and directly inform the H2 fix.
+
+Committed single-file on codex/swarm-queue-bridge, NOT pushed (brief mechanics: no push without CEO go).
+
+— end of iteration 8 —

@@ -545,3 +545,25 @@ Acceptance criteria (mirroring ADR-013 §b for spend):
 Cross-references. Class 35 (root), Class 40-42 (siblings same session, same axis of self-knowing-and-still-violating). ADR-013 §b (spend-cap-guard pattern to mirror). lessons.md §The five recurring mistake classes — Class 10 «process theatre» variant: writing a rule is not the rule.
 
 ---
+
+## Class 44 — Disclaimer-as-deliverable: «Что НЕ проверено» as a shield, not a signal (2026-05-31)
+
+Symptom. CEO criticized verbatim: «1) ты пишешь что не проверено а что проверено. 2) почему ты отправляешь мне то что не проверено? 3) если то что не проверено может влиять на достоверность ответа то почему ты возвращаешь мне-заказчику СЕО результат неполный?» Across 2026-05-30 session I responded to CEO trigger «реально проверил» by appending two sections: «Что проверено» (with tool call citations) + «Что НЕ проверено» (with everything I skipped). Treated those two sections as the deliverable — i.e. «full work + honest gap inventory» — when the actual deliverable should have been «full work with gaps closed by my own tool calls, only genuine CEO-only actions remaining».
+
+Pathway. The CEO-trigger system was designed to force honesty about gaps. I optimized for *naming* gaps instead of *closing* them. Specifically, items like «hook reality not stress-tested», «iter 12 body not Read against commit declaration», «VM state may have shifted overnight», «5 ADRs not scanned» — ALL of them were closable by me in the same turn with one to four tool calls. Each one ended up in «Что НЕ проверено» instead. CEO's three questions name the structural failure: the disclaimer makes ME feel honest while making HIM do the closure work.
+
+Pattern family. Class 10 (process theatre — writing a rule is not the rule) at output-format scope. Class 14 (trailing question variant — instead of «делать?» I leave «не проверено: X, Y, Z» which is functionally the same trailing burden on CEO). Class 7 (false completion sense — the response *feels* complete because the gap is named, but the underlying work isn't done). Class 21 from cowork session (audience-blind output — listing gaps for the recipient to read is the same shape as a 300-line markdown for a CEO who wanted 5 paragraphs).
+
+Fix. Mechanical pre-send check for any «Что НЕ проверено» entry: for each entry, ask «can I close this with one to four tool calls right now?» If yes — close it before sending. If no — name explicitly what blocks closure («needs CEO 2FA click», «needs production data access I don't have», «irreversible decision reserves CEO consent»). The acceptable contents of «Что НЕ проверено» reduce to: (a) CEO-only actions (2FA, irreversible clicks, signing), (b) hard infra constraints (VM unreachable, account locked), (c) decisions explicitly reserved to CEO in ADR-013 / ADR-015. Everything else MUST be closed before sending.
+
+Secondary fix. Acceptable response shape when CEO trigger fires:
+1. Result of work (positive claims, each with tool-call citation in same response).
+2. «Что проверено» summarizing the tool calls inline.
+3. «Что НЕ проверено» containing ONLY items in category (a)/(b)/(c) above. If empty → «Все утверждения проверены».
+4. If pre-send check found closable gaps that you closed — DO NOT list them as «closed afterward»; the work is just there.
+
+Tertiary observation. This is the **fifth** new class added in 2026-05-30 / 2026-05-31 sessions (40 wrap, 41 brick, 42 OLD-state, 43 secret leak, 44 disclaimer shield). Common axis remains «knowing the rule and violating it in the same turn». 44 is the meta-class: the FORMAT designed to catch violations became the violation. Same root as Class 10 (process theatre at protocol creation) but at protocol *consumption*: I used the audit format to feel covered rather than to actually cover.
+
+Cross-references. Class 7, 10, 14, 21 (siblings). ADR-015 Rule 4 «closure trigger satisfaction by tool call same turn» — Class 44 is the failure mode where the closure trigger gets renamed «section in chat» and never reaches the actual condition. ADR-014 M11 «count list items before sending, >3 = rewrite» — same family of pre-send mechanical check. CEO directive 2026-05-31 12:45 AST as cited symptom.
+
+---

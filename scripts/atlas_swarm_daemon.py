@@ -1444,6 +1444,37 @@ def _apply_evidence_gate(result: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _completion_target_for_swarm_summary(summary: dict[str, Any]) -> tuple[Path, dict[str, Any]]:
+    """Decide whether a swarm analysis has enough proof to be considered done."""
+    evidence_gate = summary.get("evidence_gate") if isinstance(summary, dict) else {}
+    if not isinstance(evidence_gate, dict):
+        evidence_gate = {}
+    responded = int(summary.get("perspectives_responded") or 0)
+    verified_findings = int(evidence_gate.get("verified_findings") or 0)
+
+    gate = {
+        "policy": "responded_and_verified_finding",
+        "perspectives_responded": responded,
+        "verified_findings": verified_findings,
+        "passed": False,
+        "reason": "",
+    }
+    if responded <= 0:
+        gate["reason"] = "no_perspectives_responded"
+        return FAILED, gate
+    if verified_findings <= 0:
+        gate["reason"] = "no_verified_findings"
+        return FAILED, gate
+    gate["passed"] = True
+    gate["reason"] = "verified_findings_present"
+    return DONE, gate
+
+
+def _completion_target_for_execute_success(succeeded: bool) -> Path:
+    """Execution tasks are done only when their tracker reaches succeeded=True."""
+    return DONE if succeeded else FAILED
+
+
 SAFE_EXECUTORS: dict[str, Any] = {}
 
 
@@ -2044,7 +2075,7 @@ async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
             break
 
     result = tracker.result if tracker.succeeded else {"status": "failed", "errors": tracker.errors}
-    target = (DONE if tracker.succeeded else FAILED) / task_id
+    target = _completion_target_for_execute_success(tracker.succeeded) / task_id
     target.mkdir(parents=True, exist_ok=True)
     shutil.move(str(task_path), str(target / task_path.name))
     (target / "result.json").write_text(
@@ -2404,11 +2435,10 @@ async def process_task(task_path: Path) -> None:
         "perspectives": parsed_results,
     }
 
-    # Move to done or failed
-    if summary["perspectives_responded"] == 0:
-        target = FAILED / task_id
-    else:
-        target = DONE / task_id
+    # Move to done only when the analysis has hard evidence.
+    target_parent, completion_gate = _completion_target_for_swarm_summary(summary)
+    summary["completion_gate"] = completion_gate
+    target = target_parent / task_id
     target.mkdir(parents=True, exist_ok=True)
 
     (target / "result.json").write_text(

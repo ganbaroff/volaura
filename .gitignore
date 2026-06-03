@@ -20,10 +20,11 @@ env/
 dist/
 build/
 
-# Environment
-.env
-.env.local
-.env.*.local
+# Environment — ignore ALL .env* (incl. .env.bak / .env.production landmines), keep only examples/docs
+.env*
+!.env.example
+!.env.*.example
+!.env.md
 gcp-service-account.json
 *-service-account*.json
 
@@ -114,3 +115,10 @@ memory/atlas/work-queue/daemon.log.jsonl
 memory/atlas/work-queue/daemon.log.jsonl
 memory/atlas/work-queue/brain.log.jsonl
 memory/atlas/work-queue/archivist.log.jsonl
+
+.octogent
+
+# Atlas work queue done/ and inbox/ — ephemeral per-session items,
+# memory/* includes !memory/atlas/ so we need explicit sub-exclusions here
+memory/atlas/work-queue/done/
+memory/atlas/inbox/

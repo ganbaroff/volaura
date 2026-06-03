@@ -10,12 +10,11 @@ Aggregates results, writes back to queue, logs to governance.
 Master orchestrator (Atlas-Code via Opus 4.7) drops task files. Daemon does
 the work. Opus doesn't pay per-token for execution — only for orchestration.
 
-PROVIDERS in use (Constitution Article 0 + 2026-05-07 azure remap):
-  Cerebras (qwen-3-235b)               — CEREBRAS_API_KEY
-  Groq (llama-3.3-70b)                 — GROQ_API_KEY
-  NVIDIA NIM (meta/llama-3.3-70b)      — NVIDIA_API_KEY
-  Ollama localhost:11434 (qwen3:8b)    — OLLAMA_URL (no key)
+PROVIDERS in use (ADR-013 precedence, Cerebras REMOVED after $7.25 burn):
+  NVIDIA NIM (meta/llama-3.3-70b)      — NVIDIA_API_KEY  (Inception credits, PRIMARY)
+  Ollama localhost:11434 (qwen3:8b)    — OLLAMA_URL (no key, local GPU)
   Gemini / Vertex-AI (gemini-2.5-flash)— GEMINI_API_KEY / GOOGLE_APPLICATION_CREDENTIALS
+  Groq (llama-3.3-70b)                 — GROQ_API_KEY  (free tier)
   Azure OpenAI (gpt-4.1-nano, sub-agents) — AZURE_OPENAI_API_KEY + ENDPOINT + API_VERSION
   Anthropic Claude is FORBIDDEN per Article 0.
 
@@ -174,7 +173,7 @@ AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
 # Legacy set kept for backward compat — now derived from AGENT_LLM_MAP
 HEAVY_PERSPECTIVES = {
     name for name, (prov, _) in AGENT_LLM_MAP.items()
-    if prov in ("vertex-ai", "cerebras", "nvidia-heavy")
+    if prov in ("vertex-ai", "nvidia-heavy")
 }
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
@@ -986,14 +985,10 @@ async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
         f"If you find nothing — say 'no finding'. Max 150 words."
     )
     sub_calls = []
-    cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
     nvidia_key = os.getenv("NVIDIA_API_KEY", "")
     groq_key = os.getenv("GROQ_API_KEY", "")
 
-    if cerebras_key:
-        sub_calls.append(_call_sub_agent(
-            "cerebras-sub", "https://api.cerebras.ai/v1", cerebras_key,
-            "qwen-3-235b-a22b-instruct-2507", sub_prompt, temp=sub_temp, max_tok=sub_tokens))
+    # Cerebras removed — ADR-013 spend incident ($7.25 burn)
     if nvidia_key:
         sub_calls.append(_call_sub_agent(
             "nvidia-sub", "https://integrate.api.nvidia.com/v1", nvidia_key,
@@ -1054,23 +1049,7 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
             return {"perspective": name, "provider": "azure", "model": model_id,
                     "raw": resp.choices[0].message.content or ""}
 
-        elif provider_key == "cerebras":
-            cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
-            if not cerebras_key:
-                return None
-            from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key=cerebras_key, base_url="https://api.cerebras.ai/v1")
-            resp = await asyncio.wait_for(
-                client.chat.completions.create(
-                    model=model_id,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=temp, max_tokens=max_tok,
-                    response_format={"type": "json_object"},
-                ),
-                timeout=60.0,
-            )
-            return {"perspective": name, "provider": "cerebras", "model": model_id,
-                    "raw": resp.choices[0].message.content or ""}
+        # Cerebras provider removed — ADR-013 spend incident
 
         elif provider_key in ("nvidia", "nvidia-heavy"):
             nvidia_key = os.getenv("NVIDIA_API_KEY", "")
@@ -1148,7 +1127,7 @@ async def _call_litellm_router_fallback(name: str, prompt: str, temp: float) -> 
     behaviour and the router is a safety net, not a replacement.
 
     See packages/swarm/providers/litellm_adapter.py for fallback chain
-    (Cerebras → Ollama → NVIDIA, Article 0: no Anthropic).
+    (NVIDIA → Ollama → Gemini → Groq, Article 0: no Anthropic).
     """
     try:
         from packages.swarm.providers.litellm_adapter import LiteLLMProvider, _LITELLM_AVAILABLE
@@ -1180,7 +1159,7 @@ async def _call_litellm_router_fallback(name: str, prompt: str, temp: float) -> 
     return {
         "perspective": name,
         "provider": "litellm-router",
-        "model": "router/cerebras→ollama→nvidia",
+        "model": "router/nvidia→ollama→gemini→groq",
         "raw": raw_text,
         "router_fallback": True,
     }
@@ -1194,7 +1173,7 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
     you return empty so the other agents still contribute.
 
     Phase B3 (2026-05-09): when ATLAS_USE_LITELLM_ROUTER=1 the LiteLLM
-    Router (Cerebras → Ollama → NVIDIA, Article 0: no Anthropic) is invoked
+    Router (NVIDIA → Ollama → Gemini → Groq, Article 0: no Anthropic) is invoked
     as a SAFETY NET after the assigned model fails, never as a replacement.
     Diversity is preserved on the happy path; resilience is added on the
     failure path. See codex-loop.md Phase B3 for design critique.
@@ -2600,6 +2579,17 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
         f for f in flags
         if str(f.get("perspective", "")) in crit_perspectives
     ]
+
+    # Explore runs are background reconnaissance, not user-facing updates.
+    # Keep Telegram quiet unless explore actually surfaced a critical signal.
+    if task_type == "explore" and crits == 0 and not critical_flags:
+        log_event({
+            "event": "telegram_report_suppressed",
+            "task_id": task_id,
+            "task_type": task_type,
+            "reason": "explore_tasks_suppressed_by_default",
+        })
+        return
 
     # Silence threshold gate (CEO directive 2026-05-09 via Codex). flags_count
     # arg is the SEVERITY-FILTERED count, not the raw count, so non-critical

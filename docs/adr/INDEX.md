@@ -9,15 +9,19 @@
 - [[ADR-003-auth-verification|ADR-003 — Auth & Verification]] — Supabase Auth, Google OAuth flow, magic-link, Capacitor WebView nuances
 - [[ADR-004-assessment-engine|ADR-004 — Assessment Engine]] — IRT 3PL, BARS, anti-gaming, AURA score calculation pipeline
 - [[ADR-005-aura-scoring|ADR-005 — AURA Scoring]] — 8-competency weights, badge tiers (Bronze/Silver/Gold/Platinum), score decay (logic exists, scheduler pending)
+- [[ADR-006-ecosystem-architecture|ADR-006 — Ecosystem Architecture]] — Five-product ecosystem integration, shared Supabase, FastAPI monolith, `character_events` bridge
+- [[ADR-007-ai-gateway-model-router|ADR-007 — AI Gateway — Model Router]] — Role-based provider selection and Article 0 enforcement
+- [[ADR-008-zeus-governance-layer|ADR-008 — ZEUS Governance Layer]] — Immutable governance events, policy introspection, hardened ZEUS audit layer
+- [[ADR-009-crewai-adoption|ADR-009 — CrewAI Adoption]] — Proposed CrewAI adoption for Sprint Gate DSP and critical multi-agent workflows
+- [[ADR-010-defect-autopsy|ADR-010 — Defect Autopsy]] — Top root causes from fix commits and enforced Definition of Done
+- [[ADR-011-litellm-gateway-migration|ADR-011 — LiteLLM Gateway Migration]] — Proposed phased migration of Python swarm providers to LiteLLM Router
 - [[ADR-016-positioning-lock|ADR-016 — Positioning Lock]] — VOLAURA = verified professional talent platform; event/ops is the initial wedge, not the promise; "volunteer" / "LinkedIn competitor" / "universal talent" framings banned
 
-> **Index sync pending:** this list shows 001–005 + 016, but ADR-006–011 already exist on `main` (and 012–015 on the runtime branch). A full re-index is a separate hygiene task — see ADR-016 numbering note for the lineage gap.
+> **Lineage note:** ADR-012–015 exist on the `codex/swarm-queue-bridge` runtime lineage, not on `main`. The 011→016 gap on `main` is intentional until that lineage is reconciled.
 
 ## Pending / proposed
 
-- ADR-006 — Cross-instance memory sync between Code-Atlas (VOLAURA monorepo `memory/atlas/`) and Atlas-CLI (`OneDrive/Documents/GitHub/ANUS/`). Mastra wraps runtime memory; Karpathy Wiki-pattern compiles raw → concepts. CEO's parallel track. Decision pending phase 1+ of [[../../C:/Users/user/OneDrive/Documents/GitHub/ANUS/ARCHITECTURE-DECISION|atlas-cli ADR]].
-- ADR-007 — Direct APK Sideload pipeline for MindShift (CEO directive 2026-04-26 — Google Play Console blocked). Implementation already shipped in MindShift repo `fix/gitignore-keystore-security` branch commit `3bbf6e5`. ADR write-up pending.
-- ADR-008 — Swarm save-path + learning-loop fix (Class 26 ground-truth: empty perspective JSONs, all-zero weights). Terminal-Atlas swarm-development handoff is the implementation track. ADR write-up after phase 4 lands.
+No pending ADR files are tracked on `main` at this time. New proposed ADRs should reserve the next collision-free number and be added to this index in the same PR.
 
 ## Cross-references
 

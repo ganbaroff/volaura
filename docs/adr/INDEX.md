@@ -9,6 +9,9 @@
 - [[ADR-003-auth-verification|ADR-003 — Auth & Verification]] — Supabase Auth, Google OAuth flow, magic-link, Capacitor WebView nuances
 - [[ADR-004-assessment-engine|ADR-004 — Assessment Engine]] — IRT 3PL, BARS, anti-gaming, AURA score calculation pipeline
 - [[ADR-005-aura-scoring|ADR-005 — AURA Scoring]] — 8-competency weights, badge tiers (Bronze/Silver/Gold/Platinum), score decay (logic exists, scheduler pending)
+- [[ADR-016-positioning-lock|ADR-016 — Positioning Lock]] — VOLAURA = verified professional talent platform; event/ops is the initial wedge, not the promise; "volunteer" / "LinkedIn competitor" / "universal talent" framings banned
+
+> **Index sync pending:** this list shows 001–005 + 016, but ADR-006–011 already exist on `main` (and 012–015 on the runtime branch). A full re-index is a separate hygiene task — see ADR-016 numbering note for the lineage gap.
 
 ## Pending / proposed
 

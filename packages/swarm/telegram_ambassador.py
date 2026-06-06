@@ -34,6 +34,7 @@ if packages_path not in sys.path:
     sys.path.insert(0, packages_path)
 
 from dotenv import load_dotenv
+
 load_dotenv(project_root / "apps" / "api" / ".env")
 
 from loguru import logger
@@ -45,6 +46,7 @@ SPRINT_STATE_PATH = project_root / "memory" / "context" / "sprint-state.md"
 
 
 # ── Context Memory ──────────────────────────────────────────────────────────
+
 
 def load_context() -> dict:
     """Load ambassador conversation context."""
@@ -68,6 +70,7 @@ def save_context(ctx: dict) -> None:
 
 
 # ── Proposals Reader ────────────────────────────────────────────────────────
+
 
 def load_proposals() -> list[dict]:
     """Load proposals from proposals.json."""
@@ -106,6 +109,7 @@ def update_proposal_status(proposal_id: str, new_status: str) -> str | None:
 
 
 # ── Sprint State Reader ─────────────────────────────────────────────────────
+
 
 def get_sprint_summary() -> str:
     """Read sprint-state.md and return first 20 lines as summary."""
@@ -148,9 +152,13 @@ def _build_full_context() -> str:
     """Load real project knowledge: shared-context Session 91 section + breadcrumb + SHIPPED tail + sprint state."""
     parts: list[str] = []
 
-    shared_ctx = _load_knowledge_file(project_root / "memory" / "swarm" / "shared-context.md", 3500)
+    shared_ctx = _load_knowledge_file(
+        project_root / "memory" / "swarm" / "shared-context.md", 3500
+    )
     if shared_ctx:
-        parts.append("=== SHARED CONTEXT (Session 91 section at top) ===\n" + shared_ctx)
+        parts.append(
+            "=== SHARED CONTEXT (Session 91 section at top) ===\n" + shared_ctx
+        )
 
     breadcrumb = _load_knowledge_file(project_root / ".claude" / "breadcrumb.md", 2500)
     if breadcrumb:
@@ -162,7 +170,10 @@ def _build_full_context() -> str:
 
     pending = get_pending_proposals()
     if pending:
-        prop_lines = [f"  [{p.get('severity','?').upper()}] {p.get('title','?')}" for p in pending[:10]]
+        prop_lines = [
+            f"  [{p.get('severity', '?').upper()}] {p.get('title', '?')}"
+            for p in pending[:10]
+        ]
         parts.append("=== PENDING PROPOSALS ===\n" + "\n".join(prop_lines))
     else:
         parts.append("=== PENDING PROPOSALS ===\n(none)")
@@ -219,19 +230,26 @@ async def ask_llm(question: str, context_messages: list[dict]) -> str:
     # Convert ambassador context_messages → unified message list ending with current question.
     # context_messages already includes the just-appended user question, so don't double-add.
     history = list(context_messages)
-    if not history or history[-1].get("role") != "user" or history[-1].get("text") != question:
+    if (
+        not history
+        or history[-1].get("role") != "user"
+        or history[-1].get("text") != question
+    ):
         history.append({"role": "user", "text": question})
 
     # ── Try Gemini first (proper multi-turn) ─────────────────────────────
     if gemini_key:
         try:
             from google import genai
+
             client = genai.Client(api_key=gemini_key)
             # Gemini expects role: "user" or "model"
             gemini_contents = []
             for msg in history:
                 role = "model" if msg.get("role") == "assistant" else "user"
-                gemini_contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
+                gemini_contents.append(
+                    {"role": role, "parts": [{"text": msg.get("text", "")}]}
+                )
             response = client.models.generate_content(
                 model="gemini-1.5-flash",
                 contents=gemini_contents,
@@ -251,6 +269,7 @@ async def ask_llm(question: str, context_messages: list[dict]) -> str:
     if groq_key:
         try:
             from groq import Groq
+
             client = Groq(api_key=groq_key)
             messages = [{"role": "system", "content": system_prompt}]
             for msg in history:
@@ -271,6 +290,7 @@ async def ask_llm(question: str, context_messages: list[dict]) -> str:
 
 # ── Telegram Bot Handlers ───────────────────────────────────────────────────
 
+
 def run_bot() -> None:
     """Run the Telegram bot with long polling.
 
@@ -280,6 +300,18 @@ def run_bot() -> None:
     """
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
     ceo_chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID", "")
+
+    if os.getenv("TELEGRAM_ENABLE_LONG_POLLING", "").lower() not in {
+        "1",
+        "true",
+        "yes",
+    }:
+        logger.warning(
+            "telegram_ambassador long polling is disabled by default. "
+            "Use the webhook route in apps/api/app/routers/telegram_webhook.py. "
+            "Set TELEGRAM_ENABLE_LONG_POLLING=1 only for local debugging."
+        )
+        return
 
     if not bot_token:
         logger.error("TELEGRAM_BOT_TOKEN not set")
@@ -298,7 +330,9 @@ def run_bot() -> None:
             filters,
         )
     except ImportError:
-        logger.error("python-telegram-bot not installed. Run: pip install python-telegram-bot")
+        logger.error(
+            "python-telegram-bot not installed. Run: pip install python-telegram-bot"
+        )
         return
 
     ceo_id = int(ceo_chat_id)
@@ -353,22 +387,34 @@ def run_bot() -> None:
         await update.message.reply_text("Запускаю swarm run... (это займёт ~30 секунд)")
         # Trigger the autonomous run in a subprocess
         import subprocess
+
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "packages.swarm.autonomous_run", "--mode=daily-ideation"],
+                [
+                    sys.executable,
+                    "-m",
+                    "packages.swarm.autonomous_run",
+                    "--mode=daily-ideation",
+                ],
                 cwd=str(project_root),
                 capture_output=True,
                 text=True,
                 timeout=120,
             )
             if result.returncode == 0:
-                await update.message.reply_text("[OK] Swarm run complete. /proposals для результатов.")
+                await update.message.reply_text(
+                    "[OK] Swarm run complete. /proposals для результатов."
+                )
             else:
                 error_short = result.stderr[-300:] if result.stderr else "Unknown error"
                 # Plain text — stderr can contain stack traces with markdown-breaking chars
-                await update.message.reply_text(f"[FAIL] Swarm run failed:\n{error_short}")
+                await update.message.reply_text(
+                    f"[FAIL] Swarm run failed:\n{error_short}"
+                )
         except subprocess.TimeoutExpired:
-            await update.message.reply_text("[TIMEOUT] Swarm run timed out (>120s). Check logs.")
+            await update.message.reply_text(
+                "[TIMEOUT] Swarm run timed out (>120s). Check logs."
+            )
         except Exception as e:
             await update.message.reply_text(f"[ERROR] {str(e)[:200]}")
 
@@ -408,18 +454,25 @@ def run_bot() -> None:
         if not is_ceo(update):
             return
         args = context.args or []
-        action = (args[0].lower() if args else "status")
+        action = args[0].lower() if args else "status"
 
         daemon_state_file = project_root / "memory" / "swarm" / "daemon_state.json"
         try:
             if action == "on":
-                state = json.loads(daemon_state_file.read_text(encoding="utf-8")) if daemon_state_file.exists() else {}
+                state = (
+                    json.loads(daemon_state_file.read_text(encoding="utf-8"))
+                    if daemon_state_file.exists()
+                    else {}
+                )
                 state["enabled"] = True
                 if not state.get("started_at"):
                     import time as _t
+
                     state["started_at"] = _t.time()
                 daemon_state_file.parent.mkdir(parents=True, exist_ok=True)
-                daemon_state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
+                daemon_state_file.write_text(
+                    json.dumps(state, indent=2), encoding="utf-8"
+                )
                 await update.message.reply_text(
                     "[AUTO ON] Daemon enabled.\n\n"
                     "Daemon will pick up approved low/medium proposals every 5 min and run them through swarm_coder.\n\n"
@@ -428,13 +481,23 @@ def run_bot() -> None:
                     "Limits: 5 commits/hour, 20 commits/session total. Use /auto off to stop."
                 )
             elif action == "off":
-                state = json.loads(daemon_state_file.read_text(encoding="utf-8")) if daemon_state_file.exists() else {}
+                state = (
+                    json.loads(daemon_state_file.read_text(encoding="utf-8"))
+                    if daemon_state_file.exists()
+                    else {}
+                )
                 state["enabled"] = False
-                daemon_state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
-                await update.message.reply_text("[AUTO OFF] Daemon disabled. Current iteration finishes, then no new ones.")
+                daemon_state_file.write_text(
+                    json.dumps(state, indent=2), encoding="utf-8"
+                )
+                await update.message.reply_text(
+                    "[AUTO OFF] Daemon disabled. Current iteration finishes, then no new ones."
+                )
             elif action == "status":
                 if not daemon_state_file.exists():
-                    await update.message.reply_text("[AUTO] no state file yet — daemon never enabled")
+                    await update.message.reply_text(
+                        "[AUTO] no state file yet — daemon never enabled"
+                    )
                     return
                 state = json.loads(daemon_state_file.read_text(encoding="utf-8"))
                 processed = state.get("processed_ids", [])
@@ -474,10 +537,16 @@ def run_bot() -> None:
             f"Жди 30-90 секунд."
         )
         import subprocess
+
         try:
             result = subprocess.run(
-                [sys.executable, str(project_root / "scripts" / "swarm_coder.py"),
-                 "--id", proposal_id, "--execute"],
+                [
+                    sys.executable,
+                    str(project_root / "scripts" / "swarm_coder.py"),
+                    "--id",
+                    proposal_id,
+                    "--execute",
+                ],
                 cwd=str(project_root),
                 capture_output=True,
                 text=True,
@@ -486,8 +555,8 @@ def run_bot() -> None:
                 timeout=300,
                 env={**os.environ, "PYTHONIOENCODING": "utf-8"},
             )
-            out = (result.stdout or "")
-            err = (result.stderr or "")
+            out = result.stdout or ""
+            err = result.stderr or ""
             tail = (out + "\n" + err)[-1500:]
             # Tag clearly
             if "[SAFE]" in out and "implemented" in out.lower():
@@ -527,7 +596,9 @@ def run_bot() -> None:
             await update.message.reply_text("[ERROR] GH_PAT_ACTIONS not set in .env")
             return
 
-        await update.message.reply_text(f"[EXECUTE] Triggering workflow for: {task[:100]}...")
+        await update.message.reply_text(
+            f"[EXECUTE] Triggering workflow for: {task[:100]}..."
+        )
 
         try:
             import httpx
@@ -584,7 +655,9 @@ def run_bot() -> None:
                 )
 
         except ImportError:
-            await update.message.reply_text("[ERROR] httpx not installed. Run: pip install httpx")
+            await update.message.reply_text(
+                "[ERROR] httpx not installed. Run: pip install httpx"
+            )
         except Exception as e:
             await update.message.reply_text(f"[ERROR] {str(e)[:300]}")
 
@@ -606,7 +679,9 @@ def run_bot() -> None:
         )
         await update.message.reply_text(help_text)
 
-    async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def handle_message(
+        update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
         """Handle free-text messages — route to LLM for smart response."""
         if not is_ceo(update):
             return
@@ -621,7 +696,9 @@ def run_bot() -> None:
 
         await update.message.reply_text(response)
 
-    async def global_error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def global_error_handler(
+        update: object, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
         """Catch ALL exceptions so bot never dies silently on bad messages."""
         err = context.error
         logger.error(f"[BOT ERROR] {type(err).__name__}: {err}")
@@ -647,7 +724,9 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("execute", cmd_execute))
     application.add_handler(CommandHandler("auto", cmd_auto))
     application.add_handler(CommandHandler("help", cmd_help))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    application.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
+    )
     application.add_error_handler(global_error_handler)
 
     logger.info("[BOT] MiroFish Ambassador Bot starting... (CEO chat: {id})", id=ceo_id)
@@ -656,6 +735,7 @@ def run_bot() -> None:
 
 
 # ── Entry Point ─────────────────────────────────────────────────────────────
+
 
 def main():
     run_bot()

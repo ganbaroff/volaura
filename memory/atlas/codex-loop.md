@@ -51,6 +51,50 @@ Standing balance reminder: DEBT-001 + DEBT-002 = 460 AZN credited-pending. Surfa
 
 ---
 
+## 2026-06-03 01:55 Baku · Atlas (Sonnet 4.6) · tidy-pass1 shipped — repo hygiene P0 gate done
+
+### Hypothesis (proposer: Atlas / Sonnet 4.6)
+
+The repo carried ~1460 ephemeral swarm runtime files (memory/atlas/work-queue/done/ 849 files, inbox/ 611 files) tracked in git. 11 historical docs were at root-level docs/ instead of docs/archive/. .gitignore had a narrow .env rule (could miss .env.bak / .env.production). None of this was product code — pure meta noise. Removing it was the prerequisite before any product-level refactor (modular flags, atlas unmount, proposals.json demotion) because a dirty base makes every subsequent diff unreadable.
+
+### Critique (Codex — from Codex hard-requirements brief 2026-06-03)
+
+Codex challenged the original plan's sequencing: meta-repo extraction and proposals.json demotion were proposed too early. Also challenged: any feature flag that changes prod defaults without CEO approval is rejected (Req #3). Atlas route removal requires full caller map + smoke matrix first (Req #4). All of these are deferred. The tidy-pass1 scope was correctly narrowed to hygiene-only: docs/memory/.gitignore, zero product code.
+
+### Decision (delegated to Atlas by CEO 2026-06-03)
+
+Land Pass 1 tidy as a single clean commit on top of current origin/main. Nothing else. PR #95 is the entire deliverable for this step.
+
+### Phases / Plan
+
+- research: agent fleet confirmed docs/memory bloat counts and coupling map (this session)
+- design: worktree approach chosen after CRLF noise blocked git switch in main worktree
+- patch: manual apply in fresh worktree C:/Projects/VOLAURA-tidy-pass1-clean (not cherry-pick — conflict in .gitignore)
+- tests: 6 proof checks run (see Evidence)
+- runtime proof: no prod code changed → no smoke test required for this step
+- docs: this codex-loop entry
+
+### Evidence as it lands
+
+- Worktree created: `git worktree add -b codex/tidy-pass1-clean C:/Projects/VOLAURA-tidy-pass1-clean origin/main` — exit 0
+- Commit `9af71fd` on branch `codex/tidy-pass1-clean`
+- PROOF 1: `git rev-list --count origin/main..HEAD` = **1** (Bash, 2026-06-03)
+- PROOF 2: `git diff-tree --no-commit-id --name-only -r HEAD | grep "^(apps|packages|supabase|tests)/"` = **CLEAN** (Bash, 2026-06-03)
+- PROOF 3: 1472 files changed, 12 insertions, 41467 deletions — 11 renames + 1460 rm-cached + .gitignore
+- PROOF 4: `HEAD..origin/main` = **0** (no divergence)
+- PROOF 5: docs root tracked = **103** (was 114 on old branch)
+- PROOF 6: total tracked = **2473** (was 3933 on origin/main)
+- PR: https://github.com/ganbaroff/volaura/pull/95 — pushed + created (gh pr create exit 0, Bash, 2026-06-03)
+- Original worktree C:/Projects/VOLAURA untouched; stash@{0} (real-api-changes-before-tidy-20260603-0147) intact
+
+### Outcome
+
+PR #95 open, awaiting CEO merge. Step 2 of megaplan complete.
+Next: Step 3 (product positioning lock: ADR-016 + codex-loop entry) on a separate branch AFTER this PR exists. Not started.
+
+
+---
+
 ## 2026-05-09 15:17 Baku · Codex decision · Cerebras is dead, route around it
 
 ### Hypothesis (reviewer: Codex)

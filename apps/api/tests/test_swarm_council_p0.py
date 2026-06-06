@@ -161,19 +161,26 @@ class TestSmallQuestionPool:
 
 
 class TestBinarizationBoundary:
-    """QA Engineer gap: exact 0.5 boundary behavior."""
+    """QA Engineer gap: raw_score → response mapping at the 0.5 region.
+
+    Since commit 672c537 ("fix(assessment): Preserve BARS ordinal signal",
+    2026-05-06), `submit_response` no longer binarises. The mapping is:
+        response = min(int(raw_score * 4), 3)
+    giving four ordinal buckets [0, 3]. Class name kept for git-blame
+    continuity; assertions reflect the ordinal contract.
+    """
 
     def test_raw_score_exactly_0_5_is_correct(self):
-        """raw_score=0.5 should binarize to response=1 (>= threshold)."""
+        """raw_score=0.5 → ordinal bucket 2 (was binary 1)."""
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.5, 5000)
-        assert state.items[0].response == 1
+        assert state.items[0].response == 2
 
     def test_raw_score_just_below_0_5_is_incorrect(self):
-        """raw_score=0.4999 should binarize to response=0."""
+        """raw_score=0.4999 → ordinal bucket 1 (was binary 0)."""
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 0.4999, 5000)
-        assert state.items[0].response == 0
+        assert state.items[0].response == 1
 
     def test_raw_score_0_is_incorrect(self):
         state = CATState()
@@ -181,9 +188,10 @@ class TestBinarizationBoundary:
         assert state.items[0].response == 0
 
     def test_raw_score_1_is_correct(self):
+        """raw_score=1.0 → ordinal bucket 3, clamped (was binary 1)."""
         state = CATState()
         state = submit_response(state, "q1", 1.0, 0.0, 0.0, 1.0, 5000)
-        assert state.items[0].response == 1
+        assert state.items[0].response == 3
 
 
 # ── Security Auditor: IDOR prevention ────────────────────────────────────────

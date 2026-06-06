@@ -97,7 +97,6 @@ models/
 
 # Atlas runtime — ephemeral primer files, regenerated each wake, never committed
 memory/atlas/runtime/
-memory/atlas/hands-runs/
 
 .vercel
 .coverage
@@ -116,15 +115,6 @@ memory/atlas/work-queue/daemon.log.jsonl
 memory/atlas/work-queue/daemon.log.jsonl
 memory/atlas/work-queue/brain.log.jsonl
 memory/atlas/work-queue/archivist.log.jsonl
-
-# Local-only secrets — never commit anything from secrets/
-secrets/
-!secrets/.gitkeep
-
-# Atlas swarm runtime queue state — daemon's in-progress dir is ephemeral,
-# never tracked. Pending and done are tracked by intent.
-memory/atlas/work-queue/in-progress/*
-!memory/atlas/work-queue/in-progress/.gitkeep
 
 .octogent
 

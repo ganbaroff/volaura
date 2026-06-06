@@ -7,6 +7,7 @@ from httpx import ASGITransport, AsyncClient
 
 from app.deps import get_current_user_id, get_supabase_admin, get_supabase_anon
 from app.main import app
+from app.routers import auth as auth_router
 
 
 def _make_admin_override(mock_db):
@@ -58,7 +59,8 @@ def mock_anon_db():
 
 
 @pytest.fixture
-async def client(mock_admin_db, mock_anon_db):
+async def client(mock_admin_db, mock_anon_db, monkeypatch):
+    monkeypatch.setattr(auth_router.settings, "open_signup", True)
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin_db)
     app.dependency_overrides[get_supabase_anon] = _make_anon_override(mock_anon_db)
     transport = ASGITransport(app=app)
@@ -511,7 +513,8 @@ async def test_validate_invite_multi_code_list(monkeypatch):
 
 
 @pytest.fixture
-async def consent_client(mock_admin_db, mock_anon_db):
+async def consent_client(mock_admin_db, mock_anon_db, monkeypatch):
+    monkeypatch.setattr(auth_router.settings, "open_signup", True)
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin_db)
     app.dependency_overrides[get_supabase_anon] = _make_anon_override(mock_anon_db)
     transport = ASGITransport(app=app)

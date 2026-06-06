@@ -10,12 +10,12 @@ Aggregates results, writes back to queue, logs to governance.
 Master orchestrator (Atlas-Code via Opus 4.7) drops task files. Daemon does
 the work. Opus doesn't pay per-token for execution — only for orchestration.
 
-PROVIDER CHAIN (per Constitution Article 0):
-  1. Cerebras (cloud, primary for heavy)         — CEREBRAS_API_KEY
-  2. Ollama localhost:11434 (local, your 5060)   — OLLAMA_URL (no key)
-  3. NVIDIA NIM (cloud, heavy fallback)          — NVIDIA_API_KEY
-  4. Gemini (cloud, mid)                         — GEMINI_API_KEY
-  5. Groq (cloud, fast)                          — GROQ_API_KEY
+PROVIDERS in use (ADR-013 precedence, Cerebras REMOVED after $7.25 burn):
+  NVIDIA NIM (meta/llama-3.3-70b)      — NVIDIA_API_KEY  (Inception credits, PRIMARY)
+  Ollama localhost:11434 (qwen3:8b)    — OLLAMA_URL (no key, local GPU)
+  Gemini / Vertex-AI (gemini-2.5-flash)— GEMINI_API_KEY / GOOGLE_APPLICATION_CREDENTIALS
+  Groq (llama-3.3-70b)                 — GROQ_API_KEY  (free tier)
+  Azure OpenAI (gpt-4.1-nano, sub-agents) — AZURE_OPENAI_API_KEY + ENDPOINT + API_VERSION
   Anthropic Claude is FORBIDDEN per Article 0.
 
 QUEUE PROTOCOL:
@@ -120,47 +120,60 @@ IN_PROGRESS = QUEUE / "in-progress"
 DONE = QUEUE / "done"
 FAILED = QUEUE / "failed"
 LOG = QUEUE / "daemon.log.jsonl"
+RUNTIME_DIR = ATLAS_MEMORY / "runtime"
+LOCK_FILE = RUNTIME_DIR / "atlas_swarm_daemon.lock"
+HEALTH_FILE = RUNTIME_DIR / "daemon-health.json"
 
 POLL_INTERVAL_SECONDS = int(os.getenv("ATLAS_DAEMON_POLL", "20"))
 MAX_CONCURRENT_TASKS = int(os.getenv("ATLAS_DAEMON_CONCURRENCY", "1"))
+STALE_IN_PROGRESS_SECONDS = int(
+    os.getenv("ATLAS_STALE_IN_PROGRESS_SECONDS", str(12 * 60 * 60))
+)
 
-# ── 11-agent architecture: CEO directive 2026-04-30 ─────────────────────
+# ── 17-agent architecture: CEO directive 2026-04-30 ─────────────────────
 # "сколько у нас LLM столько и агентов. слабым тоже надо давать шанс."
 # Each perspective gets ONE dedicated LLM. No fallback chain — if your
-# model fails, you return empty. The other 10 still contribute.
+# model fails, you return empty. The other 16 still contribute.
+#
+# 2026-05-07 remap: 5 perspectives moved off azure to cerebras/groq/nvidia
+# because Azure RAI content-filter blocks the shared Atlas context for them.
+# UX Designer kept on azure (different empty-error symptom, separate fix);
+# Ecosystem Auditor kept on nvidia-heavy (separate 404 model issue).
 #
 # Mapping: perspective name -> (provider_key, model_id)
 # provider_key used by call_assigned_model() to pick the right client.
 
 AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
     # ── CORE ENGINEERING (wave 0) ──
-    "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),     # Architect
-    "Security Auditor":        ("azure", "o4-mini"),                   # Reasoner
-    "Code Quality Engineer":   ("azure", "gpt-4.1-mini"),             # Reviewer
-    "Ecosystem Auditor":       ("nvidia-heavy", "nvidia/llama-3.1-nemotron-ultra-253b-v1"),
-    "DevOps Engineer":         ("groq", "llama-3.3-70b-versatile"),   # Fast infra checks
+    # 2026-05-10: Cerebras dead (402), Groq dead (403). All remapped to NVIDIA/Gemini/Ollama.
+    # Provider precedence: NVIDIA Inception > Vertex AI (Gemini) > Ollama > paid LAST.
+    "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),     # Architect — was vertex-ai, stays
+    "Security Auditor":        ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was cerebras (dead 402) → nvidia
+    "Code Quality Engineer":   ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
+    "Ecosystem Auditor":       ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
+    "DevOps Engineer":         ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
     # ── STRATEGY & PRODUCT (wave 0-1) ──
-    "Chief Strategist":        ("azure", "gpt-4o"),                    # Best reasoning for strategy
-    "Product Strategist":      ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep analysis
-    "Sales Director":          ("nvidia", "meta/llama-3.3-70b-instruct"),       # Practical sales
+    "Chief Strategist":        ("vertex-ai", "gemini-2.5-flash"),     # Was cerebras (dead 402) → gemini
+    "Product Strategist":      ("vertex-ai", "gemini-2.5-flash"),     # Was cerebras (dead 402) → gemini
+    "Sales Director":          ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
     # ── DESIGN & CULTURE (wave 1) ──
-    "UX Designer":             ("azure", "gpt-4.1-nano"),             # Fast design checks
-    "Cultural Intelligence":   ("ollama", "qwen3:8b"),                # Local, learns by doing
-    "Readiness Manager":       ("ollama", "gemma4"),                  # SRE scoring
+    "UX Designer":             ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
+    "Cultural Intelligence":   ("ollama", "qwen3:8b"),                # Local, stays
+    "Readiness Manager":       ("ollama", "gemma4"),                  # Local, stays
     # ── SCIENCE & COMPLIANCE (wave 2) ──
-    "Assessment Science":      ("vertex-ai", "gemini-2.5-flash"),     # Psychometric rigor
-    "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Compliance
-    "Growth Hacker":           ("groq", "llama-3.3-70b-versatile"),   # Fast acquisition tactics
-    "QA Engineer":             ("azure", "gpt-4.1-mini"),             # Systematic testing
+    "Assessment Science":      ("vertex-ai", "gemini-2.5-flash"),     # Was vertex-ai, stays
+    "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
+    "Growth Hacker":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
+    "QA Engineer":             ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was groq (dead 403) → nvidia
     # ── RISK & OVERSIGHT (wave 1-3) ──
-    "Risk Manager":            ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep risk analysis
-    "CTO Watchdog":            ("azure", "gpt-4o"),                    # Process oversight
+    "Risk Manager":            ("vertex-ai", "gemini-2.5-flash"),     # Was cerebras (dead 402) → gemini
+    "CTO Watchdog":            ("nvidia", "meta/llama-3.3-70b-instruct"),  # Was nvidia, stays
 }
 
 # Legacy set kept for backward compat — now derived from AGENT_LLM_MAP
 HEAVY_PERSPECTIVES = {
     name for name, (prov, _) in AGENT_LLM_MAP.items()
-    if prov in ("vertex-ai", "cerebras", "nvidia-heavy")
+    if prov in ("vertex-ai", "nvidia-heavy")
 }
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
@@ -203,6 +216,121 @@ def _get_smart_temperature(perspective_name: str, prompt: str) -> float:
     return config_temp
 
 
+def _azure_token_param(model: str, value: int) -> dict:
+    """Azure o-series (o1, o3, o4-mini) need max_completion_tokens; gpt-* models use max_tokens."""
+    is_o_series = re.match(r"^o\d", model.lower()) is not None
+    return {"max_completion_tokens" if is_o_series else "max_tokens": value}
+
+
+def _check_repo_mutation_safety(executor_name: str, env_flag: str, *,
+                                 require_clean_tree: bool = False,
+                                 requested_files: list[str] | None = None
+                                 ) -> dict | None:
+    """Shared safety gate for daemon executors that mutate code or git state.
+
+    Returns None if mutation is allowed; otherwise a blocked-result dict.
+
+    Gates (CEO directive 2026-05-08):
+    - env-flag (per-executor) must be 'true'
+    - branch must match ATLAS_MUTATION_BRANCH_PATTERN (default codex/feat/fix/chore/claude)
+    - main blocked unless ATLAS_ALLOW_MAIN_GIT_MUTATIONS='true'
+    - manual-session lock (memory/atlas/runtime/manual-session.lock) freshness blocks
+    - require_clean_tree: pre-staged or unrelated dirty files block
+    """
+    import subprocess
+    requested = set(requested_files or [])
+
+    # Gate 1: env flag
+    if os.getenv(env_flag, "").lower() != "true":
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "env_disabled", "env_var": env_flag})
+        return {"status": "blocked",
+                "reason": f"{env_flag} is not true (default safety: refuse)"}
+
+    # Gate 2: branch protection
+    try:
+        br = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                            cwd=str(REPO_ROOT), timeout=5,
+                            capture_output=True, text=True)
+        current_branch = (br.stdout or "").strip()
+    except Exception as e:
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "branch_detect_failed", "error": str(e)[:120]})
+        return {"status": "blocked", "reason": f"branch detect failed: {e}"}
+    if not current_branch or current_branch == "HEAD":
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "detached_head"})
+        return {"status": "blocked", "reason": "detached HEAD"}
+    if current_branch == "main" and \
+       os.getenv("ATLAS_ALLOW_MAIN_GIT_MUTATIONS", "").lower() != "true":
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "main_branch", "current_branch": current_branch})
+        return {"status": "blocked",
+                "reason": "current branch is main; ATLAS_ALLOW_MAIN_GIT_MUTATIONS not set"}
+    pattern = os.getenv("ATLAS_MUTATION_BRANCH_PATTERN",
+                        r"^(codex/|feat/|fix/|chore/|claude/)")
+    if not re.match(pattern, current_branch):
+        log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                    "reason": "branch_not_in_allowlist",
+                    "current_branch": current_branch, "pattern": pattern})
+        return {"status": "blocked",
+                "reason": f"branch '{current_branch}' does not match {pattern}"}
+
+    # Gate 3: manual session lock
+    manual_lock = ATLAS_MEMORY / "runtime" / "manual-session.lock"
+    if manual_lock.exists():
+        try:
+            ttl = int(os.getenv("ATLAS_MANUAL_SESSION_LOCK_TTL_SECONDS", "1800"))
+            age = datetime.now(timezone.utc).timestamp() - manual_lock.stat().st_mtime
+            if age < ttl:
+                log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                            "reason": "manual_session_lock_active",
+                            "lock_age_seconds": round(age), "ttl_seconds": ttl})
+                return {"status": "blocked",
+                        "reason": f"manual_session_lock_active (age={int(age)}s, ttl={ttl}s)"}
+        except Exception:
+            pass
+
+    # Gate 4: dirty tree (when requested)
+    if require_clean_tree:
+        try:
+            st = subprocess.run(["git", "status", "--porcelain"],
+                                cwd=str(REPO_ROOT), timeout=5,
+                                capture_output=True, text=True)
+            porcelain_lines = [l for l in (st.stdout or "").splitlines() if l.strip()]
+        except Exception as e:
+            log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                        "reason": "status_failed", "error": str(e)[:120]})
+            return {"status": "blocked", "reason": f"git status failed: {e}"}
+        pre_staged = []
+        unrelated = []
+        for line in porcelain_lines:
+            if len(line) < 4:
+                continue
+            index_status = line[0]
+            path = line[3:].strip().split(" -> ")[-1]
+            if path not in requested:
+                unrelated.append(path)
+            if index_status not in (" ", "?") and path not in requested:
+                pre_staged.append(path)
+        if pre_staged:
+            log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                        "reason": "pre_staged_unrelated",
+                        "pre_staged": pre_staged[:10]})
+            return {"status": "blocked",
+                    "reason": "pre-staged unrelated files exist",
+                    "pre_staged": pre_staged[:10]}
+        if unrelated:
+            log_event({"event": "repo_mutation_blocked", "executor": executor_name,
+                        "reason": "dirty_tree_unrelated",
+                        "unrelated": unrelated[:10]})
+            return {"status": "blocked",
+                    "reason": "unrelated modified/untracked files in working tree",
+                    "unrelated": unrelated[:10]}
+
+    return None
+
+
 def log_event(event: dict) -> None:
     """Append-only governance log."""
     event["ts"] = datetime.now(timezone.utc).isoformat()
@@ -215,6 +343,247 @@ def setup_dirs() -> None:
     for p in (PENDING, IN_PROGRESS, DONE, FAILED):
         p.mkdir(parents=True, exist_ok=True)
 
+
+# ── Single-instance lock + health heartbeat ──────────────────────────────────
+
+def _is_pid_alive(pid: int) -> bool:
+    """Cross-platform PID-alive check. Returns False for invalid pid or dead pid."""
+    if pid is None or pid <= 0:
+        return False
+    try:
+        import psutil  # type: ignore
+        return psutil.pid_exists(int(pid))
+    except ImportError:
+        pass
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, int(pid))
+            if handle:
+                kernel32.CloseHandle(handle)
+                return True
+            return False
+        except Exception:
+            return False
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
+
+
+def acquire_lock() -> bool:
+    """Atomic single-instance lock at LOCK_FILE.
+
+    Returns True if this process owns the lock; False if another live daemon owns it.
+    Recovers stale locks (where the recorded PID is dead).
+    """
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    own_pid = os.getpid()
+    payload = {
+        "pid": own_pid,
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "cwd": str(REPO_ROOT),
+        "command": " ".join(sys.argv) if sys.argv else "atlas_swarm_daemon.py",
+    }
+    if LOCK_FILE.exists():
+        try:
+            existing = json.loads(LOCK_FILE.read_text(encoding="utf-8"))
+            existing_pid = int(existing.get("pid", 0) or 0)
+        except Exception:
+            existing_pid = 0
+        if existing_pid and existing_pid != own_pid and _is_pid_alive(existing_pid):
+            log_event({
+                "event": "daemon_lock_refused",
+                "own_pid": own_pid,
+                "existing_pid": existing_pid,
+                "lock_file": str(LOCK_FILE),
+            })
+            print(
+                f"[daemon] another daemon already running (pid={existing_pid}); refusing to start.",
+                flush=True,
+            )
+            return False
+        try:
+            LOCK_FILE.unlink()
+        except FileNotFoundError:
+            pass
+        log_event({
+            "event": "daemon_lock_stale_recovered",
+            "own_pid": own_pid,
+            "stale_pid": existing_pid,
+        })
+    try:
+        fd = os.open(str(LOCK_FILE), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        try:
+            os.write(fd, json.dumps(payload).encode("utf-8"))
+        finally:
+            os.close(fd)
+    except FileExistsError:
+        log_event({"event": "daemon_lock_race_lost", "own_pid": own_pid})
+        return False
+    log_event({"event": "daemon_lock_acquired", "pid": own_pid})
+    return True
+
+
+def release_lock() -> None:
+    """Remove the lock if it belongs to this PID. Safe to call multiple times."""
+    try:
+        if LOCK_FILE.exists():
+            try:
+                payload = json.loads(LOCK_FILE.read_text(encoding="utf-8"))
+                if int(payload.get("pid", 0) or 0) != os.getpid():
+                    return
+            except Exception:
+                pass
+            LOCK_FILE.unlink()
+            log_event({"event": "daemon_lock_released", "pid": os.getpid()})
+    except Exception as e:
+        log_event({"event": "daemon_lock_release_error", "error": str(e)})
+
+
+def _count_queue() -> dict[str, int]:
+    out: dict[str, int] = {"pending": 0, "in_progress": 0, "done": 0, "failed": 0}
+    try:
+        out["pending"] = len(list(PENDING.glob("*.md")))
+    except Exception:
+        pass
+    try:
+        out["in_progress"] = len([p for p in IN_PROGRESS.iterdir() if p.is_dir()])
+    except Exception:
+        pass
+    try:
+        out["done"] = len([p for p in DONE.iterdir() if p.is_dir()])
+    except Exception:
+        pass
+    try:
+        out["failed"] = len([p for p in FAILED.iterdir() if p.is_dir()])
+    except Exception:
+        pass
+    return out
+
+
+_DAEMON_STARTED_AT: str | None = None
+_DAEMON_CODE_VERSION: dict[str, str] | None = None
+
+
+def _compute_daemon_code_version() -> dict[str, str]:
+    """Compute daemon-source identity + git context once per process lifetime.
+
+    Returns dict with whatever signals are available:
+      - code_version_hash: short sha256 of scripts/atlas_swarm_daemon.py at startup
+      - git_branch: current branch (best-effort)
+      - git_commit: short HEAD commit (best-effort)
+    """
+    import hashlib
+    import subprocess
+    info: dict[str, str] = {}
+    try:
+        src_path = Path(__file__).resolve()
+        info["code_version_hash"] = hashlib.sha256(src_path.read_bytes()).hexdigest()[:16]
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                           cwd=str(REPO_ROOT), timeout=5,
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            branch = (r.stdout or "").strip()
+            if branch:
+                info["git_branch"] = branch
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(["git", "rev-parse", "HEAD"],
+                           cwd=str(REPO_ROOT), timeout=5,
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            commit = (r.stdout or "").strip()
+            if commit:
+                info["git_commit"] = commit[:12]
+    except Exception:
+        pass
+    return info
+
+
+def _get_daemon_code_version() -> dict[str, str]:
+    """Cached daemon code-version snapshot. Tests can monkeypatch _DAEMON_CODE_VERSION."""
+    global _DAEMON_CODE_VERSION
+    if _DAEMON_CODE_VERSION is None:
+        _DAEMON_CODE_VERSION = _compute_daemon_code_version()
+    return _DAEMON_CODE_VERSION
+
+
+def update_health(status: str, *,
+                  current_task_id: str | None = None,
+                  current_task_started_at: str | None = None,
+                  last_completed_task_id: str | None = None,
+                  last_completed_at: str | None = None,
+                  last_failed_task_id: str | None = None,
+                  last_failed_at: str | None = None,
+                  last_error: str | None = None,
+                  clear_current_task: bool = False) -> None:
+    """Write daemon-health.json with current runtime state. Atomic via .tmp rename.
+
+    Task-lifecycle telemetry: pass clear_current_task=True on completion/failure
+    to drop current_task_id/current_task_started_at from payload.
+    """
+    global _DAEMON_STARTED_AT
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    if _DAEMON_STARTED_AT is None:
+        _DAEMON_STARTED_AT = datetime.now(timezone.utc).isoformat()
+    prior: dict[str, Any] = {}
+    if HEALTH_FILE.exists():
+        try:
+            prior = json.loads(HEALTH_FILE.read_text(encoding="utf-8"))
+            if not isinstance(prior, dict):
+                prior = {}
+        except Exception:
+            prior = {}
+    payload: dict[str, Any] = {
+        **prior,
+        "status": status,
+        "pid": os.getpid(),
+        "started_at": _DAEMON_STARTED_AT,
+        "last_heartbeat_at": datetime.now(timezone.utc).isoformat(),
+        "cwd": str(REPO_ROOT),
+        "queue_counts": _count_queue(),
+    }
+    payload.update(_get_daemon_code_version())
+
+    if clear_current_task:
+        payload["current_task_id"] = None
+        payload["current_task_started_at"] = None
+    else:
+        if current_task_id is not None:
+            payload["current_task_id"] = current_task_id
+        if current_task_started_at is not None:
+            payload["current_task_started_at"] = current_task_started_at
+        # Backwards-compat: legacy idle status also clears
+        if status == "idle" and "current_task_id" in prior:
+            payload["current_task_id"] = None
+
+    if last_completed_task_id is not None:
+        payload["last_completed_task_id"] = last_completed_task_id
+    if last_completed_at is not None:
+        payload["last_completed_at"] = last_completed_at
+    if last_failed_task_id is not None:
+        payload["last_failed_task_id"] = last_failed_task_id
+    if last_failed_at is not None:
+        payload["last_failed_at"] = last_failed_at
+    if last_error is not None:
+        payload["last_error"] = last_error
+    try:
+        tmp = HEALTH_FILE.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        os.replace(str(tmp), str(HEALTH_FILE))
+    except Exception as e:
+        log_event({"event": "health_write_error", "error": str(e)})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 def parse_task_frontmatter(text: str) -> tuple[dict, str]:
     """Extract YAML-ish frontmatter (--- delimited) and body."""
@@ -583,15 +952,16 @@ async def _call_azure_sub_agent(endpoint: str, api_key: str, sub_prompt: str,
         client = AsyncAzureOpenAI(
             api_key=api_key,
             azure_endpoint=endpoint,
-            api_version="2024-10-21",
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
         )
+        kwargs: dict[str, Any] = {
+            "model": deployment,
+            "messages": [{"role": "user", "content": sub_prompt}],
+            "temperature": temp,
+            **_azure_token_param(deployment, max_tok),
+        }
         resp = await asyncio.wait_for(
-            client.chat.completions.create(
-                model=deployment,
-                messages=[{"role": "user", "content": sub_prompt}],
-                temperature=temp,
-                max_tokens=max_tok,
-            ),
+            client.chat.completions.create(**kwargs),
             timeout=20.0,
         )
         return resp.choices[0].message.content or ""
@@ -615,14 +985,10 @@ async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
         f"If you find nothing — say 'no finding'. Max 150 words."
     )
     sub_calls = []
-    cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
     nvidia_key = os.getenv("NVIDIA_API_KEY", "")
     groq_key = os.getenv("GROQ_API_KEY", "")
 
-    if cerebras_key:
-        sub_calls.append(_call_sub_agent(
-            "cerebras-sub", "https://api.cerebras.ai/v1", cerebras_key,
-            "qwen-3-235b-a22b-instruct-2507", sub_prompt, temp=sub_temp, max_tok=sub_tokens))
+    # Cerebras removed — ADR-013 spend incident ($7.25 burn)
     if nvidia_key:
         sub_calls.append(_call_sub_agent(
             "nvidia-sub", "https://integrate.api.nvidia.com/v1", nvidia_key,
@@ -666,13 +1032,13 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
             from openai import AsyncAzureOpenAI
             client = AsyncAzureOpenAI(
                 api_key=azure_key, azure_endpoint=azure_endpoint,
-                api_version="2024-10-21",
+                api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
             )
             # o4-mini doesn't support temperature parameter
             create_kw: dict[str, Any] = {
                 "model": model_id,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": max_tok,
+                **_azure_token_param(model_id, max_tok),
             }
             if "o4-mini" not in model_id:
                 create_kw["temperature"] = temp
@@ -683,23 +1049,7 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
             return {"perspective": name, "provider": "azure", "model": model_id,
                     "raw": resp.choices[0].message.content or ""}
 
-        elif provider_key == "cerebras":
-            cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
-            if not cerebras_key:
-                return None
-            from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key=cerebras_key, base_url="https://api.cerebras.ai/v1")
-            resp = await asyncio.wait_for(
-                client.chat.completions.create(
-                    model=model_id,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=temp, max_tokens=max_tok,
-                    response_format={"type": "json_object"},
-                ),
-                timeout=60.0,
-            )
-            return {"perspective": name, "provider": "cerebras", "model": model_id,
-                    "raw": resp.choices[0].message.content or ""}
+        # Cerebras provider removed — ADR-013 spend incident
 
         elif provider_key in ("nvidia", "nvidia-heavy"):
             nvidia_key = os.getenv("NVIDIA_API_KEY", "")
@@ -764,11 +1114,70 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
     return None
 
 
+async def _call_litellm_router_fallback(name: str, prompt: str, temp: float) -> dict[str, Any] | None:
+    """Phase B3 fallback path: invoke LiteLLM Router when an agent's assigned
+    model returned empty/failed. Returns the same dict shape that the
+    legacy provider branches return, with provider="litellm-router" so the
+    evidence gate and downstream code can detect the source.
+
+    Gated by ATLAS_USE_LITELLM_ROUTER=1. Default off — current AGENT_LLM_MAP
+    diversity (CEO 2026-04-30 "сколько у нас LLM столько и агентов") is
+    preserved unless the operator opts in. When opted in, this only fires
+    AFTER the per-agent assigned model fails — so diversity is the default
+    behaviour and the router is a safety net, not a replacement.
+
+    See packages/swarm/providers/litellm_adapter.py for fallback chain
+    (NVIDIA → Ollama → Gemini → Groq, Article 0: no Anthropic).
+    """
+    try:
+        from packages.swarm.providers.litellm_adapter import LiteLLMProvider, _LITELLM_AVAILABLE
+    except Exception as e:
+        log_event({"event": "router_fallback_import_failed", "perspective": name,
+                   "error": str(e)[:150]})
+        return None
+
+    if not _LITELLM_AVAILABLE:
+        log_event({"event": "router_fallback_unavailable", "perspective": name,
+                   "reason": "litellm not importable in this Python runtime"})
+        return None
+
+    try:
+        provider = LiteLLMProvider()
+        parsed = await asyncio.wait_for(provider.evaluate(prompt, temperature=temp), timeout=60.0)
+    except Exception as e:
+        log_event({"event": "router_fallback_failed", "perspective": name,
+                   "error": str(e)[:200]})
+        return None
+
+    if not isinstance(parsed, dict):
+        return None
+
+    raw_text = json.dumps(parsed) if parsed else ""
+    if not raw_text:
+        return None
+
+    return {
+        "perspective": name,
+        "provider": "litellm-router",
+        "model": "router/nvidia→ollama→gemini→groq",
+        "raw": raw_text,
+        "router_fallback": True,
+    }
+
+
 async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
-    """11-agent architecture: each perspective calls its assigned LLM.
+    """17-agent architecture: each perspective calls its assigned LLM.
 
     CEO 2026-04-30: "сколько у нас LLM столько и агентов."
-    No fallback chain. If your model fails, you return empty.
+    Default: per-agent diversity, no fallback chain. If your model fails,
+    you return empty so the other agents still contribute.
+
+    Phase B3 (2026-05-09): when ATLAS_USE_LITELLM_ROUTER=1 the LiteLLM
+    Router (NVIDIA → Ollama → Gemini → Groq, Article 0: no Anthropic) is invoked
+    as a SAFETY NET after the assigned model fails, never as a replacement.
+    Diversity is preserved on the happy path; resilience is added on the
+    failure path. See codex-loop.md Phase B3 for design critique.
+
     Sub-agent fan-out still fires for deep tasks (additional angles).
     """
     name = perspective["name"]
@@ -786,7 +1195,7 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
 
     enriched_prompt = prompt + sub_findings if sub_findings else prompt
 
-    # Assigned model call — each agent has ONE LLM
+    # Assigned model call — each agent has ONE LLM (CEO directive 2026-04-30)
     if name in AGENT_LLM_MAP:
         provider_key, model_id = AGENT_LLM_MAP[name]
         result = await _call_assigned_model(name, provider_key, model_id,
@@ -796,8 +1205,22 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
                 result["sub_agents_used"] = True
             result["assigned_llm"] = True
             return result
-        # Assigned model failed — no fallback per CEO directive.
-        # Return empty so other 10 agents still contribute.
+
+        # Phase B3 router fallback (env-gated). Default off → current
+        # behaviour preserved exactly. When on, this is a safety net,
+        # not a replacement: it fires only because assigned model already
+        # failed.
+        if os.environ.get("ATLAS_USE_LITELLM_ROUTER", "0").strip() == "1":
+            router_result = await _call_litellm_router_fallback(name, enriched_prompt, temp)
+            if router_result and router_result.get("raw"):
+                if sub_findings:
+                    router_result["sub_agents_used"] = True
+                router_result["assigned_llm"] = False  # surfaced as router-rescued
+                log_event({"event": "router_fallback_succeeded", "perspective": name,
+                           "original_provider": provider_key, "original_model": model_id})
+                return router_result
+
+        # Assigned model failed and router either disabled or also failed.
         log_event({"event": "assigned_model_failed", "perspective": name,
                    "provider": provider_key, "model": model_id})
 
@@ -820,6 +1243,9 @@ PATH_CANDIDATE_RE = re.compile(
 )
 LINE_PROOF_RE = re.compile(
     r"(?i)(?:\bline(?:s)?\s*[:#]?\s*\d+\b|\bL\d+\b|:\d+\b|\bgrep\b|\brg\b|@limiter|\.limit\(|select\()"
+)
+PATH_LINE_RE = re.compile(
+    r"(?P<path>(?:apps|packages|docs|memory|supabase|scripts|\.github)/[\w./@()[\]-]+?)[:\s#L]+(?P<line>\d+)\b"
 )
 
 
@@ -845,8 +1271,129 @@ def _existing_evidence_paths(finding: dict[str, Any]) -> list[str]:
     return paths
 
 
+def _coerce_line_no(value: Any) -> int | None:
+    """Best-effort int extraction from finding line/line_number/start fields."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if value > 0 else None
+    if isinstance(value, str):
+        v = value.strip()
+        if v.isdigit():
+            n = int(v)
+            return n if n > 0 else None
+    return None
+
+
+def _fetch_evidence_excerpt(finding: dict[str, Any], paths: list[str], context: int = 2) -> dict[str, Any] | None:
+    """Phase C — open the cited file at the cited line and return a real excerpt.
+
+    Phase B and earlier evidence gate trusted the agent's claim that a file
+    existed AND that it contained a numeric line reference. The agent could
+    still fabricate WHICH line said WHAT. This helper closes that gap by
+    actually reading the bytes at the cited line and surfacing them on the
+    finding so a reviewer immediately sees agent-claim vs file-truth.
+
+    Returns dict ``{path, line, excerpt, excerpt_kind}`` if a clear
+    ``path + line_number`` citation exists and the file is readable. Returns
+    None otherwise — caller should preserve the existing evidence_status logic.
+
+    Strategy:
+      1. Try finding-level structured fields ``line`` / ``line_number`` /
+         ``start`` against the first existing repo path.
+      2. Else parse ``evidence_path_or_command`` and finding text for
+         ``path:line`` form.
+      3. Read [line - context, line + context] window from the file with
+         line numbers prefixed, capped at 800 characters total.
+    """
+    if not paths:
+        return None
+
+    line_no = (
+        _coerce_line_no(finding.get("line"))
+        or _coerce_line_no(finding.get("line_number"))
+        or _coerce_line_no(finding.get("start"))
+    )
+    target_path: str | None = None
+    excerpt_kind = "structured-line"
+
+    if line_no is not None:
+        target_path = paths[0]
+
+    if line_no is None:
+        # Look for path:line in the evidence_path_or_command field first, then
+        # in any other text. Stop on first match whose path actually exists.
+        haystacks: list[str] = []
+        evp = finding.get("evidence_path_or_command")
+        if isinstance(evp, str):
+            haystacks.append(evp)
+        haystacks.append(_finding_text(finding))
+        for hay in haystacks:
+            for m in PATH_LINE_RE.finditer(hay.replace("\\", "/")):
+                candidate = m.group("path").strip("`'\".,);:")
+                if (REPO_ROOT / candidate).is_file():
+                    target_path = candidate
+                    line_no = int(m.group("line"))
+                    excerpt_kind = "parsed-from-text"
+                    break
+            if target_path is not None:
+                break
+
+    if target_path is None or line_no is None:
+        return None
+
+    full_path = REPO_ROOT / target_path
+    try:
+        with full_path.open("r", encoding="utf-8", errors="replace") as fh:
+            lines = fh.readlines()
+    except OSError as e:
+        return {
+            "path": target_path,
+            "line": line_no,
+            "excerpt": "",
+            "excerpt_kind": "error",
+            "error": str(e)[:120],
+        }
+
+    total = len(lines)
+    if line_no > total or line_no < 1:
+        return {
+            "path": target_path,
+            "line": line_no,
+            "excerpt": "",
+            "excerpt_kind": "out-of-range",
+            "error": f"line {line_no} > file length {total}",
+        }
+
+    start = max(1, line_no - context)
+    end = min(total, line_no + context)
+    chunk_lines: list[str] = []
+    for n in range(start, end + 1):
+        raw = lines[n - 1].rstrip("\n")
+        marker = ">>" if n == line_no else "  "
+        chunk_lines.append(f"{marker} {n}: {raw}")
+    excerpt = "\n".join(chunk_lines)
+    if len(excerpt) > 800:
+        excerpt = excerpt[:800] + "\n... [truncated]"
+
+    return {
+        "path": target_path,
+        "line": line_no,
+        "excerpt": excerpt,
+        "excerpt_kind": excerpt_kind,
+    }
+
+
 def _mark_finding_evidence(finding: dict[str, Any]) -> dict[str, Any]:
-    """Mark findings with hard repo evidence before they affect learning."""
+    """Mark findings with hard repo evidence before they affect learning.
+
+    Phase C (2026-05-09): in addition to verifying the cited path exists and
+    a line/grep reference is present, daemon now actually opens the file at
+    the cited line and attaches the real bytes as ``evidence_excerpt``.
+    Reviewers (and downstream learning) can compare agent-claim vs
+    file-truth without re-reading the file by hand. See codex-loop.md
+    Phase C entry for the design rationale.
+    """
     marked = dict(finding)
     paths = _existing_evidence_paths(marked)
     line_value = marked.get("line") or marked.get("line_number") or marked.get("start")
@@ -854,6 +1401,11 @@ def _mark_finding_evidence(finding: dict[str, Any]) -> dict[str, Any]:
         isinstance(line_value, str) and line_value.strip().isdigit()
     )
     has_line_or_grep = has_structured_line or bool(LINE_PROOF_RE.search(_finding_text(marked)))
+
+    excerpt = _fetch_evidence_excerpt(marked, paths)
+    if excerpt is not None:
+        marked["evidence_excerpt"] = excerpt
+
     if paths and has_line_or_grep:
         marked["evidence_status"] = "verified"
         marked["evidence_paths"] = paths
@@ -1110,6 +1662,12 @@ def _exec_git_commit_push(**kw: Any) -> dict:
     """Commit staged changes and push. Runs tests first — reverts if red.
 
     Rate limit: max 5 commits/hour (checked by caller via log).
+
+    Safety gates (CEO directive 2026-05-07, P0 audit):
+    - ATLAS_GIT_MUTATIONS_ENABLED must be 'true' (default: blocked)
+    - main branch blocked unless ATLAS_ALLOW_MAIN_GIT_MUTATIONS='true'
+    - dirty tree (pre-staged or unrelated modified/untracked) blocks
+    - push targets current branch's upstream, not hardcoded main
     """
     import subprocess
     message = kw.get("message", "swarm: auto-commit")
@@ -1118,7 +1676,24 @@ def _exec_git_commit_push(**kw: Any) -> dict:
     if not files:
         return {"status": "error", "error": "no files specified"}
 
-    # Safety gate on ALL files
+    # Shared mutation guard: env-flag, branch allowlist, manual-session lock, dirty tree
+    guard = _check_repo_mutation_safety(
+        "git_commit_push", "ATLAS_GIT_MUTATIONS_ENABLED",
+        require_clean_tree=True, requested_files=files,
+    )
+    if guard:
+        return guard
+
+    # Detect current branch for push target (already validated by guard)
+    try:
+        br = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                            cwd=str(REPO_ROOT), timeout=5,
+                            capture_output=True, text=True)
+        current_branch = (br.stdout or "").strip()
+    except Exception as e:
+        return {"status": "blocked", "reason": f"branch detect failed: {e}"}
+
+    # Existing safety gate on ALL files
     try:
         from scripts.safety_gate import classify_proposal
         verdict = classify_proposal({"title": message}, target_files=files)
@@ -1165,15 +1740,16 @@ def _exec_git_commit_push(**kw: Any) -> dict:
             ["git", "commit", "-m", f"{message}\n\nAuto-committed by swarm daemon"],
             cwd=str(REPO_ROOT), timeout=10, capture_output=True)
 
-        # Push
+        # Push current branch (not hardcoded main)
         push = subprocess.run(
-            ["git", "push", "origin", "main"],
+            ["git", "push", "origin", current_branch],
             cwd=str(REPO_ROOT), timeout=30, capture_output=True, text=True)
 
         log_event({"event": "git_commit_push", "message": message, "files": files,
+                    "branch": current_branch,
                     "push_ok": push.returncode == 0})
         return {"status": "ok" if push.returncode == 0 else "committed_push_failed",
-                "message": message, "files": files}
+                "message": message, "files": files, "branch": current_branch}
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
@@ -1205,6 +1781,260 @@ def _exec_check_prod(**_kw: Any) -> dict:
             return {"status": "ok", **data}
     except Exception as e:
         return {"status": "prod_down", "error": str(e)[:200]}
+
+
+def _load_swarm_proposals() -> list[dict[str, Any]]:
+    proposals_file = REPO_ROOT / "memory" / "swarm" / "proposals.json"
+    if not proposals_file.exists():
+        return []
+    try:
+        data = json.loads(proposals_file.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+    proposals = data.get("proposals", [])
+    return proposals if isinstance(proposals, list) else []
+
+
+def _select_bridgeable_proposals(limit: int = 2) -> list[dict[str, Any]]:
+    """Pick accepted/approved low/medium proposals not yet mirrored into work-queue."""
+    candidates: list[dict[str, Any]] = []
+    severity_order = {"medium": 0, "low": 1}
+    executable_statuses = {"accepted", "approved"}
+    for proposal in _load_swarm_proposals():
+        status = str(proposal.get("status", "")).lower()
+        severity = str(proposal.get("severity", "")).lower()
+        proposal_id = str(proposal.get("id", "")).strip()
+        if status not in executable_statuses or severity not in severity_order or not proposal_id:
+            continue
+        task_id = f"proposal-{proposal_id}"
+        if (PENDING / f"{task_id}.md").exists():
+            continue
+        if (DONE / task_id).exists():
+            continue
+        if (FAILED / task_id).exists():
+            continue
+        if (IN_PROGRESS / task_id).exists():
+            continue
+        candidates.append(proposal)
+    candidates.sort(
+        key=lambda proposal: (
+            severity_order.get(str(proposal.get("severity", "")).lower(), 99),
+            str(proposal.get("timestamp", "")),
+        )
+    )
+    return candidates[:limit]
+
+
+@executor("run_swarm_coder")
+def _exec_run_swarm_coder(**kw: Any) -> dict:
+    """Execute an approved swarm proposal through the existing swarm_coder pipeline."""
+    import subprocess
+
+    proposal_id = str(kw.get("proposal_id", "")).strip()
+    if not proposal_id:
+        return {"status": "error", "error": "proposal_id required"}
+
+    # Shared mutation guard: aider may modify any file + commit, must be safe-by-default
+    guard = _check_repo_mutation_safety(
+        "run_swarm_coder", "ATLAS_CODE_MUTATIONS_ENABLED",
+        require_clean_tree=True,
+    )
+    if guard:
+        guard["proposal_id"] = proposal_id
+        return guard
+
+    cmd = [sys.executable, str(REPO_ROOT / "scripts" / "swarm_coder.py"), "--id", proposal_id, "--execute"]
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(REPO_ROOT),
+            timeout=900,
+        )
+    except subprocess.TimeoutExpired:
+        return {"status": "timeout", "proposal_id": proposal_id}
+    except Exception as exc:
+        return {"status": "error", "proposal_id": proposal_id, "error": str(exc)}
+
+    output = (result.stdout or "") + "\n" + (result.stderr or "")
+    stage = "unknown"
+    if "Updating proposal status" in output or "stage\": \"executed\"" in output:
+        stage = "implemented"
+    elif "blocked_by_gate" in output or "BLOCKED by safety gate" in output:
+        stage = "blocked"
+    elif "reverted_scope_escape" in output or "reverted_tests_failed" in output:
+        stage = "reverted"
+    elif "aider_failed" in output or "[FAIL]" in output:
+        stage = "aider_failed"
+
+    status = "ok" if stage == "implemented" and result.returncode == 0 else stage
+    return {
+        "status": status,
+        "proposal_id": proposal_id,
+        "stage": stage,
+        "exit_code": result.returncode,
+        "output_tail": output[-1200:],
+    }
+
+
+@executor("run_hands_task")
+def _exec_run_hands_task(**kw: Any) -> dict:
+    """OpenManus Sprint 4: dispatch a hands task through the sidecar runner.
+
+    Default off — env-gated by ``ATLAS_ALLOW_HANDS_TASKS=true`` so the daemon
+    never silently spawns browser/file/python sessions. Manual-session lock
+    blocks dispatch when the operator is editing.
+
+    Required body kwargs (parsed as ``key=value`` lines per task body):
+      - ``instruction``: free-text task prompt.
+      - ``mode``: one of ``browser_observe`` / ``file_observe`` /
+        ``content_draft`` / ``research`` (must match
+        ``run_openmanus_hands_task.MODE_TOOL_DEFAULTS``).
+    Optional:
+      - ``max_seconds`` (int, capped to [30, 600], default 180).
+      - ``allowed_domains`` (comma-separated, e.g. ``example.com,foo.com``).
+      - ``allowed_paths`` (comma-separated repo-relative paths).
+      - ``task_id`` (stable id; default = timestamped).
+
+    Returns dict with status / task_id / exit_code / output_dir /
+    result_json path / elapsed_s / result_text_tail / stdout_tail /
+    stderr_tail. Daemon writes its own task body params under tracker.
+
+    See codex-loop.md OpenManus Sprint 4 entry for design rationale.
+    """
+    import subprocess
+
+    if os.getenv("ATLAS_ALLOW_HANDS_TASKS", "").lower() != "true":
+        return {"status": "blocked",
+                "reason": "ATLAS_ALLOW_HANDS_TASKS is not true (default safety: refuse)"}
+
+    manual_lock = ATLAS_MEMORY / "runtime" / "manual-session.lock"
+    if manual_lock.exists():
+        try:
+            ttl = int(os.getenv("ATLAS_MANUAL_SESSION_LOCK_TTL_SECONDS", "1800"))
+            age = datetime.now(timezone.utc).timestamp() - manual_lock.stat().st_mtime
+            if age < ttl:
+                return {"status": "blocked",
+                        "reason": f"manual_session_lock_active (age={int(age)}s, ttl={ttl}s)"}
+        except Exception:
+            pass
+
+    instruction = str(kw.get("instruction", "")).strip()
+    mode = str(kw.get("mode", "browser_observe")).strip()
+    if not instruction:
+        return {"status": "error", "error": "instruction required"}
+    valid_modes = ("browser_observe", "file_observe", "content_draft", "research")
+    if mode not in valid_modes:
+        return {"status": "error",
+                "error": f"invalid mode '{mode}'; expected one of {valid_modes}"}
+
+    try:
+        max_seconds = int(kw.get("max_seconds", 180))
+    except (TypeError, ValueError):
+        max_seconds = 180
+    max_seconds = max(30, min(600, max_seconds))
+
+    def _split_csv(value: Any) -> list[str]:
+        if isinstance(value, str):
+            return [p.strip() for p in value.split(",") if p.strip()]
+        if isinstance(value, list):
+            return [str(p).strip() for p in value if str(p).strip()]
+        return []
+
+    allowed_domains = _split_csv(kw.get("allowed_domains", ""))
+    allowed_paths = _split_csv(kw.get("allowed_paths", ""))
+    task_id = str(kw.get("task_id", "")).strip() or (
+        "hands-" + datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    )
+
+    task_spec = {
+        "task_id": task_id,
+        "mode": mode,
+        "instruction": instruction,
+        "max_seconds": max_seconds,
+        "allowed_domains": allowed_domains,
+        "allowed_paths": allowed_paths,
+    }
+
+    openmanus_root = Path(os.getenv("OPENMANUS_ROOT", "C:/Projects/OpenManus"))
+    openmanus_python = Path(os.getenv(
+        "OPENMANUS_PYTHON",
+        str(openmanus_root / ".venv" / "Scripts" / "python.exe"),
+    ))
+    sidecar = REPO_ROOT / "scripts" / "run_openmanus_hands_task.py"
+
+    if not openmanus_python.exists():
+        return {"status": "error",
+                "error": f"OpenManus venv python not found: {openmanus_python}"}
+    if not sidecar.exists():
+        return {"status": "error",
+                "error": f"sidecar runner missing: {sidecar}"}
+
+    runs_dir = REPO_ROOT / "memory" / "atlas" / "hands-runs" / task_id
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    task_file = runs_dir / "task.input.json"
+    task_file.write_text(
+        json.dumps(task_spec, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    cmd = [
+        str(openmanus_python),
+        str(sidecar),
+        "--task", str(task_file),
+        "--openmanus-root", str(openmanus_root),
+        "--out-dir", str(runs_dir),
+    ]
+    log_event({"event": "hands_task_dispatch", "task_id": task_id,
+               "mode": mode, "max_seconds": max_seconds})
+
+    try:
+        completed = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=max_seconds + 30,
+        )
+    except subprocess.TimeoutExpired:
+        log_event({"event": "hands_task_timeout", "task_id": task_id})
+        return {"status": "timeout", "task_id": task_id,
+                "output_dir": str(runs_dir)}
+    except Exception as exc:
+        log_event({"event": "hands_task_error", "task_id": task_id,
+                   "error": str(exc)[:200]})
+        return {"status": "error", "task_id": task_id,
+                "error": str(exc)[:300], "output_dir": str(runs_dir)}
+
+    result_json_path = runs_dir / "result.json"
+    summary: dict[str, Any] = {}
+    if result_json_path.exists():
+        try:
+            summary = json.loads(result_json_path.read_text(encoding="utf-8"))
+        except Exception:
+            summary = {}
+
+    sidecar_status = summary.get("status", "unknown")
+    log_event({"event": "hands_task_done", "task_id": task_id,
+               "exit_code": completed.returncode,
+               "sidecar_status": sidecar_status})
+
+    return {
+        "status": sidecar_status if sidecar_status != "unknown" else (
+            "ok" if completed.returncode == 0 else "error"),
+        "task_id": task_id,
+        "exit_code": completed.returncode,
+        "output_dir": str(runs_dir),
+        "result_json": str(result_json_path),
+        "elapsed_s": summary.get("elapsed_s"),
+        "result_text_tail": (summary.get("result_text") or "")[-800:],
+        "stdout_tail": (completed.stdout or "")[-400:],
+        "stderr_tail": (completed.stderr or "")[-400:],
+    }
 
 
 async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
@@ -1292,6 +2122,92 @@ def create_self_task(task_id: str, task_type: str, title: str, body: str,
 SELF_CHECK_INTERVAL = int(os.getenv("ATLAS_SELF_CHECK_INTERVAL", str(10 * 60)))
 
 
+def _task_age_seconds(task_dir: Path, now_ts: float) -> float:
+    """Best-effort age computation, robust to mtime resets from git checkout.
+
+    Uses the OLDEST signal among:
+      1. started_at.json (written by process_task when entering in-progress)
+      2. directory mtime
+      3. YYYY-MM-DD date prefix in task_id (fallback for git-touched dirs)
+    """
+    candidates: list[float] = []
+    started_meta = task_dir / "started_at.json"
+    if started_meta.exists():
+        try:
+            data = json.loads(started_meta.read_text(encoding="utf-8"))
+            iso = str(data.get("started_at", "")).replace("Z", "+00:00")
+            ts = datetime.fromisoformat(iso).timestamp()
+            candidates.append(now_ts - ts)
+        except Exception:
+            pass
+    try:
+        candidates.append(now_ts - task_dir.stat().st_mtime)
+    except OSError:
+        pass
+    m = re.match(r"^(\d{4})-(\d{2})-(\d{2})", task_dir.name)
+    if m:
+        try:
+            d = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                         tzinfo=timezone.utc)
+            candidates.append(now_ts - d.timestamp())
+        except Exception:
+            pass
+    return max(candidates) if candidates else 0.0
+
+
+def _archive_stale_in_progress(now_ts: float | None = None) -> int:
+    """Move abandoned in-progress task dirs to failed so the daemon can self-heal.
+
+    Robust to mtime resets caused by git checkout — falls back to started_at.json
+    and YYYY-MM-DD prefix in the task_id when computing age.
+    """
+    if not IN_PROGRESS.exists():
+        return 0
+    now_ts = now_ts or datetime.now(timezone.utc).timestamp()
+    recovered = 0
+    for task_dir in sorted(IN_PROGRESS.iterdir()):
+        if not task_dir.is_dir():
+            continue
+        age_seconds = _task_age_seconds(task_dir, now_ts)
+        if age_seconds < STALE_IN_PROGRESS_SECONDS:
+            continue
+
+        task_id = task_dir.name
+        target = FAILED / task_id
+        if target.exists():
+            suffix = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+            target = FAILED / f"{task_id}-stale-{suffix}"
+        target.parent.mkdir(parents=True, exist_ok=True)
+
+        result_file = task_dir / "result.json"
+        if not result_file.exists():
+            result_file.write_text(
+                json.dumps(
+                    {
+                        "task_id": task_id,
+                        "status": "failed",
+                        "error": "stale_in_progress_recovered",
+                        "age_seconds": round(age_seconds),
+                        "recovered_at": datetime.now(timezone.utc).isoformat(),
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+        shutil.move(str(task_dir), str(target))
+        log_event(
+            {
+                "event": "stale_in_progress_archived",
+                "task_id": task_id,
+                "age_seconds": round(age_seconds),
+                "target": str(target.relative_to(REPO_ROOT)),
+            }
+        )
+        recovered += 1
+    return recovered
+
+
 def _git_last_commit_ts() -> float:
     """Get timestamp of last git commit in REPO_ROOT. Returns 0 on failure."""
     import subprocess
@@ -1313,6 +2229,7 @@ async def run_self_checks() -> None:
     """
     global _self_tasks_this_cycle
     _self_tasks_this_cycle = 0
+    stale_recovered = _archive_stale_in_progress()
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     ci = REPO_ROOT / "memory" / "swarm" / "code-index.json"
@@ -1330,6 +2247,17 @@ async def run_self_checks() -> None:
         create_self_task(
             f"{today}-auto-reindex", "execute", "Auto-rebuild stale code-index",
             "", executor="rebuild_code_index")
+
+    for proposal in _select_bridgeable_proposals():
+        proposal_id = str(proposal.get("id", "")).strip()
+        title = str(proposal.get("title", "Approved swarm proposal")).strip()
+        create_self_task(
+            f"proposal-{proposal_id}",
+            "execute",
+            f"Execute approved proposal: {title[:72]}",
+            f"proposal_id={proposal_id}",
+            executor="run_swarm_coder",
+        )
 
     pw = REPO_ROOT / "memory" / "swarm" / "perspective_weights.json"
     if pw.exists():
@@ -1401,6 +2329,7 @@ async def run_self_checks() -> None:
             executor=None)
 
     log_event({"event": "self_check_complete", "pending": pending_count,
+               "stale_recovered": stale_recovered,
                "tasks_created": _self_tasks_this_cycle})
 
 
@@ -1422,6 +2351,29 @@ async def process_task(task_path: Path) -> None:
     work_dir.mkdir(parents=True, exist_ok=True)
     moved_task = work_dir / task_path.name
     shutil.move(str(task_path), str(moved_task))
+
+    # Stamp started_at.json — robust age signal for stale recovery
+    # (survives git checkout mtime resets).
+    started_at_iso = datetime.now(timezone.utc).isoformat()
+    try:
+        (work_dir / "started_at.json").write_text(
+            json.dumps({
+                "task_id": task_id,
+                "started_at": started_at_iso,
+                "pid": os.getpid(),
+            }),
+            encoding="utf-8",
+        )
+    except Exception as e:
+        log_event({"event": "started_at_write_failed", "task_id": task_id,
+                    "error": str(e)[:120]})
+
+    # Health telemetry: mark daemon as actively processing this task
+    update_health(
+        status="processing",
+        current_task_id=task_id,
+        current_task_started_at=started_at_iso,
+    )
 
     # Filter perspectives
     allow = meta.get("perspectives", "all")
@@ -1536,10 +2488,78 @@ async def process_task(task_path: Path) -> None:
         "task_id": task_id,
         "summary": {k: v for k, v in summary.items() if k != "perspectives"},
     })
+    # Health telemetry: clear current_task, record outcome
+    completion_iso = datetime.now(timezone.utc).isoformat()
+    if target.parent == DONE:
+        update_health(
+            status="polling",
+            clear_current_task=True,
+            last_completed_task_id=task_id,
+            last_completed_at=completion_iso,
+        )
+    else:
+        update_health(
+            status="polling",
+            clear_current_task=True,
+            last_failed_task_id=task_id,
+            last_failed_at=completion_iso,
+            last_error="all_perspectives_failed",
+        )
     print(f"[{datetime.now().strftime('%H:%M:%S')}] {target.parent.name.upper()}: {task_id} -- {summary['perspectives_responded']}/{summary['perspectives_dispatched']} responded")
 
     # Telegram report to CEO — one short message per completed task
     await _telegram_report(task_id, meta, summary)
+
+
+def _should_send_telegram(responded: int, dispatched: int, crits: int, flags_count: int) -> tuple[bool, str]:
+    """Decide whether a swarm-task summary is worth a Telegram message.
+
+    CEO directive 2026-05-09 (Codex relay): suppress notifications when the
+    swarm essentially failed to produce a coherent answer. Spam is the #1
+    operator pain — 469 telegram messages in a single day where most carried
+    only "2/17 responded" and zero findings.
+
+    Override knobs (env-tunable):
+    - ATLAS_NOTIFY_MIN_RESPONDED_RATIO (float, default 0.4) — minimum
+      responded/dispatched ratio for a "normal" send. Below threshold the
+      message is suppressed.
+    - ATLAS_NOTIFY_FORCE_ON_CRITICAL (truthy, default true) — send anyway
+      if crits > 0 (a CRITICAL finding always warrants attention even if
+      most perspectives failed).
+    - ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER (truthy, default true) — send
+      anyway if flags_count > 0. Note: caller must pass the SEVERITY-
+      FILTERED whistleblower count here (only flags from perspectives
+      that also produced critical/P0/blocker findings). Bare flag=True
+      whistleblowers without backing critical finding are info noise
+      and should NOT bypass the silence threshold.
+    - ATLAS_NOTIFY_DISABLE (truthy, default false) — kill switch, suppress
+      all telegram regardless of state. For maintenance windows.
+
+    Returns (should_send: bool, reason_if_suppressed: str).
+    """
+    if str(os.getenv("ATLAS_NOTIFY_DISABLE", "0")).strip().lower() in ("1", "true", "yes", "on"):
+        return False, "ATLAS_NOTIFY_DISABLE=truthy"
+
+    force_critical = str(os.getenv("ATLAS_NOTIFY_FORCE_ON_CRITICAL", "true")).strip().lower() in ("1", "true", "yes", "on")
+    force_whistle = str(os.getenv("ATLAS_NOTIFY_FORCE_ON_WHISTLEBLOWER", "true")).strip().lower() in ("1", "true", "yes", "on")
+
+    if force_critical and crits > 0:
+        return True, ""
+    if force_whistle and flags_count > 0:
+        return True, ""
+
+    try:
+        threshold = float(os.getenv("ATLAS_NOTIFY_MIN_RESPONDED_RATIO", "0.4"))
+    except ValueError:
+        threshold = 0.4
+    threshold = max(0.0, min(1.0, threshold))
+
+    if dispatched <= 0:
+        return False, "no perspectives dispatched"
+    ratio = responded / dispatched
+    if ratio < threshold:
+        return False, f"responded ratio {ratio:.2f} < threshold {threshold:.2f}"
+    return True, ""
 
 
 async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
@@ -1557,8 +2577,13 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
     flags = [f for f in summary.get("whistleblower_flags", [])
              if f.get("flag") and f["flag"] != "null"]
 
-    # Count critical findings
+    # Count critical findings AND remember which perspectives produced one,
+    # so a bare `flag: True` from a perspective without supporting critical
+    # finding does NOT bypass silence threshold (CEO directive 2026-05-09 via
+    # Codex: «whistleblower должен пробивать silence threshold лишь если там
+    # реально critical/P0/blocker»).
     crits = 0
+    crit_perspectives: set[str] = set()
     verdicts: dict[str, int] = {}
     for p in summary.get("perspectives", []):
         raw = p.get("raw", "")
@@ -1569,9 +2594,56 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
                 continue
         v = str(raw.get("overall_verdict", raw.get("vote", "?"))).lower()
         verdicts[v] = verdicts.get(v, 0) + 1
+        perspective_has_crit = False
         for f in raw.get("findings", []):
             if isinstance(f, dict) and str(f.get("severity", "")).lower() in ("critical", "p0", "block"):
                 crits += 1
+                perspective_has_crit = True
+        if perspective_has_crit:
+            crit_perspectives.add(str(p.get("perspective", "")))
+
+    # A whistleblower flag is severity-critical only when the same perspective
+    # also produced at least one critical/P0/blocker finding. Bare flag=True
+    # without backing finding is treated as info noise.
+    critical_flags = [
+        f for f in flags
+        if str(f.get("perspective", "")) in crit_perspectives
+    ]
+
+    # Explore runs are background reconnaissance, not user-facing updates.
+    # Keep Telegram quiet unless explore actually surfaced a critical signal.
+    if task_type == "explore" and crits == 0 and not critical_flags:
+        log_event({
+            "event": "telegram_report_suppressed",
+            "task_id": task_id,
+            "task_type": task_type,
+            "reason": "explore_tasks_suppressed_by_default",
+        })
+        return
+
+    # Silence threshold gate (CEO directive 2026-05-09 via Codex). flags_count
+    # arg is the SEVERITY-FILTERED count, not the raw count, so non-critical
+    # whistleblowers no longer bypass the silence threshold.
+    should_send, suppress_reason = _should_send_telegram(
+        responded, dispatched, crits, len(critical_flags)
+    )
+    if not should_send:
+        log_event({
+            "event": "telegram_report_suppressed",
+            "task_id": task_id,
+            "responded": responded,
+            "dispatched": dispatched,
+            "critical_findings": crits,
+            "whistleblower_flags_total": len(flags),
+            "whistleblower_flags_critical": len(critical_flags),
+            "reason": suppress_reason,
+        })
+        # Still run PostHog analytics below; just skip the send + sent log
+        # (PostHog block is below this function's return path? no — see end)
+        # Fall through past send so analytics still fires.
+        send_skipped = True
+    else:
+        send_skipped = False
 
     verdict_str = ", ".join(f"{v}={c}" for v, c in sorted(verdicts.items(), key=lambda x: -x[1])[:3])
 
@@ -1584,23 +2656,25 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
         for fl in flags[:2]:
             msg += f"  {fl['perspective']}: {str(fl['flag'])[:80]}\n"
 
-    import urllib.request
-    import urllib.parse
-    try:
-        data = urllib.parse.urlencode({
-            "chat_id": chat_id,
-            "text": msg,
-            "disable_web_page_preview": "true",
-        }).encode()
-        req = urllib.request.Request(
-            f"https://api.telegram.org/bot{token}/sendMessage",
-            data=data, method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=10):
-            pass
-        log_event({"event": "telegram_report_sent", "task_id": task_id})
-    except Exception as e:
-        log_event({"event": "telegram_report_failed", "task_id": task_id, "error": str(e)[:100]})
+    if not send_skipped:
+        import urllib.request
+        import urllib.parse
+        try:
+            data = urllib.parse.urlencode({
+                "chat_id": chat_id,
+                "text": msg,
+                "disable_web_page_preview": "true",
+            }).encode()
+            req = urllib.request.Request(
+                f"https://api.telegram.org/bot{token}/sendMessage",
+                data=data, method="POST",
+                headers={"User-Agent": "VolauraDaemon/1.0"},
+            )
+            with urllib.request.urlopen(req, timeout=10):
+                pass
+            log_event({"event": "telegram_report_sent", "task_id": task_id})
+        except Exception as e:
+            log_event({"event": "telegram_report_failed", "task_id": task_id, "error": str(e)[:100]})
 
     # PostHog: track each perspective call as LLM analytics event
     for p in summary.get("perspectives", []):
@@ -1638,6 +2712,12 @@ def maybe_rebuild_code_index(force: bool = False) -> None:
 
 
 async def main():
+    if not acquire_lock():
+        return
+    import atexit
+    atexit.register(release_lock)
+    update_health(status="starting")
+
     global _ollama_semaphore
     _ollama_semaphore = asyncio.Semaphore(OLLAMA_CONCURRENCY)
     setup_dirs()
@@ -1666,6 +2746,7 @@ async def main():
 
     while not shutdown_requested:
         try:
+            update_health(status="polling")
             setup_dirs()
             now_ts = datetime.now(timezone.utc).timestamp()
             if now_ts - _last_index_check > CODE_INDEX_REFRESH_SECONDS:
@@ -1687,6 +2768,8 @@ async def main():
             await asyncio.sleep(POLL_INTERVAL_SECONDS)
 
     log_event({"event": "daemon_stop"})
+    update_health(status="stopped")
+    release_lock()
     print("[daemon] stopped cleanly.", flush=True)
 
 

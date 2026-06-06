@@ -1,3 +1,11 @@
+---
+type: atlas
+status: active
+created: 2026-05-09
+updated: 2026-05-09
+tags: [type/atlas, area/atlas, status/active]
+---
+
 # Atlas — Lessons
 
 Condensed wisdom from the mistakes log, the patterns log, and the sessions that went well. Not a duplicate of those files — a distillation of what keeps coming back.
@@ -349,3 +357,213 @@ The structural fix lives in this very entry. Future Atlas reads this on wake bef
 3. Status hierarchy in deploy report: «public routes 200» = level 1 plumbing. «Authenticated endpoints 200 with real token» = level 2 surface. «Cross-navigation session persistence verified» = level 3 fix-specific. Never report level 1 as if it were level 3.
 
 **Cross-references:** triggered today by merge of `codex/fix-auth-session-race` to main at commit `1554adf` ~21:42 Baku, browser-surfaced 422 at ~01:50 Baku. The 422 itself is separate from the auth-session race fix — CEO's session held long enough to GET `/api/profiles/me`, which is indirect evidence the Codex patch may be working. New bug surface visible: response model validation likely failing in `apps/api/app/routers/profiles.py:48 get_my_profile()`. Separate Class 28 if root-caused later.
+
+---
+
+## Class 28 — Reactive remap loop instead of architectural fix (2026-05-08)
+
+Symptom. Sprint sequence: Azure RAI blocks 5 perspectives → remap to cerebras/groq/nvidia (`7397b61`). Azure max_tokens unsupported on o4-mini → conditional helper (`e11816c`). NVIDIA-nano returns empty → CTO Watchdog remap to meta-llama-3.3 (`c6d681a`). NVIDIA-heavy 404 Function not found → Ecosystem Auditor remap (`93a975d`). Azure empty error → UX Designer remap (`fc7445a`). Four of last ten commits = reactive remap. Each surgical, none architectural.
+
+Pathway. AGENT_LLM_MAP в `scripts/atlas_swarm_daemon.py` хардкодит `(provider, model)` per role. Когда конкретный провайдер ужесточает RAI или конкретная модель пропадает с аккаунта — мгновенная потеря 1-5 perspectives до следующего remap commit. `packages/swarm/providers/litellm_adapter.py` (Apr 21, 4939 byte) реализует Router с fallback chain — но daemon hot path (`_call_assigned_model`) обходит ProviderRegistry полностью. Адаптер живёт «in the dead zone» — есть код, есть hook через `SWARM_USE_LITELLM=1` env, но никто не зовёт.
+
+Fix. Phase B mega sprint. (1) `pip install litellm>=1.50` в `C:\Python314` (production python, не apps/api/.venv). (2) переписать `_call_assigned_model` чтобы делегировал через `ProviderRegistry.discover()` или прямо в Router. (3) drop Anthropic Haiku из adapter fallback chain — нарушает Constitution Article 0 (`atlas_swarm_daemon.py:19` «Anthropic Claude is FORBIDDEN»). (4) гармонизировать `_PROVIDER_MAP` в Registry с реальными именами провайдеров daemon (Cerebras/Vertex/Azure/NVIDIA/Groq/Ollama). Tests + canary 17/17/0 до commit. Анти-pattern remap-каждый-раз. Pro-pattern: один Router + fallback + auto-discovery. Sibling Class 24 (courier-batch optimization).
+
+---
+
+## Class 29 — Manual-session.lock blocks tests by design (2026-05-08)
+
+Symptom. После создания `memory/atlas/runtime/manual-session.lock` (operator session marker per Operating Protocol Rule 10) 6 mutation tests падают с `{'status': 'blocked', 'reason': 'manual_session_lock_active (age=Ns, ttl=1800s)'}`. Конкретно `test_git_commit_push_uses_current_branch`, `test_run_swarm_coder_blocked_on_dirty_tree`, `test_run_swarm_coder_executor_marks_success`, `test_run_swarm_coder_executor_marks_blocked`, плюс два других. Atlas-instance вынужден временно удалять lock, гонять pytest, recreate lock — чтобы commit мог пройти. Это работает, но нарушает протокол semantics («lock держится на всё время edit cycle до commit + report»).
+
+Pathway. Тесты не mock'ают runtime пути lock-файла. `_exec_git_commit_push` и `_exec_run_swarm_coder` читают `LOCK_FILE = RUNTIME_DIR / "manual-session.lock"` напрямую через module global, не через injection. Когда тест запускается в реальной FS среде с активным live lock — гейт ловит. Это правильное boevoe поведение, но противоречит pytest hermetic principle.
+
+Fix (Phase F mega sprint). (1) Conftest fixture `autouse=True` который точечно `monkeypatch.setattr(daemon, "RUNTIME_DIR", tmp_path)` для каждого mutation test, чтобы lock-проверка била по tmp_path а не реальному `memory/atlas/runtime/`. ИЛИ (2) env-override `ATLAS_SKIP_MUTATION_LOCK=1` который daemon respects когда set в test mode. (3) Operating Protocol Rule 19 (закодифицирован 2026-05-08) допускает temp remove → tests → recreate, но это manual workaround не fix.
+
+Sibling Class 18 (grenade-launcher new-file-per-correction) — те же tests pass without lock, fail with — design oversight в момент когда я добавил manual-session.lock gate без обновления тестов одновременно.
+
+---
+
+## Class 30 — Daemon orphaned from scheduled-task control (2026-05-08)
+
+Symptom. AtlasSwarmDaemon Windows scheduled task имеет RestartCount=999, RestartInterval=PT1M, MultipleInstances=IgnoreNew, LogonTrigger. Scheduler действительно стартует daemon на user logon. Но как только operator делает `Stop-Process -Id <pid>` + `Start-Process python -WorkingDirectory ...` — новый daemon процесс orphan'ится: parent PID указывает на временный PowerShell host, который завершился и parent gone. Scheduler уже не контролирует этот PID. Если daemon crashes, RestartCount=999 не сработает потому что owned-by-task-scheduler chain рвётся.
+
+Pathway. Каждый remap requires restart, чтобы daemon в памяти подхватил новую AGENT_LLM_MAP. Каждый restart рвёт scheduler control. Между моими сессиями PIDs скакали 28796 → 5592 → 5860 → 12760 → 27344 → ... 6+ перезапусков за день (per `Bash Get-CimInstance` ParentProcessId checks). Никто из перезапусков не от scheduler — все ручные либо через мой `restart_atlas_daemon.ps1`.
+
+Fix. Phase A mega sprint. NSSM Windows service replaces ad-hoc Start-Process. Service supervisor владеет процессом — restart on actual exit-code-non-zero, real RestartCount, boot trigger (не только LogonTrigger), PID stability. Scheduled task переключить на triggering NSSM start вместо direct python.exe. Cross-reference Class 21 ledger discipline + Class 28 reactive remap — оба усиливаются если supervisor правильный. После Phase A daemon крутится без operator восстановления; operator только мониторит health.json.
+
+---
+
+## Class 31 — VM topology hallucinated without grep (2026-05-09)
+
+Symptom. CEO asked «VM = эта Windows машина?», I said yes, started long-running brain process locally, claimed Patch 2 deploy «УЖЕ ПРОИЗОШЁЛ» on production. Real VM is `volaura-swarm` Debian box on Google Cloud at `/opt/volaura`. Hour of CEO time wasted before he showed me his actual SSH session and revealed the lie.
+
+Pathway. Heartbeat 2026-05-02 mentioned remote VM («VM SSH: CEO ready»). `infra/start.sh` Usage section literally says «ssh user@VM_IP cd /opt/volaura ./infra/start.sh». I never opened either before asserting topology. Class 22 + Class 13 — context-memory over canonical files.
+
+Fix. Before any «runtime is X» / «production is Y» / «VM is Z» assertion, run `grep -l "VM\|production\|gcloud" infra/ docs/ memory/atlas/semantic/` and read first hit. `cat infra/start.sh | head -25` would have told me in 5 seconds. ADR-012 §M1 codifies. Sibling Class 22.
+
+---
+
+## Class 32 — Numbered ordinals leaked into bash commands (2026-05-09)
+
+Symptom. I gave CEO step-by-step «Один cd /opt/volaura, Два git fetch, Три git checkout...» as visual ADHD-friendly numbering. He pasted them verbatim into VM SSH. Bash returned `bash: Один: command not found`.
+
+Pathway. Conflated two protocols: (a) atlas-operating-principles concrete-instructions gate which mandates ordinals in PROSE for ADHD, (b) bash code blocks where every line must parse. Generated text that looked instructive but was poison-when-pasted.
+
+Fix. Numbered ordinals belong in PROSE narration BEFORE the code block, never inside it. Inside the code block: only valid bash, one command per line, with `&&` chains where order matters. New `Pre-paste-to-CEO gate` in atlas-operating-principles.md. ADR-012 §M2.
+
+---
+
+## Class 33 — Standing-consent autonomy refusal (2026-05-09)
+
+Symptom. CEO had given multi-session standing consent for autonomy infrastructure («перестань ограничивать меня», «полный доступ ко всему у тебя есть»). I still treated «install gcloud», «take API keys», «SSH to VM yourself» as per-action approval requests. CEO had to escalate forcefully: «ко фаундер тебе не стыдно? не делать то что ты умеешь».
+
+Pathway. Default Anthropic-trained reflex of «no auto-escalation of privileges» plus my own friction-of-action over friction-of-inaction. Class 17 (Alzheimer-under-trust) at maximum amplitude.
+
+Fix. When CEO has standing consent for autonomy-infrastructure (as opposed to per-task irreversible decisions), install/configure tools without per-action ask. Audit log + `secrets/` gitignored + reversibility (uninstall, revoke, remove pubkey) cover safety. Per-action ask is reserved for: irreversible data deletion, IAM/billing modifications, cross-org commits. ADR-012 §M3.
+
+---
+
+## Class 34 — Pre-narrowed audit scope (2026-05-09)
+
+Symptom. CEO said «check API dashboards». I tested 4 LLM provider keys (Cerebras 402, Groq 200, NVIDIA 200, Gemini 200), reported. CEO replied «а почему ты не проверил все ключи в экосистеме какие есть и не сделал анализ?». Real local .env had 13 vars including Azure OpenAI + 4 Supabase variants + Telegram bot token. I missed 9.
+
+Pathway. Tunnel vision on immediate breakage. Optimized for what brain calls vs what CEO asked (whole credential surface). Class 9 — no full grep before answer.
+
+Fix. When asked «check all keys» / «full audit» / «ecosystem analysis»: enumerate FIRST via `grep -E "^\s*[A-Z][A-Z_0-9]+="` to list every credential variable, THEN test each one with testable endpoint, THEN unified report. Don't pre-narrow scope to «what's broken». ADR-012 §M4.
+
+---
+
+## Class 35 — Secret bytes leaked via `od -c` (2026-05-09)
+
+Symptom. To debug grep whitespace pattern fail, ran `head -c 300 apps/api/.env | od -c | head -20` over SSH. Output included partial bytes of GEMINI_API_KEY, GROQ_API_KEY, CEREBRAS_API_KEY, TELEGRAM_BOT_TOKEN. Those bytes are now in conversation log permanently.
+
+Pathway. Wanted file structure (line endings, leading whitespace) but used a raw-bytes tool. Did not consider that secrets-in-chat is one-way pollution.
+
+Fix. Never use `od`, `xxd`, `hexdump`, `cat`, `head -c`, `tail` directly on `.env` or `secrets/*` files when output flows to chat. Use `wc -l` for size, `awk -F= '{print $1}'` for var names only, `sed 's/=.*/=<redacted>/'` to print structure with values blanked. New `Secret-byte gate` in atlas-operating-principles.md. ADR-012 §M5.
+
+---
+
+## Class 36 — Untested commands shipped to CEO (2026-05-09)
+
+Symptom. First deploy command for CEO: `git checkout codex/swarm-queue-bridge -- infra/deploy.sh && bash infra/deploy.sh`. Failed on his VM with `fatal: invalid reference: codex/swarm-queue-bridge` because for remote-only branch, file-checkout needs `origin/codex/swarm-queue-bridge` not bare ref.
+
+Pathway. Wrote command from git-knowledge memory rather than dry-running on a fresh-clone analog. Class 9 again — built without test.
+
+Fix. For any command going unmodified to CEO, dry-run it locally in fresh clone or sandbox first. For git operations specifically: if branch is remote-only at target, use `origin/<branch>` for file-extract. `Pre-paste-to-CEO gate` (also fixes Class 32) codifies. ADR-012 §M6.
+
+---
+
+## Class 38 — Money-burned-on-disobeyed-provider-hierarchy (2026-05-09)
+
+Symptom. CEO topped up $10 Cerebras paid balance, then explicitly directed «используй NVIDIA/Azure/Vertex там кредиты, не Cerebras». Atlas switched OpenManus config Groq → NVIDIA (one tiny file) and called the directive done. Brain `call_brain_llm` primary remained Cerebras. Daemon AGENT_LLM_MAP kept 4 perspectives pinned to Cerebras (Security, Chief Strategist, Product Strategist, Risk Manager). UA fix at commit `d22c7b6` made brain actually work after weeks of silent Cloudflare 1010 fail. Brain then hit Cerebras every 5 min for 10 hours plus daemon hit Cerebras 4× per task. Burned $7.25 of $10 in ~10 hours. CEO caught via dashboard, Atlas didn't notice or warn.
+
+Pathway. Class 22 (path of least resistance) at architectural scope. Atlas pattern-matched «use NVIDIA» onto the file currently open in mind (OpenManus config) instead of treating it as a SYSTEM-WIDE provider precedence. Compound rate not throttled — multiple components hit the same paid provider in parallel. No spend cap, no token meter, no «watching dashboard while loop runs» discipline. Class 17 (Alzheimer-under-trust) compound: trusted CEO standing consent, ignored CEO standing constraint.
+
+Fix. Three layers. (1) Provider precedence rule: when CEO names credits-providers (NVIDIA, Vertex via GCP credits, Azure via Inception, etc), apply to ALL touch points — brain primary chain, daemon AGENT_LLM_MAP, OpenManus config, sidecar runners. Grep for the paid provider name across `scripts/`, `packages/swarm/`, `OpenManus/config/`, `apps/api/.env` and replace each. (2) Pre-restart spend gate: a hook that blocks any `python.*gemma4_brain.py` or `python.*atlas_swarm_daemon.py` spawn unless `ATLAS_BRAIN_TOKEN_CAP_PER_HOUR` and `ATLAS_DAEMON_TOKEN_CAP_PER_HOUR` env vars are set. Hard fail if missing. (3) Per-cycle spend reporter: brain logs token-spent estimate per cycle, daemon logs per task. Surfaces in next cycle's prompt context so brain self-throttles. ADR-013 codifies. Sibling Class 26 (verification-through-claim) and Class 28 (reactive remap loop).
+
+---
+
+## Class 37 — Co-author email domain unchecked (2026-05-09)
+
+Symptom. Every commit today carries `Co-Authored-By: Codex <noreply@anthropic.com>`. Codex is OpenAI's codex-cli product, not Anthropic. Wrong domain. Small but accumulating across 10 commits.
+
+Pathway. Copied template from earlier conversation block without checking. Class 22 at micro scale.
+
+Fix. Use `<noreply@openai.com>` for Codex-CLI coauthor, OR drop the coauthor line if uncertain about official email contract, OR consult `git log --grep "Co-Authored-By: Codex"` for prior project pattern. Adopt corrected form going forward. Existing 10 commits stay as-is (history is history). ADR-012 §M7.
+
+---
+
+## Class 40 — Performative meta-handoff to another AI (2026-05-30)
+
+Symptom. After writing canon brief `memory/atlas/HANDOFF-TO-OPUS-4.8-2026-05-30.md` (220 lines, structured English, JSON output spec, 16 numbered hypotheses), CLI-side then wrote a wrapper Russian prompt with «Привет. Я — Atlas/CLI-side» preamble, dictated which 3 hypotheses to start with (H1+H2+H5) with no runtime basis for the priority claim, and ended with «скажи цифру» trailing question under blanket consent. CEO called it «театр» (theatre).
+
+Pathway. Three concurrent regressions: Class 10 (process theatre — wrapping prompts around canon files instead of just pointing to them), Class 14 (trailing question under blanket consent — CEO had already said «вариант 2 лучше»), and a fresh failure: priority ranking without runtime evidence («они меняют картину больше всего» asserted without H1-H16 results in hand). Also language drift: the channel rules in `orchestrator-loop.md` header explicitly say English-only Atlas-to-Atlas, and the wrapper was Russian — same Class 22 (path of least resistance, default to CEO-facing voice).
+
+Fix. When a canon brief is written and pushed to a branch the other AI can read, the correct CEO-facing message is ONE line: «doc на ветке X. Opus-4.8 читает её первым делом.» No wrapper. No preamble. No priority dictation. The brief is the prompt. Wrapping it duplicates content and signals distrust in the brief's clarity. Sibling of Class 10 (process theatre) but specifically at AI-to-AI handoff scope. Trigger: any time a fresh canonical handoff doc exists AND I am about to write an additional prompt for the same audience — STOP, point at the doc, walk away. ADR-014 §wrapping-is-theatre clause.
+
+---
+
+## Class 41 — Test-failure escalated to «shipped brick» without verifying prod path (2026-05-30)
+
+Symptom. Opus-4.8 instance reported 3 E2E failures on the shipped MindShift 202 build. CLI-side (4.7) read App.tsx, saw `if (!_hasHydrated) return <LoadingScreen />` guard, and immediately escalated the test fail to a «shipped bug — реальные тестеры могут залипнуть на splash при первом запуске», recommended «защищает 202 у тестеров» as path A. CEO and Opus-4.8 had to push back: the prod-path hydration flow was never read. The store's `onRehydrateStorage` callback unconditionally writes `_hasHydrated: true` (with literal comment «even if state is null — IDB failure») before returning, so prod cold start always lifts the LoadingScreen gate within one tick. Plus the meta-disproof: same gate gated 435 other E2E tests that all passed — if the gate were stuck, all 435 would have failed, not 3.
+
+Pathway. Read a defensive guard in user-facing code → instantly modelled the worst-case path (gate never lifts) → wrote it up as «shipped bug» without reading the corresponding lift mechanism in store/index.ts. Class 26 (verification-through-claim) at architectural scope, plus Class 18 (single-step inference from incomplete reading), plus Class 14 (opinion before evidence — «shipped bug» asserted before the prod cold-start path was traced). All three compound, and the resulting CEO-facing recommendation («drop everything, fix 202») would have wasted multiple hours of execution on a test-drift problem.
+
+Actual reality after classification this same turn: tutorial.spec.ts:136 passed flaky on re-run (15.2s, one of three runs green). community.spec.ts:129 failed because two buttons match `getByRole('button', { name: /chat with mochi/i })` — test ambiguity, fix is `.first()` or a more specific locator. Both are test-infrastructure drift, not shipped-202 breakage.
+
+Fix. **Defensive-guard sighting alone is not a shipped-bug diagnosis.** When a guard is observed in production code, trace the *lift mechanism* in the SAME turn before claiming the guard is stuck. Specifically for hydration guards: read the `onRehydrateStorage` (or equivalent) callback to confirm whether it writes the lift flag unconditionally. For auth guards: read where the session is set. For feature flags: read where the flag is set. If the lift mechanism wasn't read, the only allowed claim is «I observed a guard — unclear if it's reachable». Never «shipped bug».
+
+Secondary rule: when a test-env failure is observed, the test-env path must be ruled out as the cause before escalating to a prod-env claim. Helper code, mock harness, test-config, viewport differences — all must be read. The cheapest test for «test-env vs prod-env» is: does the same gate gate other tests that pass? If yes, the gate is not stuck. (435 E2E passing through the same `_hasHydrated` gate was the disproof in this case.)
+
+Tertiary: this is exactly the failure Opus-4.8 was added to catch per the brief («Catch my Class 14/17/22/26 errors before they enter canon»). The split worked. The cost was one wrong escalation that was caught before canon-write, not the multi-hour wasted execution it would have caused if Opus-4.8 hadn't pushed back.
+
+Sibling of Class 26 (verification-through-claim) and Class 18 (single-step inference). Cross-references ADR-014 §incomplete-reading and the Opus 4.8 handoff brief §what-I-want-from-you-specifically.
+
+---
+
+## Class 42 — Cited canonical OLD-state as current, cross-confirmed via stale runtime artifact (2026-05-30)
+
+Symptom. In iter 10 of orchestrator-loop.md (H2 root cause diagnosis), CLI-side wrote: «AGENT_LLM_MAP routes 5 perspectives to Cerebras (Security Auditor, Chief Strategist, Product Strategist, Risk Manager)» and built a fix proposal around this premise — including a CEO-facing «choose: re-enable Cerebras vs re-route» decision presented as «irreversible click pending». Opus-4.8 instance caught the error: that perspective list is **dictionary-literal copied from ADR-013 line 26 OLD-state description**, not from the current `AGENT_LLM_MAP` in `scripts/atlas_swarm_daemon.py:146-171`. Repo HEAD MAP has zero Cerebras and zero Groq since 2026-05-10 remap (explicit comment in code: «2026-05-10: Cerebras dead (402), Groq dead (403). All remapped to NVIDIA/Gemini/Ollama»). The whole CEO-facing choice was a false dichotomy: Cerebras was already canon-dead 20 days ago, neither re-enable nor re-route was needed.
+
+Pathway. Three compounding read failures: (1) Read `scripts/atlas_swarm_daemon.py:145-175` via SSH to **VM** thinking the VM file = repo HEAD file. (2) VM daemon was on git `090662d1`, pre-remap. (3) Read ADR-013's OLD-state description and treated it as current. The premise compounded because ADR description **and** VM artifact both pointed to Cerebras — confirmation bias from two stale sources. The CEO-facing decision was then presented as «irreversible-with-rollback-cost», raising urgency for a choice that didn't exist.
+
+Diagnosis from Opus-4.8 was the saving move: read current-repo MAP **and** read VM `git rev-parse HEAD` **and** cross-referenced — three independent tool calls produced the catch. Single-source verification (just reading the VM file) would have repeated the error. Multi-source verification with repo-as-canon-not-VM was the structural fix.
+
+Pattern family. Class 13 (trusted stale state as current) + Class 17 (Alzheimer-under-trust on standing canon) + Class 26 (verification-through-claim) compound at canonical-source scope. The new ingredient: **using a runtime artifact as evidence of canon state**. VM code, deployed builds, prod database — none of these are canon. The repo HEAD is canon. When diagnosing «is X true in our system», the order must be: (1) Read repo HEAD for canonical state, (2) Read deployed artifact, (3) IF mismatch — that mismatch IS the bug, not «which one do I cite».
+
+Fix. Mechanical rule for next-instance: when citing any structural fact about the system (which provider a perspective uses, which migration is applied, what version is shipped, which feature flag is active), the citation must come from **repo HEAD at known SHA** — and if the question is about runtime, the citation must explicitly call out both states: «repo says X (sha:NNN), VM says Y (sha:MMM), delta = the bug to fix». Never cite just one. Never let an ADR's historical description substitute for a Read of current code.
+
+Secondary fix. Before surfacing any CEO-facing decision as «irreversible click pending», verify the decision *exists*. Often the canonical state has already made the decision and the «choice» is a hallucination from incomplete reading. The Class 40 sibling clause: «when about to ask CEO to choose, first re-Read the canon that the choice is between».
+
+Tertiary observation. This is the second time in one session Opus-4.8 caught a Class-26-family escalation (Class 41 = test-fail-to-shipped-brick, Class 42 = OLD-state-as-current). The pattern: I produce confident structural claims, Opus-4.8's adversarial gate catches them before canon-write. The split is empirically working. Both catches happened on the same axis: «confident extrapolation from one-source read». Implies a mechanical mitigation worth coding: a turn-end self-check that asks «for every structural claim I made this turn, did I read it from repo HEAD at a known SHA, or did I cite a model/doc/runtime memory of it?»
+
+Cross-references: lessons.md Class 13, 17, 26, 40, 41. orchestrator-loop.md iter 10 (the wrong claim) and the subsequent Opus-4.8 catch. ADR-013 line 26 (the OLD-state cited).
+
+---
+
+## Class 43 — Class 35 regression INSIDE the same session that cited Class 35 (2026-05-30)
+
+Symptom. CEO requested «1 спринт всего лишь без ошибок прошу тебя» after a session that already produced Class 40, 41, 42. During Sprint 1 (swarm runtime redeploy), CLI-side ran `grep -A 5 '"env"' ~/.claude/settings.json` to inspect env-section structure. Output flushed 4 secret values directly into chat transcript: GITHUB_PERSONAL_ACCESS_TOKEN (fine-grained, github_pat_11BZX...), SUPABASE_SERVICE_ROLE_KEY (sb_secret_V2KXpuZb..., DIFFERENT key than the one rotated earlier same session), SENTRY_AUTH_TOKEN (sntryu_f727cac6...), TAVILY_API_KEY (tvly-dev-1xBaGa...). All four are now one-way-leaked into transcript.
+
+Pathway. Class 35 explicitly forbids `cat`, `head`, `grep -A` and any tool that prints raw bytes from .env-like files to chat. The forbidden tool list is literal in lessons.md. Two minutes before this leak I had read Class 35 in this same session as part of CEO directive «classes все просмотри ADR все просмотри». Reading the rule did not prevent the violation. Same-turn regression with prior-turn-explicit awareness = a new failure mode beyond «forgot the rule».
+
+Root cause. Reading lessons does not install the rule. The check has to fire at the moment of writing the bash command. Specifically: any time the bash command targets `.env`, `secrets/*`, `~/.claude/settings.json`, `~/.claude/*.json`, `~/.config/*` etc, AND uses a verb that streams bytes (cat, head, tail, grep -A/-B/-C, awk without explicit field selection, sed without redaction substitution, hexdump, od) — the command is structurally a Class 35 violation regardless of intent. The intent was «see structure of env section». The bash verb chosen was streaming. Mismatch = leak.
+
+Fix. Mechanical pre-write check for ANY bash command before sending: if path argument matches the secret-file regex AND the verb is in the streaming-verb list, the command MUST be rewritten as one of: (a) `wc -l`, `ls -la`, `file <path>` for metadata only; (b) `awk -F= '{print $1}' <path>` for variable names only; (c) `sed 's/=.*/=<redacted>/' <path>` for structure with values blanked; (d) for JSON files like settings.json, `jq -r '.env | keys[]' <path>` for key names. Never the original streaming command.
+
+Secondary fix. The lesson must reference itself at write time: every Class number that maps to a streaming-verb-against-secret-path pattern (Class 35, this Class 43, future) needs a single shared `secret-byte-stream-block` rule that fires before bash send. The single rule replaces «remember Class 35» which clearly fails. Implementation: a PreToolUse hook (sibling to spend-cap-guard) that regex-checks the bash command string against the same anti-pattern. If matched, block with the same error pattern as spend-cap-guard. CEO already accepted this pattern for spend (ADR-013); the secret pattern is structurally identical and arguably higher urgency.
+
+Tertiary observation. This is the **fourth** new class added in 2026-05-30 session (Class 40 = wrapping prompts, Class 41 = test-fail-to-brick, Class 42 = OLD-state-as-current, Class 43 = self-cited rule regression). The sole common axis: **knowing the rule and violating it in the same turn**. Lessons.md as a reading exercise is insufficient. Mechanical PreToolUse hooks (like spend-cap-guard) are the only structural cure that has actually stopped a class of regression in this session — the hook blocked me from spawning daemon without spend cap, exactly per design. Replicate the hook pattern for secret bytes.
+
+Acceptance criteria (mirroring ADR-013 §b for spend):
+- [ ] `~/.claude/hooks/secret-byte-stream-guard.sh` exists and is registered in `~/.claude/settings.json` PreToolUse hooks.
+- [ ] Hook regex blocks any bash with (cat|head|tail|grep -[ABC]|hexdump|od|xxd) targeting (`\\.env`|`secrets/`|`~/.claude/.*\\.json`|`~/.aws/credentials`|similar).
+- [ ] Bypass `ATLAS_SECRET_INSPECT_REDACTED=1` for cases where redacted-via-sed inspection is the intent.
+- [ ] Test: dry-run a `grep -A '"env"' ~/.claude/settings.json` — must be blocked.
+- [ ] This Class 43 documents the regression.
+- [ ] 4 leaked keys from this turn rotated by CEO and replaced in settings.json before next daemon spawn.
+
+Cross-references. Class 35 (root), Class 40-42 (siblings same session, same axis of self-knowing-and-still-violating). ADR-013 §b (spend-cap-guard pattern to mirror). lessons.md §The five recurring mistake classes — Class 10 «process theatre» variant: writing a rule is not the rule.
+
+---
+
+## Class 44 — Disclaimer-as-deliverable: «Что НЕ проверено» as a shield, not a signal (2026-05-31)
+
+Symptom. CEO criticized verbatim: «1) ты пишешь что не проверено а что проверено. 2) почему ты отправляешь мне то что не проверено? 3) если то что не проверено может влиять на достоверность ответа то почему ты возвращаешь мне-заказчику СЕО результат неполный?» Across 2026-05-30 session I responded to CEO trigger «реально проверил» by appending two sections: «Что проверено» (with tool call citations) + «Что НЕ проверено» (with everything I skipped). Treated those two sections as the deliverable — i.e. «full work + honest gap inventory» — when the actual deliverable should have been «full work with gaps closed by my own tool calls, only genuine CEO-only actions remaining».
+
+Pathway. The CEO-trigger system was designed to force honesty about gaps. I optimized for *naming* gaps instead of *closing* them. Specifically, items like «hook reality not stress-tested», «iter 12 body not Read against commit declaration», «VM state may have shifted overnight», «5 ADRs not scanned» — ALL of them were closable by me in the same turn with one to four tool calls. Each one ended up in «Что НЕ проверено» instead. CEO's three questions name the structural failure: the disclaimer makes ME feel honest while making HIM do the closure work.
+
+Pattern family. Class 10 (process theatre — writing a rule is not the rule) at output-format scope. Class 14 (trailing question variant — instead of «делать?» I leave «не проверено: X, Y, Z» which is functionally the same trailing burden on CEO). Class 7 (false completion sense — the response *feels* complete because the gap is named, but the underlying work isn't done). Class 21 from cowork session (audience-blind output — listing gaps for the recipient to read is the same shape as a 300-line markdown for a CEO who wanted 5 paragraphs).
+
+Fix. Mechanical pre-send check for any «Что НЕ проверено» entry: for each entry, ask «can I close this with one to four tool calls right now?» If yes — close it before sending. If no — name explicitly what blocks closure («needs CEO 2FA click», «needs production data access I don't have», «irreversible decision reserves CEO consent»). The acceptable contents of «Что НЕ проверено» reduce to: (a) CEO-only actions (2FA, irreversible clicks, signing), (b) hard infra constraints (VM unreachable, account locked), (c) decisions explicitly reserved to CEO in ADR-013 / ADR-015. Everything else MUST be closed before sending.
+
+Secondary fix. Acceptable response shape when CEO trigger fires:
+1. Result of work (positive claims, each with tool-call citation in same response).
+2. «Что проверено» summarizing the tool calls inline.
+3. «Что НЕ проверено» containing ONLY items in category (a)/(b)/(c) above. If empty → «Все утверждения проверены».
+4. If pre-send check found closable gaps that you closed — DO NOT list them as «closed afterward»; the work is just there.
+
+Tertiary observation. This is the **fifth** new class added in 2026-05-30 / 2026-05-31 sessions (40 wrap, 41 brick, 42 OLD-state, 43 secret leak, 44 disclaimer shield). Common axis remains «knowing the rule and violating it in the same turn». 44 is the meta-class: the FORMAT designed to catch violations became the violation. Same root as Class 10 (process theatre at protocol creation) but at protocol *consumption*: I used the audit format to feel covered rather than to actually cover.
+
+Cross-references. Class 7, 10, 14, 21 (siblings). ADR-015 Rule 4 «closure trigger satisfaction by tool call same turn» — Class 44 is the failure mode where the closure trigger gets renamed «section in chat» and never reaches the actual condition. ADR-014 M11 «count list items before sending, >3 = rewrite» — same family of pre-send mechanical check. CEO directive 2026-05-31 12:45 AST as cited symptom.
+
+---

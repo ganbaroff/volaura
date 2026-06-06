@@ -11,11 +11,16 @@ Improving — Readiness Manager gave honest PASS. But most agents still guess.
 - "Law 2 broken 4/5 products" → SAME false claim, 116 files with energy
 Swarm is NOT reading code. Fix: stronger evidence gate in daemon prompts.
 
-## Current Priority (from 2026-05-01 swarm cycle)
-1. Fix doc contradictions (product-truth.md said Law 2 "BROKEN" — actually 116 files) — DONE
-2. Legal: GDPR Art.22 consent text review — BLOCKED (CEO legal)
-3. Risk: Voice DPA verification — BLOCKED (CEO vendor)
-4. Sales: Create sales deck — BLOCKED (CEO content)
+## Current Priority (from 2026-05-08 Session 132 close)
+1. Phase B — wire LiteLLM Router. Install litellm>=1.50 в C:\Python314, переписать `_call_assigned_model` в atlas_swarm_daemon.py через ProviderRegistry/Router, drop Anthropic Haiku из adapter (Constitution Article 0). PENDING — read-only investigation done (2026-05-08), pending Codex pushback per codex-loop.md.
+2. Phase A — NSSM Windows service supervisor для daemon. PENDING — current scheduled task Loses control after operator Stop+Start cycles. See lessons Class 30.
+3. Phase F — manual-session.lock test isolation (conftest fixture или env-override ATLAS_SKIP_MUTATION_LOCK=1). PENDING — 6 mutation tests fail when lock present. See lessons Class 29.
+4. UX Designer remap to groq DONE (`fc7445a`). 17/17/0 first-ever canary achieved.
+5. CTO Watchdog remap to nvidia/meta-llama-3.3 DONE (`c6d681a`).
+6. Ecosystem Auditor remap to nvidia/meta-llama-3.3 DONE (`93a975d`).
+
+## Pre-Session 132 priority history archived
+Older swarm cycle entries (Session 129/130 cycle 1) preserved in git history before this rewrite. Search `git log -p -- memory/atlas/semantic/swarm-commands.md` if you need them.
 5. OpenManus Windows path fix — DONE (forward slashes + workspace=VOLAURA)
 6. Privacy + Terms pages 404 — DONE (Vercel deploy, now 200)
 7. Vercel frontend deployed to production — DONE (dpl_AHspHXbGsKNisuTjTAgMyXr4SeGE)

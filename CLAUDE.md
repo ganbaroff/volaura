@@ -22,7 +22,7 @@ Hosting: Vercel (frontend), Railway (backend, `volauraapi-production.up.railway.
 
 Monorepo: Turborepo + pnpm. `apps/web/`, `apps/api/`, `supabase/`, `packages/`, `docs/`.
 
-LLM hierarchy: Cerebras Qwen3-235B → Ollama local → NVIDIA NIM → Anthropic Haiku (last resort). Never use Claude as swarm agent.
+LLM hierarchy (ADR-013): NVIDIA NIM → Ollama local → Gemini Flash → Groq → Anthropic (last resort, user-facing only). Cerebras removed. Never use Claude as swarm agent.
 
 ---
 

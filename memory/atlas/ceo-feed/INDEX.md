@@ -8,6 +8,12 @@
 
 ## Actionable — still-relevant signals
 
+**`legal-engagement-brief-2026-06-07.md`** (new — launch-critical)
+Counsel-facing brief for AZ PDPA/SADPP + EU GDPR Art. 9 / Art. 22 / AI Act review. Lists existing repo materials (Privacy/ToS drafts, GDPR Art. 22 research, DE-CCorp diff, lawyer shortlist). Two named counsel sets with 6 concrete questions each. Output-requested format: verdict + red/amber/green list + exact questions per lawyer + correction list. Hand to VA as the packet.
+
+**`va-legal-track-2026-06-07.md`** (new — paired with the brief)
+Operational layer for the legal track: Upwork JD ($5–8/h, ~20h/mo), 5 screening questions, weekly workflow (Mon digest / Tue–Thu outreach / Fri wrap), tracking sheet schema, confidentiality + NDA, risks + mitigations, first-month milestones, failure triggers. Closes the founder-as-lawyer-courier bottleneck the way MCP-courier closed the founder-as-AI-courier bottleneck. Budget envelope $100–160/mo.
+
 **`project-milestone-ledger-2026-06-06.md`** (new)
 Current project-level milestone map: launch gate blocked externally, code bugs currently known to be user-blocking are not found, truth-lock docs still need cleanup.
 

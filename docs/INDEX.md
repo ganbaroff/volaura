@@ -47,7 +47,7 @@
 - [[TONE-OF-VOICE]] — Tinkoff/Aviasales benchmark, shame-free voice
 - [[ECOSYSTEM-MAP]] — All 5 products and their relationships
 - [[ECOSYSTEM-ASSESSMENT]] — Cross-product dependencies
-- [[500-HOUR-PLAN]] — Time allocation plan
+- [[500-HOUR-PLAN]] — Archived time allocation plan
 - [[MONETIZATION-ROADMAP]] — Revenue timeline
 - [[financial-model]] — Financial model with unit economics
 - [[GITA-GRANT-APPLICATION-2026]] — Georgia GITA grant ($240K target)
@@ -158,7 +158,7 @@ Related: [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[adr/ADR-006-ecosyste
 - [[FUNCTIONAL-TEST-STRATEGY]] — Functional testing strategy
 - [[BETA-CHECKLIST]] — Beta launch checklist
 - [[LAUNCH-BLOCKERS]] — Pre-launch blockers (19 from Constitution)
-- [[PRODUCTION-READINESS-PLAN]] — Production readiness
+- [[PRODUCTION-READINESS-PLAN]] — Archived pre-launch snapshot
 - [[ATTACK-VECTORS-EXECUTIVE]] — Security attack vectors
 - [[SECURITY-AUDIT-INDEX]] — Security audit index
 - [[DISASTER-RECOVERY-RUNBOOK]] — DR runbook
@@ -171,7 +171,7 @@ Related: [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[adr/ADR-006-ecosyste
 - [[SPRINT-AUDIT-CONSOLIDATED]] — Sprint audit results
 - [[SPRINT-S4-DEBATE-2026-04-08]] — Sprint S4 debate
 - [[MEGAPLAN-MINDSHIFT-LAUNCH-2026-04-08]] — MindShift launch megaplan
-- [[EXECUTION-PLAN]] — Execution plan
+- [[EXECUTION-PLAN]] — Archived execution plan
 - [[IMPLEMENTATION-ROADMAP]] — Implementation roadmap
 - [[BACKLOG]] — Product backlog
 
@@ -204,7 +204,7 @@ Related: [[research/NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[adr/ADR-007-ai-gatewa
 ## Templates & Process
 
 - [[ACCEPTANCE-CRITERIA-TEMPLATES]] — AC templates
-- [[ACCEPTANCE-CRITERIA]] — Definition of Done
+- [[ACCEPTANCE-CRITERIA]] — Legacy Definition of Done (historical)
 - [[AGENT-BRIEFING-TEMPLATE]] — Agent briefing template
 - [[BEST-PRACTICES]] — Development best practices
 - [[CONTRIBUTING]] — Contribution guide

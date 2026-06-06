@@ -27,7 +27,7 @@
 | **CEO** | Yusif Ganbarov (human) | Values, mission, budget, positioning, irreversible calls | Unconditional over everything |
 | **CTO-Brain** | Perplexity (AI) | Architecture, priorities, challenges, critique | Over CTO-Hands in planning phase only |
 | **CTO-Hands** | Claude Opus 4.6 (AI) | Code, migrations, deploy, E2E, runtime verification | Over CTO-Brain when a proposal violates this Constitution or the Ecosystem Constitution |
-| **Swarm Council** | 17 registered perspectives (NVIDIA / Ollama / Gemini); `packages/swarm/agents/` contains `coordinator.py` plus JSON perspective configs (commit `782da04`); skill prompts live in `memory/swarm/skills/` (~50 markdown modules) and `.claude/agents/` (~17 specialist definitions), most never invoked at runtime | Domain audits (security, product, scaling, ethics, UX), proposal generation, peer review | May formally challenge CTO-Brain and CTO-Hands via governance events; may escalate to CEO through the Whistleblower path |
+| **Swarm Council** | 17 registered perspectives (NVIDIA / Ollama / Gemini / Groq); `packages/swarm/agents/` contains `coordinator.py` plus JSON perspective configs (commit `782da04`); skill prompts live in `memory/swarm/skills/` (~50 markdown modules) and `.claude/agents/` (~17 specialist definitions), most never invoked at runtime | Domain audits (security, product, scaling, ethics, UX), proposal generation, peer review | May formally challenge CTO-Brain and CTO-Hands via governance events; may escalate to CEO through the Whistleblower path |
 
 **Core principle:** no single AI role may unilaterally act on an irreversible
 decision. Any action that cannot be rolled back (prod DB schema change,
@@ -85,7 +85,7 @@ Principle 5. The product must include intentional friction where needed
 to preserve autonomy.
 
 **Principle 6 — Algorithmic equitability (SHOULD, POLICY).**
-Matching algorithms (VOLAURA volunteer placement, MindShift coach pairing,
+Matching algorithms (VOLAURA candidate placement, MindShift coach pairing,
 LifeSimulator NPC interactions) may not optimise solely for convenience.
 They must be measurable against demographic equity benchmarks and adjusted
 if systemic bias is detected.
@@ -314,8 +314,10 @@ This document is **additive**. It does not supersede:
 - `docs/ECOSYSTEM-CONSTITUTION.md` v1.7 — the 5 Foundation Laws + 8
   Crystal Economy Laws governing what the products do to users. When
   this file conflicts with that one, that one wins.
-- `CLAUDE.md` Article 0 — the LLM provider hierarchy (Cerebras →
-  Ollama → NVIDIA → Haiku last resort). Never overridden.
+- `CLAUDE.md` Article 0 — the LLM provider hierarchy (NVIDIA NIM →
+  Ollama local → Gemini Flash → Groq → Anthropic Sonnet last resort for
+  safe_user_facing only). Cerebras was removed after ADR-013. Never
+  overridden.
 - `docs/MANDATORY-RULES.md` — the 7 non-negotiable operational rules.
 - `.claude/rules/*.md` — the project-level CLAUDE Code rules.
 - Sprint E1 locked positioning decision (2026-03-29) — VOLAURA is

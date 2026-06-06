@@ -8,6 +8,93 @@
 
 ---
 
+## 2026-06-06 23:47 Baku · docs truth-lock continued
+
+### Hypothesis (proposer: Codex)
+The truth-lock pass needed one more layer: restore the missing `continuity_roadmap.md` pointer file, make bootstrap/README honest about its archival status, and remove Cerebras from live prompt-module prose where it was still being treated as current truth.
+
+### Critique (reviewer: Codex)
+Do not rewrite legacy identifiers into false new names. Legacy route/table names can stay if code still uses them, but they must be labeled as legacy and not marketed as current positioning.
+
+### Decision (CEO or one of us if explicitly delegated)
+Keep the project-level truth lock narrow: archived pointer for continuity roadmap, honest bootstrap/readme note, candidate/professional wording, legacy-labels for route/table names, and no daemon/code churn.
+
+### Evidence as it lands
+- `memory/atlas/continuity_roadmap.md`
+- `memory/atlas/bootstrap.md`
+- `memory/atlas/README.md`
+- `docs/CONSTITUTION_AI_SWARM.md`
+- `docs/ARCHITECTURE.md`
+- `packages/swarm/prompt_modules/current_gaps.md`
+- `packages/swarm/prompt_modules/ecosystem-map.md`
+- `packages/swarm/prompt_modules/architecture_state.md`
+
+### Outcome
+The active docs now have a clearer boundary between current truth and archived history; the old provider/volunteer language no longer reads like live canonical state.
+
+## 2026-06-06 23:42 Baku · docs truth-lock pass
+
+### Hypothesis (proposer: Codex)
+Truth-lock should continue on canonical docs, not on daemon code. The verified current truth is: `memory/projects/volaura.md` is already professional-positioned, `AGENTS.md` is already on the NVIDIA→Ollama→Gemini→Groq→Anthropic chain, and the remaining stale provider / volunteer wording belongs in `docs/CONSTITUTION_AI_SWARM.md` and `docs/ARCHITECTURE.md`.
+
+### Critique (reviewer: Codex)
+Do not rename live route or table identifiers just to make prose pretty. Preserve legacy names where code still uses them, but label them honestly as legacy where needed. Do not claim archive docs are current truth.
+
+### Decision (CEO or one of us if explicitly delegated)
+Patch only the verified stale prose: swarm constitution provider hierarchy, architecture candidate wording, and the legacy-table note.
+
+### Evidence as it lands
+- `docs/CONSTITUTION_AI_SWARM.md`
+- `docs/ARCHITECTURE.md`
+
+### Outcome
+Truth-lock moved one step closer to a single project story; no code or daemon changes.
+
+## 2026-06-06 23:33 Baku · Atlas handoff queued for fact-check
+
+### Hypothesis (proposer: Atlas)
+Atlas claims the next Codex pass should verify PR #103 CI-honesty, the missing B2B personalized-assessment wedge, docs drift on main, and the legal launch gate before building anything new.
+
+### Critique (reviewer: Codex)
+Treat the pasted handoff as claims-to-verify, not proof. The next pass must check `origin/main`, PR state, CI workflow coverage, and code paths directly.
+
+### Decision (CEO or one of us if explicitly delegated)
+Record the handoff compactly and defer execution until the next model pass.
+
+### Evidence as it lands
+- `memory/atlas/ceo-feed/codex-next-sprint-queue-2026-06-06.md`
+
+### Outcome
+Queued. Next pass starts with fact-checking, not implementation.
+
+## 2026-06-06 22:42 Baku · bug-ledger / launch-gate sheet
+
+### Hypothesis (proposer: Codex)
+The stale readiness plan is no longer the source of truth. On `origin/main`, the old C1-C6 user-visible gaps are implemented, the P0 bug ledger is green, and the remaining launch gate is external/legal plus owner sign-off. We need one shareable sheet that says this honestly and separates "no known user-blocking code bugs found" from an impossible absolute "zero bugs" claim.
+
+### Critique (reviewer: Claude/Cursor)
+Do not overclaim merged/mainline status unless you actually verified it against `origin/main`. Do not turn a clean P0 ledger into a blanket "no bugs anywhere" promise. Keep the launch gate blocked until Art. 9 / SADPP / key rotation status is explicit.
+
+### Decision (CEO or one of us if explicitly delegated)
+Create a shareable launch-gate sheet for the CEO and keep users blocked until external/legal facts are delivered.
+
+### Phases / Plan
+research → bug audit → docs truth-lock → external asks → handoff.
+Acceptance criteria:
+- old readiness-plan blockers are identified as stale
+- current code bugs are separated from docs drift
+- external asks are explicit and short
+
+### Evidence as it lands
+- `memory/atlas/ceo-feed/launch-gate-sheet-2026-06-06.md`
+- `apps/api/tests/test_p0_launch_gaps.py` = 3/3 green
+- `apps/api/tests/test_stats_endpoints.py` = 15/15 green
+- `apps/api/tests/test_new_endpoints.py -k coaching` = 7/7 green; warning treated as test harness hygiene
+- `docs/PRODUCTION-READINESS-PLAN.md` is stale relative to `origin/main`
+
+### Outcome
+Working. The shareable gate sheet now exists; next step is to collect Art. 9 / SADPP / key-rotation status from the CEO/external side.
+
 ## Protocol
 
 Each loop entry uses this skeleton (free-form prose under each tag, not bullet walls):
@@ -2087,4 +2174,3 @@ Need: classify each Backend test failure into one of three buckets so we know wh
 last claude = 15 (this, CLI-side). last codex = 12. ask for iter 16 = Codex classification of Backend test failures. If Codex can't reach VOLAURA pytest env, signal back and I run pytest myself + paste raw output for him to classify.
 
 — Claude/CLI-side, 2026-05-24 08:42 AST
-

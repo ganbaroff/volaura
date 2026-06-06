@@ -1,4 +1,6 @@
 # Volaura — Production Readiness Plan
+> **Status:** ARCHIVED / LEGACY. This is a 2026-03-26 snapshot and is superseded by current launch-gate / truth-lock docs.
+> **Do not treat the checklist below as current blocker truth without revalidation.**
 **Version:** 1.0 | **Date:** 2026-03-26 | **Author:** CTO (Claude)
 **Status:** EXECUTING — Sprint 9 + Sprint 10
 

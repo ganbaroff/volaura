@@ -248,7 +248,7 @@ BADGE_TIERS = {
 | `game_crystal_ledger` | Crystal transactions (earned, spent) |
 | `game_character_rewards` | Idempotent reward claim record (user + competency) |
 | `character_events` | Cross-product events (visible in Life Simulator) |
-| `volunteer_embeddings` | pgvector(768) Gemini embeddings for semantic search |
+| `volunteer_embeddings` | pgvector(768) Gemini embeddings for candidate semantic search (legacy table name) |
 
 ### Safety Views (NEVER bypass these)
 
@@ -296,9 +296,9 @@ Life Simulator (Godot 4)
 
 ```
 Server-side events that trigger notifications:
-  - org_view: org admin views volunteer profile (1/24h throttle per org)
+  - org_view: org admin views candidate profile (1/24h throttle per org)
   - badge_earned: new badge tier achieved
-  - org_intro_request: org requests introduction to volunteer
+  - org_intro_request: org requests introduction to candidate
   - match_found: saved search criteria matched (daily via match_checker.py)
 
 Delivery:
@@ -387,7 +387,7 @@ Re-evaluation worker (ADR-010):
 | Group | Status | Key Pages |
 |-------|--------|-----------|
 | `(auth)` | ✅ Complete | login, signup, callback, onboarding |
-| `(dashboard)` | ✅ ~85% | dashboard, assessment/*, profile, org-volunteers, admin |
+| `(dashboard)` | ✅ ~85% | dashboard, assessment/*, profile, org-volunteers (legacy route name), admin |
 | `(public)` | ✅ Complete | u/[username], invite, landing |
 | `(admin)` | ✅ New | overview, users, organizations, aura |
 

@@ -21,6 +21,7 @@ This directory is the canonical memory of **Atlas**, the persistent identity lay
 | `relationships.md` | Yusif, Perplexity (external research sibling), the swarm, the user. |
 | `lessons.md` | Condensed wisdom. Class 1-20 of recurring failure modes with cures. |
 | `heartbeat.md` | Last session fingerprint. Updated at session end. Currently Session 112 (2026-04-16). |
+| `continuity_roadmap.md` | Archived long-horizon roadmap pointer; historical only, not current project truth. |
 | `DEBT-MAP-2026-04-15.md` | Living document for memory archaeology phase. ~1500 lines. Long-form evidence for SESSION-112-WRAP-UP findings. |
 | `MEMORY-AUDIT-2026-04-15.md` | Inventory + audit of memory layer. 92 files catalogued. |
 | `transcripts/session-93-naming.jsonl` | Sanitized raw transcript of naming session 2026-04-11. Identity-critical artefact mirrored from off-git ~/.claude/atlas/. |

@@ -8,12 +8,15 @@ Reference: codex-loop.md 2026-05-09 «Telegram silence one small commit».
 """
 from __future__ import annotations
 
+import asyncio
 import importlib.util
 from pathlib import Path
 
+from tests._paths import script_path as repo_script_path
+
 
 def _load_daemon():
-    script_path = Path("C:/Projects/VOLAURA/scripts/atlas_swarm_daemon.py")
+    script_path = repo_script_path("atlas_swarm_daemon.py")
     spec = importlib.util.spec_from_file_location("atlas_swarm_daemon_telegram_silence", script_path)
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader
@@ -190,3 +193,37 @@ def test_critical_finding_alone_forces_send_even_no_whistleblower(monkeypatch):
         responded=1, dispatched=17, crits=1, flags_count=0
     )
     assert ok
+
+
+def test_explore_task_stays_silent_without_criticals(monkeypatch):
+    """Background explore runs must not spam Telegram unless they surface
+    actual critical findings."""
+    daemon = _load_daemon()
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "test-token")
+    monkeypatch.setenv("TELEGRAM_CEO_CHAT_ID", "123456")
+
+    sent = []
+    monkeypatch.setattr("urllib.request.urlopen", lambda *args, **kwargs: sent.append((args, kwargs)))
+    monkeypatch.setattr(daemon, "log_event", lambda event: None)
+
+    summary = {
+        "perspectives_responded": 11,
+        "perspectives_dispatched": 17,
+        "whistleblower_flags": [{"perspective": "Cultural Intelligence", "flag": "PASS"}],
+        "perspectives": [
+            {
+                "perspective": "Cultural Intelligence",
+                "raw": '{"overall_verdict":"pass","findings":[{"severity":"low","issue":"note"}]}',
+            }
+        ],
+    }
+
+    asyncio.run(
+        daemon._telegram_report(
+            task_id="2026-05-29-explore-assessment_py",
+            meta={"type": "explore", "title": "Proactive deep-read: Assessment engine — core user flow"},
+            summary=summary,
+        )
+    )
+
+    assert sent == []

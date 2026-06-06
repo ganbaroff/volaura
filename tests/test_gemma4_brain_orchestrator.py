@@ -17,9 +17,11 @@ import json
 from pathlib import Path
 from typing import Any
 
+from tests._paths import script_path as repo_script_path
+
 
 def _load_brain():
-    script_path = Path("C:/Projects/VOLAURA/scripts/gemma4_brain.py")
+    script_path = repo_script_path("gemma4_brain.py")
     assert script_path.exists(), f"canonical brain missing: {script_path}"
     spec = importlib.util.spec_from_file_location("gemma4_brain_test", script_path)
     module = importlib.util.module_from_spec(spec)
@@ -348,7 +350,7 @@ def test_min_max_task_counts():
 # ── canonical-only import ────────────────────────────────────────────────────
 
 def test_canonical_brain_path_is_scripts_gemma4_brain():
-    canonical = Path("C:/Projects/VOLAURA/scripts/gemma4_brain.py")
+    canonical = repo_script_path("gemma4_brain.py")
     assert canonical.exists()
     # The worktree copy is informational only — must not be imported in tests.
     assert canonical.is_file()

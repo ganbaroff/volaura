@@ -1,3 +1,11 @@
+---
+type: reference
+status: active
+created: 2026-05-25
+updated: 2026-05-25
+tags: [type/reference, area/ecosystem, status/active]
+---
+
 # Volaura Architecture Master Document
 
 **Created:** 2026-04-02 (Session 81 — Full Codebase Audit)
@@ -5,7 +13,7 @@
 **Health Score:** 72/100 — Conditional GO for public launch
 **Purpose:** Single reference for system architecture. Supersedes scattered notes in shared-context.md and HANDOFF.md.
 
-**Cross-references:** [[adr/ADR-001-system-architecture]] | [[adr/ADR-002-database-schema]] | [[adr/ADR-006-ecosystem-architecture]] | [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[API-REFERENCE]]
+**Cross-references:** [[ADR-001-system-architecture]] | [[ADR-002-database-schema]] | [[ADR-006-ecosystem-architecture]] | [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[API-REFERENCE]]
 
 ---
 
@@ -56,7 +64,7 @@ volaura/                          ← Turborepo monorepo (pnpm workspaces)
 │   ├── swarm/                     ← 22 swarm agent modules
 │   └── eslint-config/             ← Shared ESLint config
 ├── supabase/
-│   ├── migrations/                ← 20 migrations applied
+│   ├── migrations/                ← 119 migrations applied
 │   └── seed.sql                   ← 8 competencies + sample data
 ├── docs/                          ← DECISIONS.md, ARCHITECTURE.md, TASK-PROTOCOL.md, ...
 ├── memory/                        ← Agent memory files (context, swarm, projects)
@@ -224,7 +232,7 @@ BADGE_TIERS = {
 
 ## 7. Database Architecture
 
-**20 migrations applied. 18 tables. 3 safety views.**
+**119 migrations applied.** See `supabase/migrations/` for current count.
 
 ### Core Tables
 
@@ -426,18 +434,22 @@ const supabase = await createClient();  // per-request, cookies
 
 ## 14. Architecture Decisions (ADR Index)
 
+Canonical index: [docs/adr/README.md](adr/README.md). Do not duplicate stale mappings here.
+
 | ADR | Decision | Status |
 |-----|----------|--------|
-| ADR-001 | Supabase as sole database + auth | Validated |
-| ADR-002 | FastAPI monolith (not microservices) | Validated |
-| ADR-003 | @hey-api/openapi-ts for generated types | Validated |
-| ADR-004 | IRT/CAT pure Python (not external library) | Validated |
-| ADR-005 | Gemini 2.5 Flash as primary LLM | Validated |
-| ADR-006 | VOLAURA = verified talent platform (not volunteer platform) | Locked Sprint E1 |
-| ADR-007 | Crystal economy: VOLAURA → Life Simulator bridge | Validated |
-| ADR-008 | AURA Leaderboard KILLED — replace with Tribe Streaks | Board-approved, not formalized |
-| ADR-009 | Tribe Streaks + Collective AURA Ladders (not leaderboard) | Board-approved, not formalized |
-| ADR-010 | keyword_fallback re-evaluation worker (24h SLA) | Implemented, SLA not enforced |
+| ADR-001 | System architecture (monorepo, Next.js + FastAPI + Supabase) | ACCEPTED |
+| ADR-002 | Database schema | ACCEPTED |
+| ADR-003 | Auth & verification | ACCEPTED |
+| ADR-004 | Assessment engine (IRT/CAT 3PL) | ACCEPTED |
+| ADR-005 | AURA scoring weights & tiers | ACCEPTED |
+| ADR-006 | Ecosystem architecture (`character_events` bridge) | ACCEPTED |
+| ADR-007 | AI gateway / model router (Article 0) | ACCEPTED |
+| ADR-008 | ZEUS governance layer | ACCEPTED |
+| ADR-009 | CrewAI adoption (Phase 1) | APPROVED, not implemented |
+| ADR-010 | Defect autopsy protocol | ACCEPTED |
+| ADR-011 | LiteLLM gateway migration | PROPOSED (Phase 1 shipped) |
+| ADR-016 | Positioning lock (verified professional talent) | ACCEPTED |
 
 ---
 
@@ -448,10 +460,10 @@ const supabase = await createClient();  // per-request, cookies
 | Domain | Score | Notes |
 |--------|-------|-------|
 | Security | 16/20 | RLS solid, body limit now fixed (CRIT-I01). BUG-012 open. |
-| Data integrity | 18/20 | 20 migrations, RLS, idempotent rewards, 3 safety views |
+| Data integrity | 18/20 | 119 migrations, RLS, idempotent rewards, safety views |
 | Scalability | 13/20 | In-memory rate limiting (not Redis), no db connection pool, no CDN for embeddings |
-| Test coverage | 11/20 | 668 tests, but 3 test files missing. Unit only — no E2E smoke in CI |
-| Documentation | 14/20 | Strong core docs. Staleness was critical this session (now resolved). |
+| Test coverage | 14/20 | 165+ API test files; control-plane job runs repo-root daemon tests; E2E in separate workflow |
+| Documentation | 12/20 | Core docs strong; ARCHITECTURE and sprint pointers require periodic sync |
 
 **Conditional GO criteria for public launch:**
 1. ✅ Migrations applied (MIGRATION-1 — 1-click CEO)
@@ -462,4 +474,4 @@ const supabase = await createClient();  // per-request, cookies
 
 ---
 
-*Last updated: 2026-04-02. Audit by 5-agent parallel codebase read. Update this document when: new router added, schema changed, new major feature shipped, or architecture decision made.*
+*Last updated: 2026-06-06. Truth-lock pass: ADR index aligned with docs/adr/README.md, migration/test counts refreshed.*

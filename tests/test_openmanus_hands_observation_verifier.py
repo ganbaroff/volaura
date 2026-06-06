@@ -11,9 +11,11 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+from tests._paths import script_path as repo_script_path
+
 
 def _load_sidecar():
-    script = Path("C:/Projects/VOLAURA/scripts/run_openmanus_hands_task.py")
+    script = repo_script_path("run_openmanus_hands_task.py")
     spec = importlib.util.spec_from_file_location("run_openmanus_hands_task_v", script)
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader

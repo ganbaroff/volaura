@@ -11,9 +11,11 @@ import importlib.util
 import json
 from pathlib import Path
 
+from tests._paths import script_path as repo_script_path
+
 
 def _load_brain():
-    script_path = Path("C:/Projects/VOLAURA/scripts/gemma4_brain.py")
+    script_path = repo_script_path("gemma4_brain.py")
     spec = importlib.util.spec_from_file_location("gemma4_brain_dedup_test", script_path)
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader

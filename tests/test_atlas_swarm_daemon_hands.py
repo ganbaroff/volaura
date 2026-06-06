@@ -15,9 +15,11 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from tests._paths import script_path as repo_script_path
+
 
 def _load_daemon():
-    script_path = Path("C:/Projects/VOLAURA/scripts/atlas_swarm_daemon.py")
+    script_path = repo_script_path("atlas_swarm_daemon.py")
     spec = importlib.util.spec_from_file_location("atlas_swarm_daemon_hands_test", script_path)
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader

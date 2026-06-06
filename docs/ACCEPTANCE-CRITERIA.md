@@ -1,8 +1,12 @@
 # Volaura — Acceptance Criteria & Pre-Launch Checklist
 
+> **Status:** LEGACY / ARCHIVED. This document preserves historical acceptance criteria from the volunteer-era planning phase.
+> **Current canon:** ADR-016 positioning lock + current launch-gate sheet and truth-lock docs.
+> **Do not treat the body below as current product truth without revalidation against `origin/main`.**
+
 **Target Launch:** When product is fully ready (no specific event dependency)
 **Team:** Solo founder + AI generators (v0, Vertex, Perplexity)
-**Scope:** Full polished product (all 9 modules) ready for 200→1000 volunteers in month 1
+**Scope:** Historical acceptance criteria snapshot; many scenarios still use volunteer-era wording and must be read as legacy.
 
 ---
 
@@ -1591,4 +1595,3 @@ This ACCEPTANCE-CRITERIA.md document provides:
 ✅ **Part 9**: Post-Launch Roadmap
 
 **Use this as the single source of truth for "ready to ship".**
-

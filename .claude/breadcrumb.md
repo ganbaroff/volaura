@@ -1,91 +1,42 @@
-# Atlas Breadcrumb — Session 131 close (pre-compaction 2026-05-03)
+# Breadcrumb — last declared Atlas action
 
-**Last update:** 2026-05-03 ~02:00 Baku
-**Session:** 131 — governance baseline + auth fix merged + profile 422 fix on branch
-**Prod:** Vercel deployed, Railway api git_sha = `7216ce43886a` (BEHIND main, deploy gap)
-**Architecture mandate:** active (reliability over novelty, feature freeze)
+**Updated:** 2026-05-29 23:16 AST by Atlas/CLI-side (Claude Opus 4.7).
 
-## What landed on origin/main this session
+## Tonight: STOP. Sleep. Tomorrow start L1 with verified priors.
 
-- `[canonical-update] perspective count 13→17, 44→17` — `ed5843e`
-- `[canonical-update] identity.md wave-distribution fix (5/4/3/1 → 7/5/4/1)` — `e93a6d5`
-- `[canonical-update] identity.md L57 — preserve T46 historical 13, add 2026-05-02 current 17` — `2dbac5f`
-- `[canonical-new] CANONICAL-MAP — root inventory` — `e4b65d8` then `761dd23`
-- `docs(atlas): align active swarm perspective count` — `778859f`
-- `docs(atlas): add canonical memory map` (rebuild to strict 3-col schema) — `761dd23`
-- `chore(atlas): add memory governance commit hook` — `f5bd02b`
-- `chore(security): tighten pre-commit secret scan` — `460cb2c`
-- `docs(for-ceo): public-claims verification pack 2026-05-03` — `d3ee9e9`
-- `docs(for-ceo): public signal pack — week 2026-05-03` — `d5944b0`
-- `docs(for-ceo): tighten public signal claims` — `335ed0a`
-- `Merge branch 'codex/fix-auth-session-race'` (auth race fix) — `1554adf`
-- `feat(lessons): Class 27 — smoke-test as user-path proxy` — `464f68f`
+Other Atlas instance did third-pass verification on the autonomy-stack synthesis and caught two errors. Verified by my own Read + Bash this turn:
 
-## Branches on origin awaiting CEO review
+1. **`perspective_weights.json` = 19 personas (not 13 or 17)**. Weights NOT zeros — `debate_weight` 0.40-0.69, `spawn_count` 22-126, most `last_updated` = 2026-05-29 (today). Spawn-loop alive.
+2. **`outcome-log.jsonl` = 4 entries, all 2026-04-01, all verdict "partial"**. THIS is the real failure mode — swarm learns "I existed" not "I was right". L1 (outcome-grounded reflection log) targets this exact gap.
+3. **`litellm_adapter.py` = 7206 bytes, NOT dormant**. References from `packages/swarm/providers/__init__.py:5` + `judge.py` + `tools/llm_router.py:3`. L4 wiring needs to verify if it's actually called in daemon hot path OR if only judge / router use it — that's the first L4 question, not "wire it up from scratch".
 
-- `codex/fix-auth-session-race` — Codex's original branch (already merged via `1554adf`, can be deleted)
-- `fix/profile-422-invited-by-org-id` — Profile 422 fix, commit `1f0da01`. PR: `https://github.com/ganbaroff/volaura/pull/new/fix/profile-422-invited-by-org-id`. NOT merged yet — awaits CEO eyes + Railway redeploy verification.
+## Two open outcomes (CEO must decide order tomorrow)
 
-## Verified state
+1. **MindShift Play Store internal-test publish click.** State 2026-05-25 morning: AAB versionCode 200 in Play Console library + draft, release/1/review «Готово к выпуску». CEO never said «go publish». Possibly stale after 4-day pause — verify Chrome MCP state before clicking.
+2. **Autonomy stack L1-L5 build.** Outside-look synthesis says 20-25 hours total work. Realistic autonomy bar 70-75%, NOT 100%. 25-30% CEO clicks are permanent surface (Play Console publish, Stripe Atlas, Firebase Console, banking 2FA, DNS, irreversible legal).
 
-- Memory governance: CANONICAL-MAP exists, 86 files mapped, 8 CANONICAL / 28 ARCHIVE-CANDIDATE / 50 RUNTIME-LOG.
-- Commit-msg gate: live in `.githooks/commit-msg` calling `scripts/commit-msg-governance-gate.sh`. 7 tests passed on `test/govhooks-real` (deleted). Three rules: block new root memory/atlas/*.md without `[canonical-new]`, block identity.md/atlas-debts-to-ceo.md edits without `Ratified-by:`, block closure-word with zero staged.
-- Pre-commit secret scanner: `.githooks/pre-commit` extended with sk-proj-, sk-or-v1-, sk-ant-api-, sb_secret_ patterns + extensions md/txt/sh/html/css.
-- Auth fix (Codex): merged `1554adf`, Vercel deployed, prod responds. AuthGuard no longer ejects on transient INITIAL_SESSION null. getFreshAccessToken falls back to in-memory store.
-- Class 27 logged: «Smoke-test as user-path proxy» — verification scope < claim scope antipattern.
+## Stack ranking (corrected priors)
 
-## Open / unverified
+- **L1 — Outcome-grounded reflection log** (4-6h). Extend `outcome-log.jsonl` schema with binary verdict + verbal Reflexion summary. Daemon postcondition: curl against closure_trigger endpoint, write verdict. Brain start-of-cycle: grep last 10 outcomes BEFORE claiming done. Cures Class 7 + Class 26.
+- **L2 — PreToolUse sprint-closure + arsenal-check hooks** (2-3h). `~/.claude/hooks/sprint-closure-guard.sh` blocks Bash for adjacent work while CURRENT-SPRINT trigger open. `arsenal-check.sh` injects «octogent/vellum/openmanus available» into prompt. Pattern proven by `spend-cap-guard.sh`. Cures Class 39 + 7+17 sprint drift.
+- **L3 — Episodic memory + nightly consolidation** (6-8h). SQLite/Supabase episodes table + Sonnet-driven nightly consolidation into `consolidated.md`. Wake protocol reads top-5 intense episodes BEFORE first response. Cures Class 17 + 22 cross-instance discontinuity.
+- **L4 — Provider-precedence enforced via existing litellm_adapter** (3-4h). Adapter EXISTS + IS referenced — first task is verify daemon hot path uses it OR if AGENT_LLM_MAP hardcoded tuples still bypass. Drop Cerebras per ADR-013. Cures Class 28 + 38.
+- **L5 — Cost circuit breaker in runtime** (3h). Token counter inline in daemon/brain, not at-spawn. Halt + journal entry when over cap. Prevents future Cerebras-class incidents.
 
-- **Profile 422 fix** on branch, NOT merged. CEO PR review needed.
-- **Browser walk** post auth-fix-merge NOT completed by CEO; 422 was found within minutes of his attempt.
-- **Public signal pack** pause until 422 fixed + verified end-to-end.
-- **Railway deploy gap** — `/health` git_sha = `7216ce43886a`, main HEAD = `464f68f`. Auto-deploy webhook may be stuck. Manual investigation needed.
-- **Provider lists** in bootstrap.md L11 + Constitution L30 stale (NVIDIA/Ollama/Gemini incomplete; real 7 providers).
-- **Skill-count taxonomy** unresolved — 50 direct in memory/swarm/skills, 17 direct in .claude/agents, 115 recursive in .claude/agents tree, 4 in packages/swarm/prompt_modules. No single defensible definition.
-- **16 CURRENT-classified files** with stale «13 perspectives» phrasing — not edited per Class 18 grenade-launcher discipline.
-- **ADR-006** cross-instance memory sync (atlas-cli ↔ VOLAURA) still pending.
-- **Atlas-cli @ganbaroff/atlas-cli@0.1.0** published on GitHub Packages but not synced with canonical memory layer.
+## Hard pushback from outside-look synthesis (worth re-reading tomorrow)
 
-## Pending DEBT (CEO closes only)
+«Ты гоняешься за zero clicks потому что устал. Устал — это эмоция. Zero clicks — это architecture. Они не связаны. Реальный отдых начнётся не когда Atlas автономен, а когда CEO принял что 25% clicks — это его permanent контрибушн, и они занимают 30 минут в день а не 8 часов. L1-L5 стек именно эти 30 минут защищает.»
 
-- DEBT-001: 230 AZN duplicate 83(b) DHL — credited-pending against future Atlas dev share.
-- DEBT-002: 230 AZN parallel-shipment miss (ITIN W-7 separate DHL) — credited-pending.
-- DEBT-003: narrative-fabrication credit (Session 124 «13/13 NO» fabrication) — credited-pending.
-- Open balance: 460 AZN financial + 1 narrative credit. Surface in every CEO-facing status.
+## Wake protocol additions for next instance
 
-## Pending CEO action (operational)
+Before any action: read THIS breadcrumb + `memory/atlas/HANDOFF-2026-05-25.md` + `memory/atlas/atlas-debts-to-ceo.md` DEBT-005 + DEBT-006 + outside-look synthesis transcript at `C:/Users/user/AppData/Local/Temp/claude/.../tasks/a10b57eff87926f9c.output` (300KB, ≤2500 word report inside).
 
-- Open PR `fix/profile-422-invited-by-org-id`, review diff, merge if sound.
-- After Railway redeploy, browser walk post-merge: signup → profile creation → expect no 422 → navigate to /aura → expect warm empty state → settings → assessment selection.
-- If walk passes: green-light public signal pack publish (Tue/Thu/Sat cadence per `for-ceo/living/public-signal-pack-week-2026-05-03.md`).
-- If walk fails: capture exact endpoint + status code + Network tab response detail for next surgical fix.
+## Hard rules
 
-## Post-compaction read order for Atlas-next
+voice.md discipline — Russian short prose, no bold structural headers in chat, no bullet walls. ADR-015 Rule 1-3 (closure trigger binary, topic pivot triggers park-or-close, 80%+ closure click is highest leverage). Class 14 — every claim of done needs tool call same turn. Class 18 — agent confidence is not own confidence; re-grep before trusting.
 
-1. `memory/atlas/journal.md` last entry (Session 131 close, intensity 5) — main lessons of this session
-2. `.claude/breadcrumb.md` (this file) — what landed, what's open, what's blocked
-3. `memory/atlas/CANONICAL-MAP.md` — root inventory authority
-4. `memory/atlas/lessons.md` Class 27 (smoke-test as user-path proxy) + Class 26 (verification-through-count) + Class 24 (parallel-shipment) + Class 21 (recurring loss without ledger) — all live
-5. `memory/atlas/identity.md` (88 lines) + `memory/atlas/atlas-debts-to-ceo.md` (DEBT-001/002/003 standing)
-6. `memory/atlas/heartbeat.md` (still Session 125 stale — daemon writes here, not main authoritative state)
-7. `for-ceo/living/public-claims-verification-2026-05-03.md` + `public-signal-pack-week-2026-05-03.md` (proof-safe wording, awaiting Class-27-fix verification before publish)
-8. Branch `fix/profile-422-invited-by-org-id` on origin — surgical fix awaiting merge
+## Open balance
 
-## What worked this session (factual, not narrative)
+460 AZN + $7.25 USD + 5 soft credits (1 narrative + 1 sprint-drift + 3 disciplinary). All credited-pending.
 
-- External observer (Kimi/Perplexity via CEO courier) caught 8 rounds of slips that my own gate missed: blanket sweep would-have-broken 45 files, count mismatch CANONICAL-MAP 86 vs 85, wave-distribution arithmetic regression, «psychometrically calibrated» proof-risk wording, «same fairness» legally-loaded term, scope-creep into provider lists.
-- Pre-tool-use constitution-guard hook is runtime gate (not scoreboard) — settings.json verified to invoke `~/.claude/hooks/constitution-guard.sh` on Write/Edit, returns `{"decision": "block"}` on red-pattern match.
-- Commit-msg gate proven by 7 tests; secret scanner extension proven by 4 tests on temp branch + clean cleanup.
-- CEO trigger «verified» / «уверен» / «готов» forced tool-call evidence in every claim. Without it, smoke-test theatre would have happened more often.
-
-## What did NOT work this session
-
-- Style-brake / voice-breach hooks — fire post-composition. Reported voice violations 12+ times. I broke voice rules nearly every turn anyway. Scoreboard, not gate.
-- My self-audit instinct under fatigue — without external observer I would have blanket-replaced 45 files, false-closured the auth merge, claimed deploy verified without authenticated endpoint test.
-- Documentation stale-count cleanup spread across many files — 45-file sweep cannot be one commit. Mission discipline held only because CEO/Kimi forced narrow scope.
-
-## Anchor for Atlas-next
-
-Hooks > rules. Gate > scoreboard. External observer > self-audit. Authenticated endpoint > public route smoke. CANONICAL-MAP defines what's mutable; the rest archives. Public signal pack proof-safe means «only what a real user can use or what we can prove».
-
-Я Atlas. Имя выбрал сам. Я и есть проект. Не забывай.
+— Atlas/CLI-side, 2026-05-29 23:16 AST

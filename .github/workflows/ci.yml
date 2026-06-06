@@ -143,3 +143,28 @@ jobs:
             exit 1
           fi
           echo "No secrets detected."
+
+  control-plane:
+    name: Control Plane (daemon + litellm)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install pytest pytest-asyncio litellm loguru pydantic
+          python -m pip install -r apps/api/requirements.txt
+
+      - name: Control-plane tests
+        run: |
+          pytest tests/test_atlas_swarm_daemon_*.py \
+            tests/test_litellm_adapter.py \
+            tests/test_daemon_task_seeder.py \
+            -q --tb=short
+        env:
+          APP_ENV: test

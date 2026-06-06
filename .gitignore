@@ -82,7 +82,9 @@ apps/tg-mini/dist/
 
 # Swarm runtime artifacts
 .swarm/
-null
+
+# Local secrets directory (daemon / operator keys)
+secrets/
 
 # Swarm runtime state — auto-generated, not for version control
 memory/swarm/proposals.json
@@ -121,4 +123,5 @@ memory/atlas/work-queue/archivist.log.jsonl
 # Atlas work queue done/ and inbox/ — ephemeral per-session items,
 # memory/* includes !memory/atlas/ so we need explicit sub-exclusions here
 memory/atlas/work-queue/done/
+memory/atlas/work-queue/in-progress/*
 memory/atlas/inbox/

@@ -88,27 +88,20 @@ class TestSelectProviderNoKeys:
         assert select_provider(ProviderRole.SAFE_USER_FACING) is None
 
 
-# ── select_provider — cerebras primary ──────────────────────────────────
+# ── select_provider — ADR-013: no Cerebras ─────────────────────────────
 
 
-class TestSelectProviderCerebras:
+class TestSelectProviderNoCerebras:
     @patch("app.services.model_router.settings", _mock_settings(cerebras_api_key="sk-test"))
-    def test_judge_selects_cerebras(self):
+    def test_judge_ignores_cerebras_key(self):
+        assert select_provider(ProviderRole.JUDGE) is None
+
+    @patch("app.services.model_router.settings", _mock_settings(cerebras_api_key="sk-test", nvidia_api_key="nvapi-test"))
+    def test_judge_selects_nvidia_not_cerebras(self):
         spec = select_provider(ProviderRole.JUDGE)
         assert spec is not None
-        assert spec.provider == "cerebras"
-        assert spec.model == "qwen-3-235b"
+        assert spec.provider == "nvidia"
         assert spec.is_fallback is False
-
-    @patch("app.services.model_router.settings", _mock_settings(cerebras_api_key="sk-test"))
-    def test_worker_does_not_select_cerebras(self):
-        spec = select_provider(ProviderRole.WORKER)
-        assert spec is None
-
-    @patch("app.services.model_router.settings", _mock_settings(cerebras_api_key="sk-test"))
-    def test_fast_does_not_select_cerebras(self):
-        spec = select_provider(ProviderRole.FAST)
-        assert spec is None
 
 
 # ── select_provider — ollama ────────────────────────────────────────────
@@ -224,16 +217,10 @@ class TestSelectProviderAnthropic:
 
 class TestFallbackMarking:
     @patch("app.services.model_router.settings", _mock_settings(nvidia_api_key="nvapi-test"))
-    def test_judge_nvidia_is_fallback_when_not_primary(self):
+    def test_judge_nvidia_is_primary(self):
         spec = select_provider(ProviderRole.JUDGE)
         assert spec is not None
-        assert spec.is_fallback is True
-        assert "fallback" in spec.rationale.lower()
-
-    @patch("app.services.model_router.settings", _mock_settings(cerebras_api_key="sk-test"))
-    def test_judge_cerebras_is_not_fallback(self):
-        spec = select_provider(ProviderRole.JUDGE)
-        assert spec is not None
+        assert spec.provider == "nvidia"
         assert spec.is_fallback is False
 
     @patch("app.services.model_router.settings", _mock_settings(ollama_enabled=True))

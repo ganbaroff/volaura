@@ -8,6 +8,15 @@
 
 ## Actionable — still-relevant signals
 
+**`project-milestone-ledger-2026-06-06.md`** (new)
+Current project-level milestone map: launch gate blocked externally, code bugs currently known to be user-blocking are not found, truth-lock docs still need cleanup.
+
+**`launch-gate-sheet-2026-06-06.md`** (new)
+Short CEO-facing gate sheet: no known user-blocking code bugs from current audit; launch still blocked by Art. 9 / SADPP / key rotation / sign-off.
+
+**`codex-next-sprint-queue-2026-06-06.md`** (new)
+Compact Atlas-to-Codex handoff queue: PR #103 CI-honesty, B2B personalized-assessment wedge, docs drift, and next verification order. Claims-to-verify, not proof.
+
 **`volaura-docs-deep-scan-2026-04-12.md`** (61 lines)
 Contains 5 beta-blocker CEO action items — Railway `APP_ENV=production`, `APP_URL=https://volaura.app`, Supabase email confirmation OFF, `supabase db push` for 4 pending migrations, redirect URLs. VERIFY against prod: (a) env already set, (b) migrations already applied in later sessions. Also: deadline block (May WUF13 / GITA Georgia / Astana Hub / Turkiye Tech Visa) — check `memory/atlas/deadlines.md` for current state.
 

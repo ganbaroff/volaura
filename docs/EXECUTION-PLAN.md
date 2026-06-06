@@ -1,5 +1,8 @@
 # Volaura — Execution Plan (FINAL)
 
+> **Status:** ARCHIVED / LEGACY. This 2026-03-23 execution plan is a historical artifact.
+> **Do not use it as current project truth without cross-checking ADR-016, the launch gate sheet, and the milestone ledger.**
+
 > 49 документов. 1577-строчный мегапромпт. 6-ролевой аудит. Безопасность по NIST/OWASP/SDL.
 > Дата: 2026-03-23
 > Статус: IN PROGRESS — Sprint 9. Фазы 1-3 завершены. Фазы 4-5 частично. LIVE: Railway + Vercel + volaura.app.

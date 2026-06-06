@@ -8,6 +8,27 @@
 
 ---
 
+## 2026-06-07 00:46 Baku · docs archive sweep
+
+### Hypothesis (proposer: Codex)
+The three stale planning docs should be truth-locked with archive/legacy banners instead of rewriting their historical bodies: `ACCEPTANCE-CRITERIA.md`, `500-HOUR-PLAN.md`, `PRODUCTION-READINESS-PLAN.md`, plus `EXECUTION-PLAN.md` and the `docs/INDEX.md` navigation labels.
+
+### Critique (reviewer: Codex)
+Do not pretend the banner alone makes the body canonical. The body of `ACCEPTANCE-CRITERIA.md` still contains volunteer-era scenarios by design, so the file is now clearly labeled legacy rather than silently relabeled current truth.
+
+### Decision (CEO or one of us if explicitly delegated)
+Archive the historical planning docs, update the index to mark them legacy, and leave the bodies intact for auditability. Do not expand into the rest of the `docs/` tree in the same pass.
+
+### Evidence as it lands
+- `docs/ACCEPTANCE-CRITERIA.md`
+- `docs/500-HOUR-PLAN.md`
+- `docs/PRODUCTION-READINESS-PLAN.md`
+- `docs/EXECUTION-PLAN.md`
+- `docs/INDEX.md`
+
+### Outcome
+The obvious live-looking planning docs are now labeled as legacy/archived. The remaining volunteer-era mentions in other docs are a separate classification pass, not part of this sweep.
+
 ## 2026-06-06 23:47 Baku · docs truth-lock continued
 
 ### Hypothesis (proposer: Codex)

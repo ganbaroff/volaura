@@ -19,8 +19,8 @@ Completed, contestable, verified AURA profiles per week — unblocked by **hones
 3. [x] Cerebras removed from `model_router.py`; CLAUDE.md + AGENTS.md aligned with ADR-013
 4. [x] PRE-LAUNCH CEO legal gate section + contradiction fixes
 5. [x] Per-workspace AGENTS.md stubs (`apps/web`, `apps/api`, `apps/tg-mini`, `packages/swarm`)
-6. [ ] Reconcile `codex/swarm-queue-bridge` with `origin/main` (merge/rebase)
-7. [ ] Promote `Control Plane` + `hard-gates` to required branch checks (when green)
+6. [x] Reconcile `codex/swarm-queue-bridge` with `origin/main` (merge/rebase)
+7. [x] Promote `Control Plane` + `hard-gates` to required branch checks (see `.github/branch-protection-checks.json`)
 
 ## Do NOT touch during sprint
 

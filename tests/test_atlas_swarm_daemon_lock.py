@@ -11,9 +11,11 @@ import json
 import os
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
 
 def _load_daemon_module():
-    script_path = Path("C:/Projects/VOLAURA/scripts/atlas_swarm_daemon.py")
+    script_path = REPO_ROOT / "scripts" / "atlas_swarm_daemon.py"
     spec = importlib.util.spec_from_file_location("atlas_swarm_daemon_lock_test", script_path)
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader
@@ -385,8 +387,7 @@ def test_git_commit_push_uses_current_branch(monkeypatch):
 
 
 def test_secrets_dir_in_gitignore():
-    from pathlib import Path
-    gi = Path("C:/Projects/VOLAURA/.gitignore").read_text(encoding="utf-8")
+    gi = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
     lines = [l.strip() for l in gi.splitlines()]
     assert "secrets/" in lines, "secrets/ must be in .gitignore"
 
@@ -395,8 +396,7 @@ def test_secrets_dir_in_gitignore():
 
 
 def test_in_progress_dir_in_gitignore():
-    from pathlib import Path
-    gi = Path("C:/Projects/VOLAURA/.gitignore").read_text(encoding="utf-8")
+    gi = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
     lines = [l.strip() for l in gi.splitlines()]
     assert "memory/atlas/work-queue/in-progress/*" in lines, (
         "in-progress runtime queue must be gitignored"
@@ -591,8 +591,7 @@ def test_git_commit_push_main_still_blocked_without_allow(monkeypatch):
 
 
 def test_aider_instruction_forbids_git_mutations():
-    from pathlib import Path
-    src = Path("C:/Projects/VOLAURA/scripts/swarm_coder.py").read_text(encoding="utf-8")
+    src = (REPO_ROOT / "scripts" / "swarm_coder.py").read_text(encoding="utf-8")
     forbidden = [
         "git checkout", "git pull", "git fetch", "git rebase",
         "git merge", "git cherry-pick", "git stash", "git reset",

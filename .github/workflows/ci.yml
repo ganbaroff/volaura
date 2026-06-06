@@ -74,6 +74,24 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
+  daemon-tests:
+    name: Daemon line tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r apps/api/requirements.txt && pip install pytest pytest-asyncio
+
+      - name: Tests
+        run: pytest tests/test_atlas_swarm_daemon_lock.py tests/test_atlas_swarm_daemon_completion_gate.py -v --tb=short
+
   shame-free:
     name: Constitution Law 3 (Shame-Free Language)
     runs-on: ubuntu-latest

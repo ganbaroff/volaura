@@ -689,11 +689,12 @@ def _make_start_db_user(
       1. is_platform_admin check  (profiles.select)
       2. stale session update     (db_admin — handled separately)
       3. in_progress conflict     (assessment_sessions.select)
-      4. rapid-restart check      (assessment_sessions.select)
-      5. 7-day cooldown check     (assessment_sessions.select)
-      6. abuse monitor count      (assessment_sessions.select, count=exact)
-      7. carry-over theta lookup  (assessment_sessions.select)
-      8. insert new session       (assessment_sessions.insert)
+      4. ever_completed count     (assessment_sessions.select, count=exact)   ← df3db64
+      5. rapid-restart check      (assessment_sessions.select)
+      6. 7-day cooldown check     (assessment_sessions.select)
+      7. abuse monitor count      (assessment_sessions.select, count=exact)
+      8. carry-over theta lookup  (assessment_sessions.select)
+      9. insert new session       (assessment_sessions.insert)
     """
     m = MagicMock()
     for attr in ["table", "select", "insert", "update", "delete", "eq", "neq",
@@ -703,15 +704,20 @@ def _make_start_db_user(
     m.auth.admin = MagicMock()
     m.auth.admin.get_user_by_id = AsyncMock(return_value=MagicMock(user=None))
 
+    # ever_completed.count matches prev_session presence so the rapid-restart
+    # gate honours its 'only after a completed assessment' guard (df3db64).
+    ever_completed_count = len(prev_session or [])
+
     m.execute = AsyncMock(
         side_effect=[
-            MagicMock(data=None, count=None),               # 1. is_platform_admin (no row → not admin)
-            MagicMock(data=in_progress_data, count=None),   # 3. in_progress conflict
-            MagicMock(data=[], count=None),                  # 4. rapid-restart (no recent start)
-            MagicMock(data=[], count=None),                  # 5. 7-day cooldown (no recent completed)
-            MagicMock(data=[], count=0),                     # 6. abuse monitor (count=0)
-            MagicMock(data=prev_session or [], count=None),  # 7. carry-over theta
-            MagicMock(data=[], count=None),                  # 8. insert
+            MagicMock(data=None, count=None),                          # 1. is_platform_admin (no row → not admin)
+            MagicMock(data=in_progress_data, count=None),              # 3. in_progress conflict
+            MagicMock(data=[], count=ever_completed_count),            # 4. ever_completed count (df3db64)
+            MagicMock(data=[], count=None),                            # 5. rapid-restart (no recent start)
+            MagicMock(data=[], count=None),                            # 6. 7-day cooldown (no recent completed)
+            MagicMock(data=[], count=0),                               # 7. abuse monitor (count=0)
+            MagicMock(data=prev_session or [], count=None),            # 8. carry-over theta
+            MagicMock(data=[], count=None),                            # 9. insert
         ]
     )
     return m
@@ -721,8 +727,9 @@ def _make_start_db_admin_minimal() -> MagicMock:
     """db_admin for start_assessment when get_competency_id and fetch_questions are patched.
 
     Real admin calls remaining:
-      1. policy_versions lookup  (GDPR consent log — non-blocking, None = skip insert)
-      2. stale session check     (assessment_sessions.select)
+      1. policy_versions lookup        (GDPR consent log — non-blocking, None = skip insert)
+      2. zero-answer stale select      (df3db64; data=[] → no update follows)
+      3. 24h stale session select      (data=[] → no update follows)
     """
     m = MagicMock()
     for attr in ["table", "select", "insert", "update", "delete", "eq", "neq",
@@ -734,8 +741,9 @@ def _make_start_db_admin_minimal() -> MagicMock:
 
     m.execute = AsyncMock(
         side_effect=[
-            MagicMock(data=None, count=None),   # 1. policy_versions (None → skip consent insert)
-            MagicMock(data=[], count=None),      # 2. stale session check (nothing to expire)
+            MagicMock(data=None, count=None),    # 1. policy_versions (None → skip consent insert)
+            MagicMock(data=[], count=None),       # 2. zero-answer stale select (df3db64)
+            MagicMock(data=[], count=None),       # 3. 24h stale session select
         ]
     )
     return m
@@ -814,16 +822,18 @@ async def test_start_carryover_theta_exception_uses_defaults():
     m.auth.admin = MagicMock()
     m.auth.admin.get_user_by_id = AsyncMock(return_value=MagicMock(user=None))
 
-    # carry-over call (position 6) raises — endpoint must catch and continue
+    # carry-over call (position 7 after df3db64 inserted ever_completed at position 3)
+    # raises — endpoint must catch and continue.
     m.execute = AsyncMock(
         side_effect=[
-            MagicMock(data=None, count=None),   # is_platform_admin
-            MagicMock(data=None, count=None),   # in_progress
-            MagicMock(data=[], count=None),      # rapid-restart
-            MagicMock(data=[], count=None),      # cooldown
-            MagicMock(data=[], count=0),          # abuse monitor
-            Exception("DB timeout"),             # carry-over fails
-            MagicMock(data=[], count=None),      # insert (after fallback)
+            MagicMock(data=None, count=None),     # 1. is_platform_admin
+            MagicMock(data=None, count=None),     # 2. in_progress
+            MagicMock(data=[], count=0),          # 3. ever_completed count (df3db64)
+            MagicMock(data=[], count=None),       # 4. rapid-restart
+            MagicMock(data=[], count=None),       # 5. cooldown
+            MagicMock(data=[], count=0),          # 6. abuse monitor
+            Exception("DB timeout"),              # 7. carry-over fails
+            MagicMock(data=[], count=None),       # 8. insert (after fallback)
         ]
     )
 

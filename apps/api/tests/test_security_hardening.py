@@ -142,6 +142,7 @@ async def test_rapid_restart_blocked_at_25_minutes():
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
             {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no existing in-progress session
+            MagicMock(data=[], count=1),  # ever_completed count (df3db64) — must be >0 for rapid-restart to fire
             [{"started_at": _iso_minutes_ago(25), "status": "abandoned"}],  # rapid-restart hit
         ]
     )
@@ -172,7 +173,8 @@ async def test_rapid_restart_allowed_at_35_minutes():
     admin = _build_chainable(
         [
             {"id": COMP_ID_A},  # competency id lookup
-            [],  # stale session check (none found)
+            [],  # zero-answer stale select (df3db64) — none
+            [],  # 24h stale session check (none found)
             [MCQ_QUESTION],  # questions list for session creation
         ]
     )
@@ -181,6 +183,7 @@ async def test_rapid_restart_allowed_at_35_minutes():
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
             {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no existing in-progress
+            MagicMock(data=[], count=0),  # ever_completed count (df3db64) — first-time user; cooldown bypass irrelevant since rapid_restart elapsed
             [{"started_at": _iso_minutes_ago(35), "status": "abandoned"}],  # 35 min ago — OK
             [],  # retest cooldown (no completed)
             MagicMock(data=[], count=0),  # abuse monitoring count
@@ -213,7 +216,8 @@ async def test_rapid_restart_only_applies_to_non_completed():
     admin = _build_chainable(
         [
             {"id": COMP_ID_A},
-            [],  # stale session check (none found)
+            [],  # zero-answer stale select (df3db64) — none
+            [],  # 24h stale session check (none found)
             [MCQ_QUESTION],
         ]
     )
@@ -222,6 +226,7 @@ async def test_rapid_restart_only_applies_to_non_completed():
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
             {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no existing in-progress
+            MagicMock(data=[], count=0),  # ever_completed count (df3db64) — first-time path
             [],  # rapid-restart query returns empty (completed sessions excluded by neq)
             [],  # retest cooldown: no completed session within 7 days
             MagicMock(data=[], count=0),  # abuse monitoring count
@@ -263,6 +268,7 @@ async def test_rapid_restart_returns_retry_after_minutes():
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
             {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],
+            MagicMock(data=[], count=1),  # ever_completed count (df3db64) — must be >0 for rapid-restart to fire
             [{"started_at": _iso_minutes_ago(10), "status": "abandoned"}],
         ]
     )
@@ -300,7 +306,8 @@ async def test_rapid_restart_allows_different_competency():
     admin = _build_chainable(
         [
             {"id": COMP_ID_B},  # competency B id lookup
-            [],  # stale session check (none found)
+            [],  # zero-answer stale select (df3db64) — none
+            [],  # 24h stale session check (none found)
             [MCQ_QUESTION],  # questions for competency B
         ]
     )
@@ -309,6 +316,7 @@ async def test_rapid_restart_allows_different_competency():
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
             {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no in-progress session for comp B
+            MagicMock(data=[], count=0),  # ever_completed count (df3db64) — first-time for comp B
             [],  # no recent non-completed session for comp B
             [],  # no completed session within 7 days for comp B
             MagicMock(data=[], count=0),  # abuse monitoring

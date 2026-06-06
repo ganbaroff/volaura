@@ -23,6 +23,7 @@ import pytest
 from fastapi import HTTPException
 from pydantic import ValidationError
 
+from app.routers import auth as auth_router
 from app.routers.auth import (
     RegisterRequest,
     ValidateInviteRequest,
@@ -58,6 +59,12 @@ FAKE_REQUEST.headers = {
     "user-agent": "test-agent",
     "authorization": f"Bearer {ACCESS_TOKEN}",
 }
+
+
+@pytest.fixture(autouse=True)
+def _open_signup_for_register_tests(monkeypatch):
+    """Keep legacy register-unit tests focused on auth behavior, not beta gating."""
+    monkeypatch.setattr(auth_router.settings, "open_signup", True)
 
 
 # ── DB mock helpers ────────────────────────────────────────────────────────────

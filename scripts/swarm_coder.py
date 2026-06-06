@@ -456,7 +456,9 @@ def implement_proposal(
         "1. Make ONLY the minimal change requested.\n"
         "2. Do NOT modify files outside the ones provided.\n"
         "3. Do NOT add new modes, features, or refactors beyond the request.\n"
-        "4. Do NOT use git reset --hard, git push --force, gh pr create, rm -rf, or any destructive commands.\n"
+        "4. Do NOT use git checkout, git pull, git fetch, git rebase, git merge, git cherry-pick,\n"
+        "   git stash, git reset, git commit, git push, git reset --hard, git push --force,\n"
+        "   gh pr create, rm -rf, or any destructive commands.\n"
         "5. If the request is unclear, make the smallest possible change in the most relevant provided file."
     )
     aider_result = call_aider(target_files, instruction)

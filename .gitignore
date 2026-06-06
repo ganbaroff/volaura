@@ -25,6 +25,7 @@ build/
 !.env.example
 !.env.*.example
 !.env.md
+secrets/
 gcp-service-account.json
 *-service-account*.json
 
@@ -120,5 +121,6 @@ memory/atlas/work-queue/archivist.log.jsonl
 
 # Atlas work queue done/ and inbox/ — ephemeral per-session items,
 # memory/* includes !memory/atlas/ so we need explicit sub-exclusions here
+memory/atlas/work-queue/in-progress/*
 memory/atlas/work-queue/done/
 memory/atlas/inbox/

@@ -15,6 +15,8 @@ from pathlib import Path
 
 import pytest
 
+from tests._paths import REPO_ROOT
+
 
 def _load_adapter_module():
     """Load packages.swarm.providers.litellm_adapter from absolute path.
@@ -23,7 +25,7 @@ def _load_adapter_module():
     these tests run cleanly from any CWD without requiring the package layout
     to be on sys.path.
     """
-    repo_root = Path("C:/Projects/VOLAURA")
+    repo_root = REPO_ROOT
     script_path = repo_root / "packages" / "swarm" / "providers" / "litellm_adapter.py"
     # Adapter does ``from ..swarm_types import ProviderInfo`` and
     # ``from .base import LLMProvider`` — those resolve only when imported as a

@@ -4,8 +4,10 @@ import argparse
 import importlib.util
 from pathlib import Path
 
+from tests._paths import REPO_ROOT, script_path
 
-SCRIPT = Path("C:/Projects/VOLAURA/scripts/run_openmanus_hands_task.py")
+
+SCRIPT = script_path("run_openmanus_hands_task.py")
 
 
 def load_sidecar():
@@ -102,4 +104,4 @@ def test_resolve_output_dir_defaults_to_hands_runs():
 
     out = sidecar.resolve_output_dir({"task_id": "abc"}, None)
 
-    assert out == Path("C:/Projects/VOLAURA/memory/atlas/hands-runs/abc")
+    assert out == REPO_ROOT / "memory/atlas/hands-runs/abc"

@@ -4,9 +4,11 @@ import importlib.util
 import json
 from pathlib import Path
 
+from tests._paths import script_path as repo_script_path
+
 
 def _load_seeder_module():
-    script_path = Path("C:/Projects/VOLAURA/scripts/daemon_task_seeder.py")
+    script_path = repo_script_path("daemon_task_seeder.py")
     spec = importlib.util.spec_from_file_location("daemon_task_seeder_test", script_path)
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader

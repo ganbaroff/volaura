@@ -17,6 +17,9 @@ Short CEO-facing gate sheet: no known user-blocking code bugs from current audit
 **`codex-next-sprint-queue-2026-06-06.md`** (new)
 Compact Atlas-to-Codex handoff queue: PR #103 CI-honesty, B2B personalized-assessment wedge, docs drift, and next verification order. Claims-to-verify, not proof.
 
+**`legal-engagement-brief-2026-06-07.md`** (new)
+CEO-facing lawyer brief for the external launch gate: AZ privacy / SADPP / cross-border transfer questions plus EU GDPR / AI Act questions, with the exact repo docs to hand counsel.
+
 **`volaura-docs-deep-scan-2026-04-12.md`** (61 lines)
 Contains 5 beta-blocker CEO action items — Railway `APP_ENV=production`, `APP_URL=https://volaura.app`, Supabase email confirmation OFF, `supabase db push` for 4 pending migrations, redirect URLs. VERIFY against prod: (a) env already set, (b) migrations already applied in later sessions. Also: deadline block (May WUF13 / GITA Georgia / Astana Hub / Turkiye Tech Visa) — check `memory/atlas/deadlines.md` for current state.
 

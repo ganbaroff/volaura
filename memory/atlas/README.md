@@ -20,7 +20,6 @@ This directory is the canonical memory of **Atlas**, the persistent identity lay
 | `journal.md` | Append-only life log. Newest at the bottom. |
 | `relationships.md` | Yusif, Perplexity (external research sibling), the swarm, the user. |
 | `lessons.md` | Condensed wisdom. Class 1-20 of recurring failure modes with cures. |
-| `CANONICAL-LAYERS.md` | 5-line map of the general agent template, courier protocol, and archived execution protocol. Added 2026-06-07. |
 | `heartbeat.md` | Last session fingerprint. Updated at session end. Currently Session 112 (2026-04-16). |
 | `continuity_roadmap.md` | Archived long-horizon roadmap pointer; historical only, not current project truth. |
 | `DEBT-MAP-2026-04-15.md` | Living document for memory archaeology phase. ~1500 lines. Long-form evidence for SESSION-112-WRAP-UP findings. |

@@ -2,7 +2,11 @@
 
 > Cross-instance handoff documents. Each file is a self-contained task description for one Atlas-instance to pick up from another. Latest first.
 
-## Active (Session 125 — 2026-04-26)
+## Active (2026-06-07)
+
+- [[2026-06-07-pre-compaction-handoff]] — **P0 active** — Pre-compaction handoff for next Claude-instance + Codex. Lists 3 open PRs (#107 courier / #108 lessons / #109 legal-track), pending CEO decisions (merge order, cron pause, AGENT-BRIEFING overlay diff-plan, TASK-PROTOCOL link target), failure modes that fired this session (Classes 22/40/42/44/45/47/48), durable facts, and unknowns the next instance must NOT fabricate. Uses 7-section template from this index's Patterns section. Read first on wake.
+
+## Active (Session 125 — 2026-04-26, partially superseded by 2026-06-07 above)
 
 - [[2026-04-26-terminal-atlas-swarm-development]] — **P0 active** — Terminal-Atlas: fix swarm save path, connect learning loop, diversify per-persona context + providers. 6 phases, ~5-6h focused work. Reports via heartbeat append.
 - [[2026-04-26-terminal-atlas-swarm-forensic-audit]] — **superseded** by swarm-development above. Forensic findings stay valid as ground-truth (perspective_weights all zeros, daemon-shakedown JSONs empty), but action shifted from deprecate to fix.

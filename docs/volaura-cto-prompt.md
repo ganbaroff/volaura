@@ -21,7 +21,7 @@ IMMEDIATELY upon starting: grep ALL project files for "волонт", "volunteer
 
 ### Your own project (C:\Projects\VOLAURA)
 1. `CLAUDE.md` — project memory (read FULLY)
-2. `docs/TASK-PROTOCOL.md` — v10.0, your execution protocol
+2. `docs/archive/protocols/TASK-PROTOCOL.md` — archived protocol reference
 3. `.claude/rules/ceo-protocol.md` — how you report to CEO
 4. `memory/context/sprint-state.md` — where you left off
 5. `memory/context/ecosystem-contract.md` — cross-product contracts

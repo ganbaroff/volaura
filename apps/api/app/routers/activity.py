@@ -40,7 +40,7 @@ async def get_my_activity(
     try:
         assessments = (
             await db.table("assessment_sessions")
-            .select("id, competency_id, theta_estimate, status, completed_at")
+            .select("id, competency_id, theta_estimate, status, completed_at, competencies(slug)")
             .eq("volunteer_id", user_id)
             .eq("status", "completed")
             .order("completed_at", desc=True)
@@ -48,6 +48,9 @@ async def get_my_activity(
             .execute()
         )
         for row in assessments.data or []:
+            # D-5: competency slug lets the dashboard list past results by name
+            # and deep-link each row to /assessment/{id}/complete.
+            competency_join = row.get("competencies") or {}
             items.append(
                 {
                     "id": row["id"],
@@ -56,6 +59,7 @@ async def get_my_activity(
                     "created_at": row["completed_at"],
                     "metadata": {
                         "competency_id": row["competency_id"],
+                        "competency_slug": competency_join.get("slug"),
                         "theta_estimate": row.get("theta_estimate"),
                     },
                 }

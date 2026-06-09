@@ -287,7 +287,19 @@
     "crystalsEarnedDesc": "Life Simulator balansınıza əlavə edildi",
     "voiceHint": "Səsinizlə cavab verin",
     "startListening": "Səs yazmağa başla",
-    "stopListening": "Səs yazmağı dayandır"
+    "stopListening": "Səs yazmağı dayandır",
+    "apiError": {
+      "SESSION_EXPIRED": "Bu qiymətləndirmə sessiyasının vaxtı bitib. Hazır olanda yenisini başladın.",
+      "MIN_ITEMS_NOT_REACHED": "Nəticənin hesablanması üçün bir neçə cavab da lazımdır. Tamamlamaq üçün daha {{remaining}} suala cavab verin.",
+      "SESSION_NOT_COMPLETABLE": "Bu sessiya artıq aktiv deyil. Hazır olanda yenisini başladın.",
+      "SESSION_NOT_FOUND": "Bu qiymətləndirmə sessiyası tapılmadı. Silinmiş ola bilər."
+    },
+    "errorCompleteFailed": "Bu kompetensiyanı yekunlaşdırmaq alınmadı. Yenidən cəhd edin.",
+    "pastResults": "Tamamlanmış qiymətləndirmələriniz",
+    "pastResultsHint": "Nəticəyə yenidən baxmaq üçün istənilən birini açın.",
+    "pastResultsError": "Keçmiş nəticələri hazırda yükləmək alınmadı.",
+    "pastResultUnknownCompetency": "Kompetensiya qiymətləndirməsi",
+    "viewResult": "Nəticəyə bax"
   },
   "stats": {
     "notYet": "Hələ yoxdur",

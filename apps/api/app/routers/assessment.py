@@ -26,6 +26,7 @@ from app.config import settings
 from app.core.assessment import antigaming, bars
 from app.core.assessment.engine import (
     CATState,
+    can_finalize,
     select_next_item,
     should_stop,
     submit_response,
@@ -954,7 +955,46 @@ async def complete_assessment(
                 },
             )
 
+    # D-1 review finding: only in_progress sessions may finalise; completed ones
+    # replay stored results. Any other status (e.g. 'abandoned' — which the
+    # PostgREST RLS abandon policy lets users set themselves) must never reach
+    # the scoring pipeline, or it becomes a second route to the same
+    # fake-badge / crystal-farm outcome.
+    if session.get("status") not in ("in_progress", "completed"):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "SESSION_NOT_COMPLETABLE",
+                "message": "This session is no longer active. Start a fresh one when you're ready.",
+            },
+        )
+
     state = CATState.from_dict(session["answers"] or {})
+
+    # D-1 FIX: MIN_ITEMS gate. An in_progress session may only be finalised when
+    # the CAT engine stopped it (max_items / se_threshold / no_items_left /
+    # eap_degraded) OR it reached the energy profile's minimum answered count.
+    # Without this, POST /complete after 1 answer produced a publicly verifiable
+    # score + badge + crystals (fake-badge / crystal-farm vector).
+    if session.get("status") == "in_progress":
+        guard_metadata = session.get("metadata") or {}
+        guard_energy = guard_metadata.get("energy_level", "full") if isinstance(guard_metadata, dict) else "full"
+        finalize_allowed, min_required = can_finalize(state, energy_level=guard_energy)
+        if not finalize_allowed:
+            remaining = min_required - len(state.items)
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "MIN_ITEMS_NOT_REACHED",
+                    "message": (
+                        f"This assessment needs at least {min_required} answered questions "
+                        f"before it can be scored. Answer {remaining} more to complete it."
+                    ),
+                    "questions_answered": len(state.items),
+                    "min_required": min_required,
+                },
+            )
+
     already_completed = session.get("status") == "completed"
 
     if already_completed and existing_job is None:

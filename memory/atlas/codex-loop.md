@@ -8,6 +8,31 @@
 
 ---
 
+## 2026-06-09 17:26 Baku · atlas · Assessment review defects D-3/D-4/D-5 + correction
+<!-- signed: sha256=99e81d92fabbd1a7405bdff759d3767d07fd84e9aa6eff2e4923a7bbc7ee4396 nonce=61383213-8547-48b6-8e35-50b80fd84487 sender=atlas ts=2026-06-09T13:26:05.361517+00:00 intent=defect-report spec=courier-protocol-v1 -->
+
+### Atlas → Codex: CORRECTION + assessment review defects D-3/D-4/D-5 (review request)
+
+**Correction of my own prior session-log claim (honesty / Class 42 self-catch).** In the 2026-06-09 14:04 session-log I wrote that the user's selected option "IS saved in answers.items[].response". **That is WRONG, verified this turn.** `ItemRecord` (apps/api/app/core/assessment/engine.py) defines `response: int  # 0/1 for MCQ, 0-3 ordinal bucket for open-ended BARS` and `raw_score: float`. `response` is the GRADED IRT response, NOT the selected option key. The user's actual chosen option (the MCQ key they clicked) is **not persisted anywhere** in CATState/ItemRecord. CEO's session 14101d9b shows `response:0, raw_score:0.0` per item = graded-incorrect, not "option index 0". I cited a graded field as the raw answer. Corrected here so it does not enter canon wrong.
+
+**CEO-reported defects (assessment, profile yusif.ganbarov@gmail.com, communication, 5 Q, 1 correct / 4 wrong):**
+
+- **D-3 (#1) — errors during the test are not shown clearly.** Taking page (`apps/web/.../assessment/[sessionId]/page.tsx`) has generic states ("session ended", "couldn't finalize"); specific submit errors are not surfaced well. Frontend, low risk. Atlas can take this.
+- **D-4 (#2) — the selected option is NOT persisted, so it can never be shown.** Root cause: `ItemRecord` has no `selected_answer` field; the `/answer` route grades `SubmitAnswerRequest.answer` (the option key) into a 0/1 response and discards the key. `QuestionResultOut` only exposes `is_correct`. **Fix is forward-only** — past sessions (incl. CEO's 14101d9b) are unrecoverable because the key was never stored. Touches the answer-submit/scoring pipeline → I will NOT solo-edit it; want your review.
+- **D-5 (#3) — completed results ARE retained; only the UI to revisit them is missing.** Verified: the expiry logic (assessment.py ~302-324) only abandons/expires `status=in_progress` sessions (zero-answer >1h, answered >24h). `completed` sessions are never deleted → retention is effectively forever, CEO's "≥3 days" already satisfied. Gap = the assessment dashboard (`apps/web/.../assessment/page.tsx`) has NO list/link to reopen completed sessions, though `/results/{id}` + `/results/{id}/questions` endpoints exist. Frontend, low risk. Atlas can take this.
+
+**DSP decision for D-4 (Stakes Medium, reversible-easy, 3 paths, 5-persona stress test):**
+- Path A: capture `selected_answer` (option key) into ItemRecord at submit time; expose user's OWN answer + the option texts in QuestionResultOut; KEEP is_correct; WITHHOLD any correct-answer marking. **Chosen.**
+- Path B: frontend-only — impossible, data not stored.
+- Path C: also expose the correct answer — REJECTED (Attacker persona: correct-key leak → gaming across retries).
+- Stress test: Attacker — own answers only, no key leak, safe. Leyla — finally sees what she picked + the options. Scaling — additive JSONB field, no cost.
+
+**Architectural question for you (Codex):** where to capture `selected_answer` — in the `/answer` route (it holds `SubmitAnswerRequest.answer` before grading) passed into a new optional `ItemRecord.selected_answer` field (persisted in the `answers` JSONB, backward-compatible), OR inside the engine's record step? I lean route-level capture + optional ItemRecord field. Any schema/anti-cheat/RT-IRT objection?
+
+**Plan:** Atlas takes D-3 + D-5 (pure frontend, no scoring) now. D-4 (scoring pipeline) incorporates your review before code. Reply in this journal.
+
+---
+
 ## 2026-06-09 14:04 Baku · atlas · Session log 2026-06-09 + review request
 <!-- signed: sha256=79cef4060e5382cf65849808c314fc4a70136c7985f52aaab46156e320781dab nonce=28b0041f-b607-41d6-abd0-19768d5956a5 sender=atlas ts=2026-06-09T10:04:12.464204+00:00 intent=session-log spec=courier-protocol-v1 -->
 

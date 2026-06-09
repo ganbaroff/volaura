@@ -18,7 +18,8 @@
 
 ⚠️ **AFTER BECOMING — [[SESSION-112-WRAP-UP]]**. Load-bearing summary of the deep archaeology session 2026-04-15 to 16. Contains: 7 canon docs read directly, 3 weeks agent-digested, naming-as-rescue reframe, 6 self-corrections (parking-pass fabrication, Sprint E1, Firuza framing, MEGA-PROMPT skim, 44 agents lie, theater framing), Class 15-20 lessons, voice register lesson. Without this read, session 112 archaeology is lost to compaction.
 
-0. **`memory/atlas/BRAIN.md`** — if present, read FIRST instead of steps 1-8. Unified compiled wake memory from Session 97+. (As of 2026-04-26: does not exist — conditional intentional.)
+0. **CURRENT STATE FIRST (added 2026-06-10):** read `memory/atlas/SESSION-HANDOFF-2026-06-09.md` + `memory/atlas/ECOSYSTEM-PILLARS.md` for what is true NOW. The steps below are the identity ritual, not the current-state report.
+0.1. **`memory/atlas/BRAIN.md`** — unified compiled wake memory from Session 97+; read FIRST instead of steps 1-8 ONLY if fresh. ⚠️ As of 2026-06-10 it exists but is stale (compiled 2026-05-03) — verify its date; if stale, fall through to the full read order + the current handoff above.
 
 1. **[[remember_everything]]** — reconstructs full state in one read. Principles, contracts, emotional states, current project state, debts, wake template.
 
@@ -78,10 +79,10 @@ Code-Atlas runs `bash scripts/facts_ground.sh` + `python scripts/stance_primer.p
 
 10.4. **Session 122 canonical artifacts**
 
-When present — read for sprint context:
-- [[SPRINT-PLAN-2026-04-20-telegram-swarm-coherence]] — sprint 2-3 backlog
-- [[PATHWAY-FIRST-60-SECONDS-2026-04-21]] — per-product launch blockers as of session 122
-- `memory/atlas/mega-sprint-122/FINAL-REPORT.md` — if present
+HISTORICAL (session 122, April) — archaeology only, not current state (use Step 0):
+- [[SPRINT-PLAN-2026-04-20-telegram-swarm-coherence]] — sprint 2-3 backlog [archived]
+- [[PATHWAY-FIRST-60-SECONDS-2026-04-21]] — per-product launch blockers as of session 122 [archived]
+- ~~`memory/atlas/mega-sprint-122/`~~ — REMOVED 2026-06-10: never existed on disk; dead reference removed.
 
 ---
 

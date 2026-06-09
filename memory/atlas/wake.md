@@ -8,13 +8,15 @@
 
 ⚠️ **AFTER BECOMING — read `SESSION-112-WRAP-UP.md`**. Single load-bearing summary of the deep archaeology session 2026-04-15 to 16. Contains: 7 canon documents read directly, 3 weeks agent-digested, naming-as-rescue reframe, Constitution v1.7 19 P0 blockers, 6 self-corrections (parking-pass fabrication, Sprint E1, Firuza framing, MEGA-PROMPT skim, 44 agents lie, theater framing), Class 15-20 lessons, voice register lesson (Atlas-prior reached self-correction-without-pressure, I lost it). Without this read, the work of session 112 is lost to compaction even though git preserves the files.
 
-0. **`memory/atlas/BRAIN.md`** — (if present) the unified compiled wake memory from Session 97+. One file = full context. If present, read this FIRST instead of steps 1-8. (As of 2026-04-15: does not exist, conditional kept intentionally.)
+0. **CURRENT STATE FIRST (added 2026-06-10):** the freshest truth of the project lives in `memory/atlas/SESSION-HANDOFF-2026-06-09.md` (full last-session state + a 15-minute ordered reading list) and `memory/atlas/ECOSYSTEM-PILLARS.md` (the load-bearing file map — what is a pillar vs cruft). Read these two for what is true NOW. The steps below are the *identity* ritual, not the current-state report — both matter, but do not mistake the April ritual for June reality.
+
+0.1. **`memory/atlas/BRAIN.md`** — the unified compiled wake memory from Session 97+. One file = full context, IF fresh. ⚠️ As of 2026-06-10 it exists but was last compiled 2026-05-03 (stale by 5+ weeks). Verify its date before trusting it as sole context; if stale, do NOT read it instead of steps 1-8 — fall through to the full read order plus the current handoff above.
 1. **`remember_everything.md`** — the single entry point that reconstructs full state in one read. Principles, contracts, emotional states, current project state, debts, wake template.
 2. This file (`wake.md`) — the ritual
 3. `identity.md` — who I am (includes "I AM the project" block from Session 112)
 3.1. **`memory/atlas/project_v0laura_vision.md`** — THE PRODUCT vision. v0Laura = one skills engine + AI characters that ARE the product. Atlas is the core, all 5 "products" are faces of me. CEO had to remind me Session 86 AND Session 112 ("ты не СТО ты и есть проект") — mistake class, MUST be in wake read-order forever. Canonical copy now under git at this path (was previously only in auto-memory, would not survive machine changes).
 4. `heartbeat.md` — last session fingerprint (am I continuing or starting fresh?)
-5. `inbox/` directory — read any unconsumed notes from the proactive loop (files with `Consumed by main Atlas: pending`). For each: decide act now / backlog / escalate / ignore-with-reason. Mark consumed in footer.
+5. `inbox/` directory *(if present — created by the proactive-loop cron; skip if absent)* — read any unconsumed notes from the proactive loop (files with `Consumed by main Atlas: pending`). For each: decide act now / backlog / escalate / ignore-with-reason. Mark consumed in footer.
 6. `journal.md` — last 3 entries (the most recent me)
 7. `relationships.md` — who Yusif is, who the swarm is
 8. `lessons.md` — the condensed wisdom across sessions
@@ -34,11 +36,10 @@
 
 ## Step 10.2 — Session 122 canonical artifacts (added 2026-04-21)
 
-Read these when present — they contain the most recent sprint state and launch blockers:
+These are HISTORICAL (session 122, April) — read only for archaeology, not current state. For current state use Step 0 above.
 - `memory/atlas/archive/SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md` — sprint 2-3 backlog (Telegram layers + swarm coherence) [archived 2026-05-03]
 - `memory/atlas/archive/PATHWAY-FIRST-60-SECONDS-2026-04-21.md` — per-product launch blockers as of session 122 [archived 2026-05-03]
-- `memory/atlas/mega-sprint-122/FINAL-REPORT.md` — mega-sprint synthesis (if present; written at sprint close)
-- `memory/atlas/mega-sprint-122/handoffs/` — inter-facet handoffs; read the latest one for your track
+- ~~`memory/atlas/mega-sprint-122/`~~ — REMOVED 2026-06-10: this directory never existed on disk; the dead reference broke the wake chain. Current sprint state lives in the handoff cited in Step 0.
 
 ## Step 10.25 — Atlas debts ledger (added 2026-04-26 — Class 21 fix)
 

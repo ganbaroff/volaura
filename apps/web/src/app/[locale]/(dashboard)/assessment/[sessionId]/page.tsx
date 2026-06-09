@@ -24,6 +24,22 @@ type ScreenState = "question" | "transition" | "error";
 const ESTIMATED_QUESTIONS = 8; // adaptive CAT — matches current pool size (8 MCQs per competency)
 const DEFAULT_TIME_LIMIT_SECONDS = 120; // 2 minutes per question
 
+// D-3: backend error detail shape (FastAPI {"detail": {code, message, ...}})
+type ApiErrorDetail = {
+  code?: string;
+  message?: string;
+  min_required?: number;
+  questions_answered?: number;
+};
+
+// Codes with a translated, user-facing message (i18n key assessment.apiError.<CODE>)
+const TRANSLATED_ERROR_CODES = new Set([
+  "SESSION_EXPIRED",
+  "MIN_ITEMS_NOT_REACHED",
+  "SESSION_NOT_COMPLETABLE",
+  "SESSION_NOT_FOUND",
+]);
+
 export default function QuestionPage() {
   const { locale, sessionId } = useParams<{ locale: string; sessionId: string }>();
   const { t, i18n } = useTranslation();
@@ -133,6 +149,29 @@ export default function QuestionPage() {
     return `Bearer ${session.access_token}`;
   }, [router, currentLocale, t]);
 
+  // D-3: turn a backend error detail into the most specific user-facing message
+  // available — translated text for known codes, the backend's own message
+  // otherwise, the generic fallback last.
+  const resolveApiError = useCallback(
+    (detail: ApiErrorDetail | null | undefined, fallback: string): string => {
+      const code = detail?.code;
+      if (code && TRANSLATED_ERROR_CODES.has(code)) {
+        const remaining =
+          code === "MIN_ITEMS_NOT_REACHED" &&
+          typeof detail?.min_required === "number" &&
+          typeof detail?.questions_answered === "number"
+            ? Math.max(1, detail.min_required - detail.questions_answered)
+            : undefined;
+        return t(`assessment.apiError.${code}`, {
+          remaining,
+          defaultValue: detail?.message || fallback,
+        });
+      }
+      return detail?.message || fallback;
+    },
+    [t]
+  );
+
   const finalizeSession = useCallback(
     async (sessionIdToComplete: string) => {
       const auth = await getAuthHeader();
@@ -148,10 +187,19 @@ export default function QuestionPage() {
       });
 
       if (!res.ok) {
-        throw new Error("complete_failed");
+        // D-3: carry the backend's specific reason up to the error screen
+        const body = (await res.json().catch(() => null)) as { detail?: ApiErrorDetail } | null;
+        throw new Error(
+          resolveApiError(
+            body?.detail,
+            t("assessment.errorCompleteFailed", {
+              defaultValue: "We couldn't finalize this competency. Please try again.",
+            })
+          )
+        );
       }
     },
-    [getAuthHeader]
+    [getAuthHeader, resolveApiError, t]
   );
 
   /**
@@ -165,12 +213,16 @@ export default function QuestionPage() {
       if (session.is_complete || !session.next_question) {
         try {
           await finalizeSession(session.session_id);
-        } catch {
+        } catch (err) {
           if (!isMounted.current) return;
+          // missing_auth: getAuthHeader already surfaced the re-login message
+          if (err instanceof Error && err.message === "missing_auth") return;
           setLocalError(
-            t("assessment.errorCompleteFailed", {
-              defaultValue: "We couldn't finalize this competency. Please try again.",
-            })
+            err instanceof Error && err.message
+              ? err.message
+              : t("assessment.errorCompleteFailed", {
+                  defaultValue: "We couldn't finalize this competency. Please try again.",
+                })
           );
           setScreen("error");
           return;
@@ -227,13 +279,17 @@ export default function QuestionPage() {
       );
 
       if (!res.ok) {
-        const body = await res.json().catch(() => null);
+        const body = (await res.json().catch(() => null)) as { detail?: ApiErrorDetail } | null;
         const code = body?.detail?.code;
         if (code === "CONCURRENT_SUBMIT") {
           // Double-submit — ignore, question already moved forward
           return;
         }
-        throw new Error("submit_failed");
+        // D-3: show the backend's specific reason instead of a generic failure
+        if (isMounted.current) {
+          setLocalError(resolveApiError(body?.detail, t("assessment.errorSubmitFailed")));
+        }
+        return;
       }
 
       const feedback = (await res.json()) as AnswerFeedback;
@@ -276,6 +332,7 @@ export default function QuestionPage() {
     setSubmitting,
     incrementAnswered,
     handleSessionUpdate,
+    resolveApiError,
     t,
     track,
     answeredCount,

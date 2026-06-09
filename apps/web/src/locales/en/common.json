@@ -287,7 +287,19 @@
     "crystalsEarnedDesc": "Added to your Life Simulator balance",
     "voiceHint": "Answer with voice",
     "startListening": "Start voice input",
-    "stopListening": "Stop voice input"
+    "stopListening": "Stop voice input",
+    "apiError": {
+      "SESSION_EXPIRED": "This assessment session has expired. Start a new one when you're ready.",
+      "MIN_ITEMS_NOT_REACHED": "A few more answers are needed before this can be scored. Answer {{remaining}} more to complete it.",
+      "SESSION_NOT_COMPLETABLE": "This session is no longer active. Start a fresh one when you're ready.",
+      "SESSION_NOT_FOUND": "We couldn't find this assessment session. It may have been removed."
+    },
+    "errorCompleteFailed": "We couldn't finalize this competency. Please try again.",
+    "pastResults": "Your completed assessments",
+    "pastResultsHint": "Open any of them to revisit the result.",
+    "pastResultsError": "Couldn't load past results right now.",
+    "pastResultUnknownCompetency": "Competency assessment",
+    "viewResult": "View result"
   },
   "stats": {
     "notYet": "Not yet",

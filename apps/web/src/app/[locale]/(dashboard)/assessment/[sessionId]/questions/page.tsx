@@ -43,7 +43,12 @@ function DifficultyBadge({ label }: { label: string }) {
 
 function QuestionRow({ q, locale, index, isLow }: { q: QuestionResult; locale: string; index: number; isLow: boolean }) {
   const { t } = useTranslation();
-  const text = locale === "az" && q.question_az ? q.question_az : (q.question_en ?? "—");
+  const text =
+    locale === "az" && q.question_az
+      ? q.question_az
+      : locale === "ru" && q.question_ru
+        ? q.question_ru
+        : (q.question_en ?? "—");
   const timeSeconds = q.response_time_ms != null
     ? (q.response_time_ms / 1000).toFixed(1)
     : null;

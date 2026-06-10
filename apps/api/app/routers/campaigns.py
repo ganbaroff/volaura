@@ -56,9 +56,7 @@ async def _get_owned_org(db_admin: SupabaseAdmin, user_id: str) -> dict:
 async def _get_campaign_by_token(db_admin: SupabaseAdmin, token: str) -> dict:
     if not token or len(token) > 64:
         raise HTTPException(status_code=422, detail={"code": "INVALID_TOKEN", "message": "Invalid invite token"})
-    result = (
-        await db_admin.table("screening_campaigns").select("*").eq("invite_token", token).maybe_single().execute()
-    )
+    result = await db_admin.table("screening_campaigns").select("*").eq("invite_token", token).maybe_single().execute()
     if not result or not result.data:
         raise HTTPException(
             status_code=404,
@@ -69,10 +67,7 @@ async def _get_campaign_by_token(db_admin: SupabaseAdmin, token: str) -> dict:
 
 async def _candidate_count(db_admin: SupabaseAdmin, campaign_id: str) -> int:
     result = (
-        await db_admin.table("campaign_candidates")
-        .select("id", count="exact")
-        .eq("campaign_id", campaign_id)
-        .execute()
+        await db_admin.table("campaign_candidates").select("id", count="exact").eq("campaign_id", campaign_id).execute()
     )
     return result.count or 0
 
@@ -151,10 +146,7 @@ async def list_my_campaigns(
     campaign_ids = [c["id"] for c in campaigns]
 
     candidates_result = (
-        await db_admin.table("campaign_candidates")
-        .select("campaign_id")
-        .in_("campaign_id", campaign_ids)
-        .execute()
+        await db_admin.table("campaign_candidates").select("campaign_id").in_("campaign_id", campaign_ids).execute()
     )
     counts: dict[str, int] = {}
     for row in candidates_result.data or []:
@@ -284,10 +276,7 @@ async def join_campaign(
 
     # Map slugs -> competency ids
     comp_result = (
-        await db_admin.table("competencies")
-        .select("id, slug")
-        .in_("slug", campaign["competency_slugs"])
-        .execute()
+        await db_admin.table("competencies").select("id, slug").in_("slug", campaign["competency_slugs"]).execute()
     )
     slug_by_id = {c["id"]: c["slug"] for c in (comp_result.data or [])}
 
@@ -431,9 +420,7 @@ async def get_campaign_report(
         aura = aura_by_id.get(vid, {})
         all_scores = aura.get("competency_scores") or {}
         relevant = {
-            slug: float(all_scores[slug])
-            for slug in campaign_slugs
-            if isinstance(all_scores.get(slug), (int, float))
+            slug: float(all_scores[slug]) for slug in campaign_slugs if isinstance(all_scores.get(slug), (int, float))
         }
         campaign_score = round(sum(relevant.values()) / len(relevant), 1) if relevant else None
 

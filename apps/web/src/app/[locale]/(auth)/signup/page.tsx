@@ -55,6 +55,11 @@ function SignupForm() {
   const setSession = useAuthStore((s) => s.setSession);
   const searchParams = useSearchParams();
 
+  // Honour ?next= return path (relative only, prevents open redirect) —
+  // used by screening campaign invite links to bring candidates back after signup
+  const rawNext = searchParams.get("next");
+  const nextPath = rawNext?.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
+
   // Pre-select org type if coming from "Find talent" hero CTA
   const initialType: AccountType = searchParams.get("type") === "organization" ? "organization" : "professional";
   const [accountType, setAccountType] = useState<AccountType>(initialType);
@@ -170,7 +175,7 @@ function SignupForm() {
       }
 
       if (isMounted.current) {
-        router.push(`/${locale}/onboarding`);
+        router.push(nextPath ?? `/${locale}/onboarding`);
       }
     } catch (err) {
       setError(
@@ -236,7 +241,7 @@ function SignupForm() {
       {/* Social auth — only available when invite gate is off */}
       {openSignup !== false && (
         <SocialAuthButtons
-          redirectTo={`${typeof window !== "undefined" ? window.location.origin : ""}/${locale}/callback`}
+          redirectTo={`${typeof window !== "undefined" ? window.location.origin : ""}/${locale}/callback${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`}
           meta={{ account_type: accountType, ...(orgType ? { org_type: orgType } : {}) }}
         />
       )}

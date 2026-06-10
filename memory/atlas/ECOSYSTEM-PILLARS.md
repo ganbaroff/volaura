@@ -10,9 +10,11 @@
 | **MindShift** (focus PWA) | `C:/Projects/mindshift`, prod v1.0 | **LIVE** | Canonical. Second real product. |
 | **Life Simulator** (agent office) | `C:/Projects/openclaw-office` | **PARKED** — stalled ~8 weeks | Prototype. Not close to done, not load-bearing. Park. |
 | **ZEUS** (agent/swarm tooling) | `VOLAURA/packages/swarm` + `octogent` + `OpenManus` | **OPS LAYER, not a product** | Keep swarm (ops spine); octogent/OpenManus = parked tooling. |
-| **BrandedBy** (AI twin) | **nowhere — 0 files, 0 matches** | **CONCEPT ONLY** | Not started. Don't begin now. |
+| **BrandedBy** (AI twin) | **28 files INSIDE the VOLAURA monorepo** — router, schemas, 2 services + refresh worker, 5 api test files, 2 web pages, hooks + tests, CI workflow | **BUILT FEATURE** (not a separate product/repo) | Built + tested in-repo; completeness/quality NOT yet assessed. *(Corrected 2026-06-10 — see erratum.)* |
 
-**Constitution amendment candidate #1:** replace the "5 equal products" framing with this reality ledger (LIVE / PARKED / OPS / CONCEPT) so the supreme law stops implying work that doesn't exist.
+**Constitution amendment candidate #1:** replace the "5 equal products" framing with this reality ledger (LIVE / PARKED / OPS / BUILT-FEATURE / CONCEPT) so the supreme law stops implying work that doesn't exist — **and stops mislabeling work that DOES exist** (the BrandedBy erratum below is the reason this caveat was added).
+
+> **ERRATUM — 2026-06-10:** the original BrandedBy row claimed "0 files / CONCEPT ONLY." That was wrong. Verified against `origin/main` (`737cd28`) via `git ls-tree -r origin/main | grep brandedby`: **28 files** exist inside the VOLAURA monorepo (router, schemas, 2 services + a refresh worker, 5 api test files, 2 web pages, hooks + tests, a CI workflow). Root cause of the error: the building read searched `C:/Projects/` for a BrandedBy **repo/dir** (none exists — it's not a separate product) and concluded "0 files," missing the in-monorepo feature. Lesson: classify products by searching INSIDE the monorepo, not only the workspace top-level. Completeness/quality of the BrandedBy feature is still unverified — "built + tested files exist" ≠ "shippable."
 
 ---
 

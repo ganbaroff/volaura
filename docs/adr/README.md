@@ -34,6 +34,7 @@ This directory contains the **Architecture Decision Records (ADRs)** for the VOL
 | 010 | [Defect Autopsy](ADR-010-defect-autopsy.md) | ACCEPTED | — | Defect post-mortem protocol |
 | 011 | [LiteLLM Gateway Migration](ADR-011-litellm-gateway-migration.md) | PROPOSED (Phase 1 shipped) | 2026-04-19 | Phased migration of Python swarm providers to LiteLLM Router |
 | 016 | [Positioning Lock](ADR-016-positioning-lock.md) | ACCEPTED | 2026-06-03 | VOLAURA = verified professional talent platform; event/ops is the initial wedge, not the promise |
+| 017 | [CV-Grounded Item Generation](ADR-017-cv-grounded-item-generation.md) | PROPOSED (PoC proven) | 2026-06-10 | Two-layer engine: calibrated CAT core + CV-grounded Experience Interview; continuous multi-agent AIG with human review gate |
 
 > **Lineage note:** ADR-012–015 exist on the `codex/swarm-queue-bridge` runtime lineage, not on `main`. The 011→016 gap on `main` is intentional until that lineage is reconciled.
 

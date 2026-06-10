@@ -58,6 +58,7 @@ from app.routers import (
     badges,
     beta_invite,
     brandedby,
+    campaigns,
     character,
     community,
     discovery,
@@ -209,6 +210,7 @@ app.include_router(events.router, prefix="/api")
 app.include_router(eventshift.router, prefix="/api")
 app.include_router(organizations.router, prefix="/api")
 app.include_router(invites.router, prefix="/api")
+app.include_router(campaigns.router, prefix="/api")  # B2B screening campaigns (2026-06-11 pivot)
 app.include_router(beta_invite.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")
 app.include_router(verification.router, prefix="/api")

@@ -7,6 +7,13 @@
       "runtimeArgs": ["--filter", "web", "exec", "next", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "web-local-api",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd apps\\web && set NEXT_PUBLIC_API_URL=http://127.0.0.1:8787&& pnpm exec next dev"],
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

@@ -81,6 +81,10 @@ def test_default_chain_does_not_call_cerebras(monkeypatch):
 
     monkeypatch.setenv("CEREBRAS_API_KEY", "fake-cerebras-key")
     monkeypatch.setenv("GROQ_API_KEY", "fake-groq-key")
+    # NVIDIA is first in the chain (AGENTS.md §35) and _try_nvidia returns None
+    # without a key — the 6 sibling tests all set this; this one omitted it, so its
+    # "NVIDIA first" assertion could never be reached. Added to match (strengthens).
+    monkeypatch.setenv("NVIDIA_API_KEY", "fake-nvidia-key")
     monkeypatch.delenv("ATLAS_ENABLE_CEREBRAS", raising=False)
 
     called_urls: list[str] = []

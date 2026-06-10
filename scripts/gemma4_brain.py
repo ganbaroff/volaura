@@ -425,64 +425,21 @@ def _try_ollama(prompt: str, max_tokens: int) -> str | None:
     return None
 
 
-def _try_cerebras(prompt: str, max_tokens: int) -> str | None:
-    """Provider LAST — Cerebras paid balance. GATED off by default per ADR-013.
-
-    CEO directive 2026-05-09 after $7.25 of $10 paid balance burned in ten hours:
-    Cerebras must NOT be the first-tried provider. It must NOT be tried at all
-    unless ATLAS_ENABLE_CEREBRAS is explicitly set to "true" in the environment.
-    Default behaviour: silently skip Cerebras even when CEREBRAS_API_KEY is set.
-
-    Reference: docs/adr/ADR-013-2026-05-09-cerebras-spend-incident.md §a
-    """
-    if os.getenv("ATLAS_ENABLE_CEREBRAS", "").strip().lower() != "true":
-        log_event({"event": "brain_llm_skipped", "provider": "cerebras",
-                   "reason": "ATLAS_ENABLE_CEREBRAS not 'true' (ADR-013 default)"})
-        return None
-    key = os.getenv("CEREBRAS_API_KEY", "")
-    if not key:
-        return None
-    try:
-        import urllib.request
-        payload = json.dumps({
-            "model": "qwen-3-235b-a22b-instruct-2507",
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.4,
-            "max_tokens": max_tokens,
-        }).encode()
-        req = urllib.request.Request(
-            "https://api.cerebras.ai/v1/chat/completions",
-            data=payload,
-            headers={"Content-Type": "application/json",
-                     "Authorization": f"Bearer {key}",
-                     "User-Agent": "VolauraBrain/1.0"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            data = json.loads(resp.read())
-            content = data["choices"][0]["message"]["content"]
-            log_event({"event": "brain_llm_call", "provider": "cerebras",
-                       "model": "qwen-3-235b", "gated_by": "ATLAS_ENABLE_CEREBRAS=true"})
-            return content
-    except Exception as e:
-        log_event({"event": "brain_llm_failed", "provider": "cerebras", "error": str(e)[:150]})
-        return None
-
-
 def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
-    """Call brain LLM. Provider precedence per ADR-013 (CEO directive 2026-05-09):
+    """Call brain LLM. Provider precedence per AGENTS.md §35 + CLAUDE.md + ADR-013:
 
-        Groq -> Gemini -> NVIDIA NIM -> Ollama (local) -> Cerebras (GATED)
+        NVIDIA NIM -> Ollama (local) -> Gemini Flash -> Groq
 
-    Cerebras is paid balance and remains off-by-default to prevent token-burn
-    incidents like the 2026-05-09 $7.25/$10 burn. Set ATLAS_ENABLE_CEREBRAS=true
-    in the environment to permit attempting it as last resort. Default behaviour:
-    Cerebras is never called even when CEREBRAS_API_KEY is set.
+    Cerebras was FULLY REMOVED from this chain after the 2026-05-09 $7.25/$10 burn
+    (ADR-013 §a; lessons.md Class 38/42). It is never called — not even with
+    ATLAS_ENABLE_CEREBRAS=true — and the `_try_cerebras` function was deleted so a
+    future refactor cannot re-promote it without re-adding code the provider-chain
+    tests (tests/test_gemma4_brain_provider_chain.py) reject.
 
     Returns first non-empty content from the chain, or empty string if every
-    provider failed (or was skipped by gating).
+    provider failed.
     """
-    for tryer in (_try_groq, _try_gemini, _try_nvidia, _try_ollama, _try_cerebras):
+    for tryer in (_try_nvidia, _try_ollama, _try_gemini, _try_groq):
         content = tryer(prompt, max_tokens)
         if content:
             return content

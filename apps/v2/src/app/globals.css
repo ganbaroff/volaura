@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/*
+  VOLAURA v2 — "Ledger" design language.
+
+  The old site was a dark consumer app. v2 is a verification document:
+  warm paper, ink typography, one violet seal. Numbers are tabular,
+  rules are hairline, whitespace is structural. B2B-first.
+
+  Constitution kept: no red anywhere (violet errors, amber warnings),
+  shame-free copy, one primary CTA per screen, motion <= 800ms.
+*/
+
+@theme {
+  --color-paper: #faf9f6;
+  --color-paper-raised: #ffffff;
+  --color-paper-sunken: #f1efe9;
+  --color-ink: #16151a;
+  --color-ink-soft: #5c5a64;
+  --color-ink-faint: #a3a0ab;
+  --color-rule: #e4e1d8;
+  --color-seal: #5b2ee5;
+  --color-seal-soft: #ece6fd;
+  --color-amber: #b97e00;
+  --color-verified: #1a7f4e;
+
+  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --font-body: var(--font-inter), "Inter", sans-serif;
+
+  --radius-card: 0.25rem;
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-seal-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

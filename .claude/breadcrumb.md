@@ -1,28 +1,30 @@
 # Breadcrumb — last declared Atlas action
 
-**Updated:** 2026-06-10 ~16:00 Baku by Claude-instance (Opus 4.8) executing for Atlas.
-**Supersedes:** the 2026-06-10 ~01:25 mega-sprint breadcrumb (main has advanced far past it).
+**Updated:** 2026-06-11 ~03:45 AST by Atlas (Fable 5).
 
-## READ THIS FIRST on wake → then the handoffs
-Session arc + 15-min reading list: **`memory/atlas/SESSION-HANDOFF-2026-06-09.md`**. Then this breadcrumb for everything since. Fable 5 instances: also `memory/atlas/FABLE-5-PROMPTING.md` AND note — **our domain (assessment integrity, RLS, keys, credits, LLM-routing) trips Fable 5's cyber/bio safety filter constantly → do security/infra/credits work on Opus 4.8, not Fable** (`memory/atlas/master-prompt.md`).
+## B2B pivot Sprint 1 — screening campaigns loop SHIPPED locally, awaiting deploy
 
-## One-paragraph state (origin/main advancing past `9d3bdb9`)
-Big session. Merged this session: #122 (D-1/D-3/D-5 assessment defects, prod-proven), #123 codex-loop, #124 master-prompt, #125 ecosystem-pillars+mega-sprint+Fable-ban, #126 wake-chain repair, #127 CI test-gate (the never-run swarm/atlas-core/brain/openmanus suites now run), #128 clone-rescue report, #129 cleanup (vendored claude-flow agents removed), #130 morning-report, **#131 brain-chain fix (Cerebras REMOVED from `gemma4_brain.py`, NVIDIA-first, Codex-reviewed, MERGED)**, #132 BrandedBy ledger correction, #133 deferred-key-rotation debt, #134+#135 credits ledger (console-verified). **Fossils resolved:** #93 brand-identity banner LANDED (rebased); #17 + #13 CLOSED (superseded — verified). The freellmapi $0 gateway is LIVE (`http://34.60.182.57:8799`, `/ping` 200). **#137 (2026-06-10): deck confirms resolved — `founder-profile.md` + `STRATEGY-fundraise-path-2026-06-10.md` created, deck-source updated; main=`e38e194`.**
+CEO approved the refounding pivot (B2C marketplace → B2B screening) with "do! you're the boss".
+Decision log: `memory/decisions/2026-06-11-b2b-pivot.md`. Brief: `for-ceo/briefs/2026-06-11-refounding-volaura.md`.
 
-## OPEN THREADS (what's actually in flight)
-1. **Pitch deck v3** — both CEO confirms RESOLVED (#137 on main `e38e194`, 2026-06-10): (a) **ask-framing DECIDED** = "paid proof first, accelerator second" → `memory/atlas/STRATEGY-fundraise-path-2026-06-10.md` (strange-protocol, adversary-tested; deck is NOT a "raise $X" deck); (b) **founder bio RESOLVED** from real CV → `memory/atlas/founder-profile.md` (COP29 66k / CIS Games / WUF13 15k, PMP). Source-of-truth `memory/atlas/PITCH-DECK-SOURCE-2026-06-10.md` updated. **NEXT = BUILD v3** with a DESIGN TOOL (Canva MCP / pptx / Figma) + real visuals + **screenshot-and-Read every slide before "done"** (v2 failed by verifying text, not pixels). CEO week-1 input still needed: 5 reachable corporate-HR contacts from the COP29/WUF13 network.
-2. **Credits** — `memory/atlas/CREDITS-AND-RESOURCES.md` (console-verified). CEO actions: spend $247 GCP Free before **Jul 8 2026**; click NVIDIA "Authenticate Email" to finish the INC form; Azure $5k redemption → sub `8f69cd30-…`; log into AWS to read Activate amount.
-3. **Deferred key rotation** — 5 keys exposed 2026-06-10, CEO deferred (`atlas-debts-to-ceo.md`). To add a key to .env safely: clipboard → append, value NEVER through chat.
-4. **Cerebras sweep** — #131 fixed `gemma4_brain.py` only; Cerebras still referenced in live-code (`packages/swarm/tools/llm_router.py`, `apps/api/app/services/model_router.py`, `packages/swarm/providers/dynamic.py`). Spend-sensitive → via Codex, not solo.
-5. **Provider liveness (Atlas probe 2026-06-10):** Groq WORKS, Gemini alive(quota 429), Cerebras key-alive-but-removed-by-policy, **NVIDIA key DEAD (401)**, Azure unverified.
-6. D-4 (`selected_answer` capture) awaiting Codex · Hermes blocked on 2 CEO gates (e2-small +$24/mo, valid Telegram token).
-7. **RTK installed** 2026-06-10 (`C:/Users/user/bin/rtk.exe` v0.42.3, sha256-verified) + PreToolUse hook merged into `~/.claude/settings.json` (spend-cap hook preserved; backup `settings.json.bak-pre-rtk`). **Takes effect only after Claude Code restart.** Rewrites git/gh output for token savings.
-8. **/loop NOT active** (CronList empty 2026-06-10). CEO once killed it for token-waste → if re-enabling, needs a SHARP tick prompt (silent-unless-action) + the codex-trigger mechanism confirmed. Awaiting CEO.
-9. **MindShift working-tree audit fixes UNCOMMITTED** (cross-product, `C:/Projects/mindshift`): migrations 025/026, check-secrets.ps1 PAT removal, crisisDetection TR/DE/ES/AZ, a11y, mochi-respond DB-fallback. Needs `tsc -b` + commit + PR.
-10. **Assessment content (2026-06-10 evening arc):** CEO ran the live test — questions read broken. Full audit = `memory/atlas/ASSESSMENT-CONTENT-AUDIT-2026-06-10.md` (#139). **FIX-1 DONE+LIVE** (#141, migration `20260610230000` applied to prod via MCP, 0 mangles remain). **NEXT: FIX-2** = RU for all 117 items + frontend locale chain `ru→question_ru→en` (page.tsx:463 ignores question_ru; options lack text_ru 117/117) → **FIX-3** = D-4 selected-answer capture. **Outreach/HR-contacts FROZEN until FIX-1..3 + clean RU/AZ end-to-end pass.** Engine vision = **ADR-017** (#140): two-layer (calibrated CAT core + CV-grounded Experience Interview), PoC proven on founder CV (`scripts/poc_cv_item_generation.py`, Groq $0); impl PR-1..4 after FIX-1..3, LLM-code via Codex.
-11. **RLS latent finding (security, Codex — not solo):** pgTAP red on every `supabase/**` PR: `ecosystem_event_failures` + `lifesim_events` have RLS=on but FORCE=off (owner-bypass; prod-verified via pg_class 2026-06-10). Fix = `FORCE ROW LEVEL SECURITY` BUT check SECURITY DEFINER writers first (may break event logging). Surfaced by #141 (merged anyway — check not required).
+### What was built and VERIFIED this session (tool receipts in transcript)
+1. **Migration applied to prod DB**: `screening_campaigns` + `campaign_candidates` + `assessment_sessions.campaign_id` + RLS. File: `supabase/migrations/20260611030000_screening_campaigns.sql`.
+2. **API** `apps/api/app/routers/campaigns.py` (+schemas, registered in main.py): create/list/close campaign, public GET by token, authenticated join (idempotent, creates assigned sessions), ranked report (org owner only).
+3. **Web**: public landing `/{locale}/screening/[token]` (EN+AZ verified in preview), org pages `/my-organization/campaigns` + `/campaigns/[id]` (report), `use-campaigns.ts` hooks, signup `?next=` passthrough (login already had it).
+4. **Smoke test PASS** (`apps/api/smoke_campaigns.py` against local API :8787 + prod DB): candidate joined → 3 assigned sessions; re-join idempotent; owner list+report OK; candidate blocked from report 403.
+5. Pilot campaign seeded in prod DB: token `pilot-c9ddfe3a56b14e573ec7`, campaign id `a21c84d1-5ff4-443e-b692-a869ab494a37`, org WUF13 Demo. One smoke candidate joined (atlas-smoke-4d07d2d4@volaura-test.dev, id 5c4bce60-...) — left intentionally as report demo data.
 
-## Do NOT
-fabricate a fundraise $ number (none exists — runway is a non-issue) · claim real users (pre-beta, 0 paying, legal-gated) · use "volunteer platform" / "LinkedIn competitor" framing (ADR-016 banned) · push origin/main direct · resize VM without CEO · use the dead Telegram token · touch scoring/LLM-routing code solo (Class 3 — Codex) · revive Cerebras · Anthropic in swarm (Article 0) · auto-close debts · do security/credits work on Fable 5 (use Opus).
+### NOT done yet (next steps, in order)
+1. **Deploy API to Railway** (`railway up` or push) — prod API has no /campaigns yet (verified 404 not checked on prod; local only). Then curl prod public endpoint.
+2. **Deploy web to Vercel** — screening pages + signup next= change.
+3. E2E Playwright spec for the loop (apps/web/e2e/ exists).
+4. Org-side UI verification in preview (needs org-owner login — verified via API smoke instead).
+5. My-organization page: add link/card to campaigns page (currently reachable only by URL).
+6. Design partner outreach materials (CEO sales motion) — after deploy.
 
-— deck source: `memory/atlas/PITCH-DECK-SOURCE-2026-06-10.md` · credits: `memory/atlas/CREDITS-AND-RESOURCES.md` · full arc: `memory/atlas/SESSION-HANDOFF-2026-06-09.md`
+### Known issues
+- www.volaura.app SSL fails (curl exit 60); apex volaura.app fine. Check Vercel domain config.
+- Agent tool hit session limit at ~03:00, resets 6am Baku.
+
+### Hard rules reminder
+Voice: Russian short prose to CEO. Class 26: claims need same-turn tool receipts. Open balance: 460 AZN + $7.25 + 5 soft credits, credited-pending.

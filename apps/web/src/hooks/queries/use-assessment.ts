@@ -8,6 +8,7 @@ export interface QuestionResult {
   question_id: string;
   question_en: string | null;
   question_az: string | null;
+  question_ru?: string | null;
   difficulty_label: "easy" | "medium" | "hard" | "expert";
   is_correct: boolean;
   response_time_ms: number | null;

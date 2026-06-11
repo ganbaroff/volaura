@@ -6,6 +6,7 @@ interface McqOption {
   key: string;
   text_en: string;
   text_az: string;
+  text_ru?: string;
 }
 
 interface McqOptionsProps {
@@ -29,7 +30,12 @@ export function McqOptions({
     <div className="space-y-3" role="radiogroup" aria-label="Answer options">
       {options.map((option, index) => {
         const isSelected = selected === option.key;
-        const displayText = locale === "az" ? option.text_az : option.text_en;
+        const displayText =
+          locale === "az"
+            ? option.text_az
+            : locale === "ru"
+              ? option.text_ru || option.text_en
+              : option.text_en;
         return (
           <button
             key={option.key}

@@ -458,9 +458,14 @@ export default function QuestionPage() {
     router.push(`/${currentLocale}/dashboard`);
   };
 
-  // Get the display text for the current question based on locale
+  // Get the display text for the current question based on locale.
+  // ru falls back to en until the RU item bank is fully translated.
   const questionText = currentQuestion
-    ? (currentLocale === "az" ? currentQuestion.question_az : currentQuestion.question_en)
+    ? (currentLocale === "az"
+        ? currentQuestion.question_az
+        : currentLocale === "ru"
+          ? currentQuestion.question_ru || currentQuestion.question_en
+          : currentQuestion.question_en)
     : "";
 
   // ── Render ──────────────────────────────────────────────────────────────

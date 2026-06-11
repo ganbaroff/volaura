@@ -58,7 +58,7 @@ export default function Landing() {
           <div className="mt-9 flex items-center gap-5">
             <Link
               href="#how"
-              className="bg-ink px-7 py-3.5 font-display text-sm font-semibold tracking-wide text-paper transition-colors hover:bg-seal"
+              className="rounded-xl bg-seal px-7 py-3.5 font-display text-sm font-semibold tracking-wide text-white transition-colors hover:bg-seal/90"
             >
               Create a screening campaign
             </Link>
@@ -70,7 +70,7 @@ export default function Landing() {
 
         {/* The seal — a verification certificate fragment */}
         <div className="relative hidden md:block">
-          <div className="border border-rule bg-paper-raised p-6 shadow-[6px_6px_0_0_var(--color-paper-sunken)]">
+          <div className="rounded-xl border border-rule bg-paper-raised p-6">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-faint">Verified profile</p>
             <p className="mt-3 font-display text-xl font-bold">AURA 86.4</p>
             <p className="text-sm text-ink-soft">Gold tier · 8 competencies assessed</p>
@@ -108,7 +108,7 @@ export default function Landing() {
           <h2 className="font-display text-2xl font-bold tracking-tight">The report you actually get</h2>
           <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-faint">sample data</span>
         </div>
-        <div className="mt-8 overflow-x-auto border border-rule bg-paper-raised">
+        <div className="mt-8 overflow-x-auto rounded-xl border border-rule bg-paper-raised">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
               <tr className="border-b border-rule text-[11px] uppercase tracking-[0.18em] text-ink-faint">
@@ -159,7 +159,7 @@ export default function Landing() {
 
       {/* ── Candidates strip ─────────────────────────────────────────────── */}
       <section id="candidates" className="border-t border-rule py-16">
-        <div className="border border-rule bg-paper-sunken p-8 md:p-10">
+        <div className="rounded-xl border border-rule bg-paper-sunken p-8 md:p-10">
           <h2 className="font-display text-2xl font-bold tracking-tight">Candidates pay nothing. Ever.</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-ink-soft">
             Take the assessment once — your verified AURA profile is yours forever.

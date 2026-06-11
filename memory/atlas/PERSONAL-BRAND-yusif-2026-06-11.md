@@ -54,5 +54,25 @@ OmniVoice (voice, self-host) · MoneyPrinterTurbo + worker (assembly) · faster-
 - **AZ voice quality** — OmniVoice go/no-go; if his cloned AZ sounds robotic, fall back to his real recorded voice + light edit.
 - **Capture discipline** — if we stop tagging real moments, we're back to manufacturing. The capture-log is the engine.
 
-## What to hand the cheap model / Sonnet next
-Deep search (per CEO): saturation map of the build-in-public-with-AI niche + AZ/RU-language demand evidence + course-pricing benchmarks; draft the course curriculum from CLAUDE.md + agent protocols; build the moment-log template. (Grounding agent already running.)
+## GROUNDED FINDINGS (Sonnet research 2026-06-11) — these CHANGE the plan
+**The diagnosis is not "build a content machine." It largely EXISTS and the content is WRITTEN. The bottleneck is PUBLISHING.**
+
+What already exists (don't rebuild — verify before touching):
+- 4 production-ready skills: `promotion-agency`, `social-post` (defines Series 1 = Claude-CTO voice, Series 2 = Yusif voice; real data: **AZ posts +67% impressions vs EN**, carousels 21.7% eng, optimal Tue/Thu 20:00 Baku), `content-factory` (6-step chain, 10+ units/idea), `video-script` — all in `C:\Projects\VOLAURA\.claude\skills\`.
+- **20+ pieces already DRAFTED** since April 2026, 3 languages: Series 1 "Claude CTO Diaries" (7 posts, only **2 ever published** — 290 & Day-2 impressions), Series 2 "AI Employee" (10 posts, 0 published), batches B01/B02, a full ~9-min YouTube script "I Gave AI Full Control" (passed quality gate). Paths: `C:\Projects\VOLAURA\.claude\worktrees\affectionate-montalcini-5ea05e\docs\content\`.
+- Cultural baseline `AZ-LINKEDIN-AUDIENCE.md` + content `TRACKER.md` (most pieces stuck at draft/planned since April).
+- Pipeline spec `memory/atlas/content-pipeline-handoff.md` (TTS + Remotion render scaffolded; Postiz scheduler NOT built; `content_pipeline.py` not wired).
+- Documented gap (`YUSIF_MASTER.md`): "PR/self-promotion 3/10 — does the work, others get credit. **Zero press in 10 years.**"
+
+**The real bottleneck = the one human action (publish) + cadence.** Two months of good drafts, 2 posts shipped. This is not a creation problem; it's an execution/ownership problem. The factory's missing part is a frictionless publish path + an owner of "post", NOT more content.
+
+Positioning — VALIDATED + sharpened by research: **"The operations director who runs AI agent teams like human teams"** (220 volunteers + $10M logistics → AI agents, same systems thinking). Globally UNCLAIMED — every AI-builder creator is ex-engineer/product; nobody comes from large-scale human-ops. COP29/WUF13 isn't color, it's the core credibility proof. Series 1 drafts already land hardest exactly where his ops instincts (performance reviews, promotion/firing, governance) are applied to agents. [Fortune solo-AI, NxCode, MindStudio — agent sources in transcript]
+- AVOID (confirmed saturated): "vibe-coder / built an app without coding" — hundreds of EN creators 2025-26, will saturate AZ/RU in 6-12mo, and it UNDERSELLS him (luck-with-tools vs serious-systems-to-new-domain).
+
+Course economics (grounded): cohort = **3-5x** self-paced price (same content; e.g. $497 self vs $1,497 cohort; Ali Abdaal $4,995/seat → $1.5M/9mo), completion **85-96% vs 10-20%**. Cold email converting <18% open — **build warm audience FIRST, sell second**; 9-day-challenge funnel converts 8-15% of completers. → Publish backlog to warm the audience, THEN cohort course. The course is the ONLY genuinely missing money-piece (only scaffolding exists). RU/AZ practitioner-builder voice is ABSENT (gap confirmed); demand signal hh.ru +3x YoY AI-role searches.
+
+## Revised next actions (grounded)
+1. **Audit the existing 20+ drafts** (verify they're real + on-positioning) — cheap model.
+2. **Fix the publish bottleneck** — pick ONE channel, a fixed slot (Tue/Thu 20:00), and make "approve→post" one Telegram tap. Ship the Series-1 backlog first (already written, already on the right positioning).
+3. **OmniVoice → turn the ready YouTube scripts into actual video** (scripts exist, voice now exists).
+4. **Define the course** from his real playbook (CLAUDE.md, agent protocols) — cohort-first. This is the money and it's the one thing truly missing.

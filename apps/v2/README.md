@@ -14,11 +14,13 @@ have earned it.
 instrument sold to employers. The candidate side exists as the exhaust of every
 B2B sale. See `for-ceo/briefs/2026-06-11-refounding-volaura.md`.
 
-**Design language — "Ledger":** the old site was a dark consumer app; v2 is a
-verification document. Warm paper (#FAF9F6), ink typography (Space Grotesk +
-Inter), one violet seal (#5B2EE5), hairline rules, tabular numbers, hard
-shadows like stamped paper. Constitution survives: no red, shame-free copy,
-one primary CTA per screen, reduced-motion respected.
+**Design:** the canonical VOLAURA design system, untouched — it is the product
+of 16 CEO research studies and is NOT up for reinvention (CEO directive
+2026-06-11: «дизайн структура должна остаться такой же»). v2 rebuilds the CODE
+on the same DNA: obsidian glass surface hierarchy, VOLAURA violet #7C5CFC,
+gold tertiary, purple errors / amber warnings (never red), Plus Jakarta Sans
+headlines + Inter body, rounded-xl, one primary CTA, reduced-motion respected.
+Token values are copied from `apps/web/src/app/globals.css` (Tier 1-2-3).
 
 **Architecture:**
 - `apps/v2` — fresh Next.js 14 + Tailwind v4, zero legacy CSS, zero legacy components.

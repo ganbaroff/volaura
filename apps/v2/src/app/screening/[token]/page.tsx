@@ -59,7 +59,7 @@ export default async function ScreeningPage({ params }: { params: { token: strin
           It may have expired or been closed. Ask the organization that sent it
           for a fresh one — or explore VOLAURA from the start.
         </p>
-        <Link href="/" className="mt-8 inline-block self-start bg-ink px-6 py-3 font-display text-sm font-semibold text-paper transition-colors hover:bg-seal">
+        <Link href="/" className="mt-8 inline-block self-start rounded-xl bg-seal px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-seal/90">
           Go to VOLAURA
         </Link>
       </main>
@@ -75,7 +75,7 @@ export default async function ScreeningPage({ params }: { params: { token: strin
         VOLAURA<span className="text-seal">.</span>
       </p>
 
-      <div className="mt-10 border border-rule bg-paper-raised p-8 shadow-[6px_6px_0_0_var(--color-paper-sunken)]">
+      <div className="mt-10 rounded-xl border border-rule bg-paper-raised p-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-faint">
           Screening by {campaign.org_name}
         </p>
@@ -105,7 +105,7 @@ export default async function ScreeningPage({ params }: { params: { token: strin
         {open ? (
           <a
             href={joinUrl}
-            className="mt-8 block bg-ink px-6 py-3.5 text-center font-display text-sm font-semibold text-paper transition-colors hover:bg-seal"
+            className="mt-8 block rounded-xl bg-seal px-6 py-3.5 text-center font-display text-sm font-semibold text-white transition-colors hover:bg-seal/90"
           >
             Join this screening — free
           </a>

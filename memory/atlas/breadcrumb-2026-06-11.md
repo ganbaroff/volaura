@@ -44,13 +44,23 @@ Next instance: read this first. Real-time gap with prior turn = ~12 days (May 31
 
 All in `memory/atlas/lessons.md`. Common axis: knowing the rule and violating it in the same turn. Mechanical PreToolUse hooks (spend-cap-guard, secret-stream-guard) are the only structural fix that proven to stop a regression mid-session.
 
-## Open commits stack on `codex/swarm-queue-bridge` (local-only, not pushed to remote)
+## Open commits stack — CORRECTED 15:18 AST (v1 of this breadcrumb was wrong, Class 42 in same file)
 
-Remote `atlas/handoff-2026-05-25` last pushed = `081f587` (Class 40, May 30 evening).
+**v1 ERROR**: claimed "Total 8 commits ahead" on `codex/swarm-queue-bridge`. Wrong on both counts.
 
-Local stack from 31 May session: `3b9dbb2` (Class 44), `0c0d7b7` (Class 43), `1cbf2cf` (iter 12 Opus 4.8 verdict + hook authored), `9786480` (iter 11), `b1bf500` (Class 42), `1880530` (iter 10), `bee204d` (iter 9 + Class 41), `40efaa8` (iter 8 Opus 4.8 runtime sweep).
+**Reality** (`git rev-list --count origin/atlas/handoff-2026-05-25..codex/docs-archive-banner`):
+- Current checked-out branch is `codex/docs-archive-banner` (HEAD = `70a6c66`, this breadcrumb).
+- **229 commits ahead** of remote `origin/atlas/handoff-2026-05-25` (last pushed `081f587` evening of May 30).
+- Branches present locally: `codex/docs-archive-banner` (active), `codex/docs-archive-banner-clean`, `codex/swarm-queue-bridge` (v1 of this file thought we were here — we weren't).
+- Working tree is **dirty**: ~20 modified files + new migration + perspective_weights + code-index regen + daily-health-log → `git diff --stat HEAD` = 1825 insertions / 1227 deletions (34 files). Plus 15 stale `pending/code-index-empty.md` (2026-05-10..23) marked deleted (auto-regenerated, never committed).
+- B2B campaign loop commit (`e767370 feat(sprint-1): Add B2B screening campaign loop end-to-end`) shipped end-to-end **locally** — never pushed.
 
-Total 8 commits ahead of remote. Push when one sweep is genuinely closed — none right now.
+**Push strategy**: do NOT mass-push 229 commits. Branch needs triage:
+1. Identify which commits are theory-sweep vs production code vs daemon work vs B2B.
+2. Cluster into logical pushes (or rebase-squash where appropriate).
+3. Push by cluster after each genuinely closes.
+
+For now: keep local stack, work continues on `codex/docs-archive-banner`. Next-instance: do not push without explicit CEO ack of triage outcome.
 
 ## Channel mechanics
 

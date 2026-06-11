@@ -70,7 +70,15 @@ class Settings(BaseSettings):
     # NVIDIA NIM — 160+ open-source models, OpenAI-compatible, free tier — added 2026-04-02
     # Base URL: https://integrate.api.nvidia.com/v1 — drop-in OpenAI SDK replacement
     # Swarm routing: nemotron-ultra-253b (reasoning agents) + llama-3.3-70b (speed agents)
+    # NOTE 2026-06-11: NGC key went 401 (dead). Demoted in model_router below FreeLLMAPI.
     nvidia_api_key: str = ""
+
+    # FreeLLMAPI gateway — OpenAI-compatible router, Balanced strategy — added 2026-06-11
+    # Base URL: http://34.60.182.57:8799/v1 — drop-in OpenAI SDK replacement
+    # CEO has 75M token monthly budget unused. Routes Gemini 2.5/3 Flash, Gemma 4 26B/31B.
+    # Inserted BEFORE NVIDIA in every chain because NVIDIA key went 401 (see note above).
+    # Revert: unset FREELLMAPI_API_KEY on Railway and chain falls back to NVIDIA→Gemini→Groq.
+    freellmapi_api_key: str = ""
 
     # Stripe (MVP-1)
     # ── KILL SWITCH ──────────────────────────────────────────────────────────────

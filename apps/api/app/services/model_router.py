@@ -120,6 +120,27 @@ def _nvidia_llama_70b() -> ProviderSpec | None:
     )
 
 
+def _freellmapi_gemini_flash() -> ProviderSpec | None:
+    """FreeLLMAPI gateway → Gemini 2.5 Flash via OpenAI-compatible router.
+
+    Added 2026-06-11 after NVIDIA NGC key went 401 and the model_router was
+    silently emitting fallback==False NVIDIA specs that the callers then 401'd
+    on (no HTTP-error-driven retry in this router). CEO has 75M tokens/month
+    unused on this gateway; using it as primary diversifies away from one
+    dead-key prod blackout.
+    """
+    if not settings.freellmapi_api_key:
+        return None
+    return ProviderSpec(
+        provider="freellmapi",
+        model="gemini-2.5-flash",
+        base_url="http://34.60.182.57:8799/v1",
+        api_key=settings.freellmapi_api_key,
+        rationale="FreeLLMAPI gateway → Gemini 2.5 Flash (Balanced, 75M/mo budget)",
+        is_fallback=False,
+    )
+
+
 def _gemini_pro() -> ProviderSpec | None:
     if not settings.gemini_api_key:
         return None
@@ -203,6 +224,7 @@ def _sonnet_last_resort() -> ProviderSpec | None:
 
 _CHAINS: dict[ProviderRole, list] = {
     ProviderRole.JUDGE: [
+        _freellmapi_gemini_flash,  # 2026-06-11: NVIDIA NGC key dead, promote to primary
         _nvidia_nemotron_ultra,
         _ollama_local,
         _gemini_pro,
@@ -212,18 +234,21 @@ _CHAINS: dict[ProviderRole, list] = {
     ],
     ProviderRole.WORKER: [
         _ollama_local,
+        _freellmapi_gemini_flash,  # 2026-06-11: before NVIDIA after NGC key dead
         _nvidia_llama_70b,
         _groq_llama_70b,
         _gemini_flash,
     ],
     ProviderRole.FAST: [
         _groq_llama_8b,
+        _freellmapi_gemini_flash,  # 2026-06-11: before NVIDIA after NGC key dead
         _gemini_flash,
         _nvidia_llama_70b,
     ],
     ProviderRole.SAFE_USER_FACING: [
         _gemini_pro,
         _gemini_flash,
+        _freellmapi_gemini_flash,  # 2026-06-11: before NVIDIA after NGC key dead
         _nvidia_nemotron_ultra,
         _sonnet_last_resort,  # CEO-authorised last resort after free tiers
     ],

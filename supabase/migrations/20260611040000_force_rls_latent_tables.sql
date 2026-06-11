@@ -5,3 +5,6 @@
 
 ALTER TABLE public.lifesim_events FORCE ROW LEVEL SECURITY;
 ALTER TABLE public.ecosystem_event_failures FORCE ROW LEVEL SECURITY;
+
+-- swarm_proposals (created 20260506) — same latent hole, caught on CI replay.
+ALTER TABLE public.swarm_proposals FORCE ROW LEVEL SECURITY;

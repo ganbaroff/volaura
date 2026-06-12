@@ -37,7 +37,9 @@ CREATE INDEX idx_assessment_sessions_campaign
 
 -- RLS: API talks through service role; policies cover direct PostgREST access.
 ALTER TABLE public.screening_campaigns ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.screening_campaigns FORCE ROW LEVEL SECURITY;
 ALTER TABLE public.campaign_candidates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.campaign_candidates FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY "Org owners read own campaigns"
 ON public.screening_campaigns FOR SELECT

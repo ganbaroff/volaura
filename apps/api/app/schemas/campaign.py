@@ -20,10 +20,21 @@ class CampaignCreate(BaseModel):
     deadline_days: int = Field(default=14, ge=1, le=60)
     candidate_cap: int = Field(default=500, ge=1, le=2000)
 
-    @field_validator("title", "description")
+    @field_validator("title")
     @classmethod
-    def strip_text(cls, v: str | None) -> str | None:
-        return v.strip() if isinstance(v, str) else v
+    def normalize_title(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 3:
+            raise ValueError("Title must be at least 3 characters after trimming")
+        return v
+
+    @field_validator("description")
+    @classmethod
+    def normalize_description(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        v = v.strip()
+        return v or None
 
     @field_validator("competency_slugs")
     @classmethod

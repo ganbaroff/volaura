@@ -111,6 +111,34 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
     return [q.copy() for q in questions]
 
 
+def _normalize_options(options: list | None) -> list[dict] | None:
+    """Normalize MCQ options to one client shape and strip grading fields.
+
+    The question bank holds two seed generations: {key, text_en, text_az,
+    text_ru} and a 2026-05 batch shaped {id, text, score, ...}. Serving rows
+    verbatim (a) broke clients expecting one shape and (b) LEAKED the per-option
+    `score` — the answer key — to the candidate's browser (found 2026-06-13:
+    22 of 99 MCQ rows). One choke point, one shape, nothing gradable leaves.
+    """
+    if not options:
+        return None
+    normalized: list[dict] = []
+    for opt in options:
+        if not isinstance(opt, dict):
+            normalized.append({"key": str(opt), "text_en": str(opt)})
+            continue
+        text_en = opt.get("text_en") or opt.get("text") or ""
+        normalized.append(
+            {
+                "key": str(opt.get("key") or opt.get("id") or ""),
+                "text_en": text_en,
+                "text_az": opt.get("text_az") or text_en,
+                "text_ru": opt.get("text_ru"),
+            }
+        )
+    return normalized
+
+
 def make_question_out(question: dict) -> QuestionOut:
     """Build QuestionOut from a raw DB question row."""
     return QuestionOut(
@@ -119,7 +147,7 @@ def make_question_out(question: dict) -> QuestionOut:
         question_en=question["scenario_en"],
         question_az=question["scenario_az"],
         question_ru=question.get("scenario_ru"),
-        options=question.get("options"),
+        options=_normalize_options(question.get("options")),
         competency_id=question["competency_id"],
     )
 

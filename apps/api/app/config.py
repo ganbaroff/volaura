@@ -72,6 +72,13 @@ class Settings(BaseSettings):
     # Swarm routing: nemotron-ultra-253b (reasoning agents) + llama-3.3-70b (speed agents)
     nvidia_api_key: str = ""
 
+    # FreeLLMAPI gateway — OpenAI-compatible router, Balanced strategy — added 2026-06-11
+    # Base URL: http://34.60.182.57:8799/v1 — drop-in OpenAI SDK replacement
+    # CEO has 75M token monthly budget unused. Routes Gemini 2.5/3 Flash, Gemma 4 26B/31B.
+    # Inserted BEFORE NVIDIA in every chain because NVIDIA key went 401 (see note above).
+    # Revert: unset FREELLMAPI_API_KEY on Railway and chain falls back to NVIDIA→Gemini→Groq.
+    freellmapi_api_key: str = ""
+
     # Stripe (MVP-1)
     # ── KILL SWITCH ──────────────────────────────────────────────────────────────
     # payment_enabled=False (default): paywall bypassed, checkout returns 503.

@@ -1247,6 +1247,15 @@ LINE_PROOF_RE = re.compile(
 PATH_LINE_RE = re.compile(
     r"(?P<path>(?:apps|packages|docs|memory|supabase|scripts|\.github)/[\w./@()[\]-]+?)[:\s#L]+(?P<line>\d+)\b"
 )
+NEGATIVE_CLAIM_RE = re.compile(
+    r"(?i)\b(?:unused|not used|dead code|no longer used|never used)\b"
+)
+SEARCH_PROOF_RE = re.compile(r"(?i)\b(?:grep|rg|findstr)\b")
+BACKTICK_IDENTIFIER_RE = re.compile(r"`(?P<symbol>[A-Za-z_][A-Za-z0-9_]*)`")
+IMPORT_UNUSED_SYMBOL_RE = re.compile(
+    r"(?is)\b(?P<symbol>[A-Za-z_][A-Za-z0-9_]*)\s+import\b.{0,120}"
+    r"\b(?:unused|not used|dead code|no longer used|never used)\b"
+)
 
 
 def _finding_text(finding: dict[str, Any]) -> str:
@@ -1259,6 +1268,86 @@ def _finding_text(finding: dict[str, Any]) -> str:
         elif value is not None:
             parts.append(str(value))
     return "\n".join(parts)
+
+
+def _negative_claim_symbols(finding: dict[str, Any]) -> list[str]:
+    """Extract likely code symbols from an unused/dead-code claim."""
+    primary_parts: list[str] = []
+    for key in ("claim", "summary", "title", "description"):
+        value = finding.get(key)
+        if isinstance(value, str):
+            primary_parts.append(value)
+    primary_text = "\n".join(primary_parts) or _finding_text(finding)
+
+    symbols: list[str] = []
+    for match in BACKTICK_IDENTIFIER_RE.finditer(primary_text):
+        symbol = match.group("symbol")
+        if symbol not in symbols:
+            symbols.append(symbol)
+
+    for match in IMPORT_UNUSED_SYMBOL_RE.finditer(primary_text):
+        symbol = match.group("symbol")
+        if symbol not in symbols:
+            symbols.append(symbol)
+
+    return symbols
+
+
+def _line_is_import_reference(line: str) -> bool:
+    stripped = line.strip()
+    return stripped.startswith("import ") or stripped.startswith("from ")
+
+
+def _symbol_usage_outside_import(path: str, symbol: str) -> int | None:
+    """Return the first non-import line using symbol, or None if absent."""
+    full_path = REPO_ROOT / path
+    token_re = re.compile(rf"\b{re.escape(symbol)}\b")
+    try:
+        lines = full_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+
+    for line_no, line in enumerate(lines, start=1):
+        if token_re.search(line) and not _line_is_import_reference(line):
+            return line_no
+    return None
+
+
+def _symbol_present_in_import(path: str, symbol: str) -> bool:
+    full_path = REPO_ROOT / path
+    token_re = re.compile(rf"\b{re.escape(symbol)}\b")
+    try:
+        lines = full_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return False
+
+    return any(token_re.search(line) and _line_is_import_reference(line) for line in lines)
+
+
+def _negative_claim_unverified_reason(finding: dict[str, Any], paths: list[str]) -> str | None:
+    """Verify absence-style claims with an independent file scan."""
+    text = _finding_text(finding)
+    if not NEGATIVE_CLAIM_RE.search(text):
+        return None
+
+    if not SEARCH_PROOF_RE.search(str(finding.get("evidence_path_or_command", ""))):
+        return "search_proof_required_for_negative_claim"
+
+    symbols = _negative_claim_symbols(finding)
+    if not symbols:
+        return "negative_claim_symbol_unresolved"
+
+    saw_import_reference = False
+    for path in paths:
+        for symbol in symbols:
+            usage_line = _symbol_usage_outside_import(path, symbol)
+            if usage_line is not None:
+                return f"negative_claim_contradicted_by_usage:{symbol}@{path}:{usage_line}"
+            saw_import_reference = saw_import_reference or _symbol_present_in_import(path, symbol)
+
+    if not saw_import_reference:
+        return "negative_claim_symbol_not_found"
+    return None
 
 
 def _existing_evidence_paths(finding: dict[str, Any]) -> list[str]:
@@ -1405,8 +1494,25 @@ def _mark_finding_evidence(finding: dict[str, Any]) -> dict[str, Any]:
     excerpt = _fetch_evidence_excerpt(marked, paths)
     if excerpt is not None:
         marked["evidence_excerpt"] = excerpt
+        if excerpt.get("excerpt_kind") in ("out-of-range", "error"):
+            marked["evidence_status"] = "unverified"
+            marked["evidence_reason"] = (
+                "line_out_of_range"
+                if excerpt.get("excerpt_kind") == "out-of-range"
+                else "evidence_excerpt_error"
+            )
+            marked["evidence_paths"] = paths
+            return marked
 
     if paths and has_line_or_grep:
+        # Negative claims like "unused import" need search proof plus an
+        # independent scan proving the symbol is not used outside imports.
+        negative_reason = _negative_claim_unverified_reason(marked, paths)
+        if negative_reason is not None:
+            marked["evidence_status"] = "unverified"
+            marked["evidence_paths"] = paths
+            marked["evidence_reason"] = negative_reason
+            return marked
         marked["evidence_status"] = "verified"
         marked["evidence_paths"] = paths
         return marked

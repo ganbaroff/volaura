@@ -47,6 +47,7 @@ from app.schemas.assessment import (
     AssessmentResultOut,
     CoachingResponse,
     CoachingTip,
+    IntegrityFlagsRequest,
     PublicVerificationOut,
     QuestionBreakdownOut,
     QuestionResultOut,
@@ -278,6 +279,95 @@ async def start_assessment(
             user_id=user_id,
             error=str(exc),
         )
+
+    # ── Campaign-assigned session activation ─────────────────────────────────
+    # A campaign join pre-creates sessions with status='assigned' and campaign_id
+    # set. Activating must UPDATE that row (not insert a new one): the campaign
+    # report counts completions by campaign_id, and a fresh self-serve row would
+    # never appear in it. Self-serve cooldowns don't apply here — the invitation
+    # is org-scoped and join is idempotent (one session per competency per
+    # campaign), so there is nothing to farm by re-activating.
+    if payload.session_id is not None:
+        assigned_result = (
+            await db_admin.table("assessment_sessions")
+            .select("id, volunteer_id, competency_id, status, campaign_id")
+            .eq("id", payload.session_id)
+            .maybe_single()
+            .execute()
+        )
+        assigned = assigned_result.data if assigned_result else None
+        if not assigned or assigned["volunteer_id"] != str(user_id):
+            raise HTTPException(
+                status_code=404,
+                detail={"code": "SESSION_NOT_FOUND", "message": "Assigned session not found"},
+            )
+        if assigned["status"] == "in_progress":
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "SESSION_IN_PROGRESS",
+                    "message": "This session is already active — resume it",
+                    "session_id": assigned["id"],
+                },
+            )
+        if assigned["status"] != "assigned":
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "SESSION_NOT_ACTIVATABLE",
+                    "message": f"Session is '{assigned['status']}' and cannot be started",
+                },
+            )
+        if assigned["competency_id"] != competency_id:
+            raise HTTPException(
+                status_code=422,
+                detail={"code": "COMPETENCY_MISMATCH", "message": "Session belongs to a different competency"},
+            )
+
+        questions = await fetch_questions(db_admin, competency_id)
+        if not questions:
+            raise HTTPException(
+                status_code=422,
+                detail={"code": "NO_QUESTIONS", "message": "No active questions for this competency"},
+            )
+        state = CATState()
+        first_q = select_next_item(state, questions)
+        activation_metadata: dict = {
+            "article22_consent_at": datetime.now(UTC).isoformat(),
+            "assessment_plan": {
+                "competencies": payload.assessment_plan_competencies or [payload.competency_slug],
+                "current_index": payload.assessment_plan_current_index or 0,
+            },
+        }
+        if payload.energy_level != "full":
+            activation_metadata["energy_level"] = payload.energy_level
+        await (
+            db_admin.table("assessment_sessions")
+            .update(
+                {
+                    "status": "in_progress",
+                    "role_level": payload.role_level,
+                    "theta_estimate": state.theta,
+                    "theta_se": state.theta_se,
+                    "answers": state.to_dict(),
+                    "current_question_id": first_q["id"] if first_q else None,
+                    "question_delivered_at": datetime.now(UTC).isoformat(),
+                    "started_at": datetime.now(UTC).isoformat(),
+                    "metadata": activation_metadata,
+                }
+            )
+            .eq("id", assigned["id"])
+            .eq("status", "assigned")
+            .execute()
+        )
+        logger.info(
+            "Campaign-assigned session activated",
+            user_id=user_id,
+            session_id=assigned["id"],
+            campaign_id=assigned.get("campaign_id"),
+            competency_slug=payload.competency_slug,
+        )
+        return make_session_out(assigned["id"], payload.competency_slug, state, first_q, payload.role_level)
 
     # Resolve admin status once — used by both the stale-session bypass and the
     # rapid-restart cooldown below.
@@ -1537,6 +1627,45 @@ async def complete_assessment(
         completed_at=completed_at_dt,
         crystals_earned=crystals_earned,
     )
+
+
+@router.post("/{session_id}/integrity", status_code=204)
+@limiter.limit(RATE_ASSESSMENT_COMPLETE)
+async def report_integrity_flags(
+    request: Request,
+    session_id: str,
+    payload: IntegrityFlagsRequest,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> None:
+    """Store client-side camera anti-cheat flags on the session (Gap 9 v0).
+
+    Video is processed entirely in the candidate's browser and never uploaded —
+    only aggregate counters arrive here. Flags are SOFT signals merged into
+    session metadata for org-side review context; they never auto-fail anyone.
+    """
+    try:
+        uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(status_code=422, detail={"code": "INVALID_SESSION_ID", "message": "Invalid session id"})
+
+    session_result = (
+        await db_admin.table("assessment_sessions")
+        .select("id, volunteer_id, metadata")
+        .eq("id", session_id)
+        .maybe_single()
+        .execute()
+    )
+    session = session_result.data if session_result else None
+    if not session or session["volunteer_id"] != str(user_id):
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "message": "Session not found"})
+
+    metadata = session.get("metadata") or {}
+    metadata["integrity"] = {
+        **payload.model_dump(),
+        "reported_at": datetime.now(UTC).isoformat(),
+    }
+    await db_admin.table("assessment_sessions").update({"metadata": metadata}).eq("id", session_id).execute()
 
 
 @router.get("/session/{session_id}", response_model=SessionResumeOut)

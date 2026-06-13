@@ -13,6 +13,7 @@ def _mock_settings(**overrides):
     defaults = {
         "cerebras_api_key": "",
         "nvidia_api_key": "",
+        "freellmapi_api_key": "",
         "gemini_api_key": "",
         "groq_api_key": "",
         "anthropic_api_key": "",

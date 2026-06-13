@@ -420,9 +420,6 @@
         "key": "D",
         "text_en": "Advise Aytən that given the absence of standalone sexual harassment law in Azerbaijan and the family connections involved, her strongest path is to file directly with the Baku City Court under Criminal Code Article 175 rather than through internal HR processes.",
         "text_az": "Aytənə məsləhət verin ki, Azərbaycanda müstəqil cinsi təcavüz qanunu olmadığı və ailə əlaqələri nəzərə alındığında, daxili İR prosesləri vasitəsilə deyil, Cinayət Məcəlləsinin 175-ci maddəsi üzrə birbaşa Bakı Şəhər Məhkəməsinə müraciət etmək onun ən güclü yoludur."
-      },
-      {
-        "key": "C"
       }
     ],
     "correct_answer": "C",

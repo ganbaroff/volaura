@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 # Allowed competency slugs pattern
 SLUG_RE = re.compile(r"^[a-z][a-z0-9_]{1,49}$")
@@ -72,6 +72,10 @@ class StartAssessmentRequest(BaseModel):
     automated_decision_consent: bool = False  # GDPR Article 22: user acknowledges automated scoring
     assessment_plan_competencies: list[str] | None = None
     assessment_plan_current_index: int | None = None
+    # Campaign flow: activate the pre-created 'assigned' session from a campaign
+    # join instead of inserting a fresh row. Keeps campaign_id on the session so
+    # the campaign report counts the completion.
+    session_id: str | None = None
 
     @field_validator("competency_slug")
     @classmethod
@@ -80,6 +84,13 @@ class StartAssessmentRequest(BaseModel):
         if not SLUG_RE.match(v):
             raise ValueError("Invalid competency slug: lowercase letters, numbers, underscore only (2-50 chars)")
         return v
+
+    @field_validator("session_id")
+    @classmethod
+    def validate_session_id_optional(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        return _validate_uuid(v.strip(), "session_id")
 
     @field_validator("assessment_plan_competencies")
     @classmethod
@@ -235,6 +246,21 @@ class SessionResumeOut(BaseModel):
     # True when the session can actually be resumed (in_progress + not past
     # the 24h auto-expiry threshold used by /start).
     is_resumable: bool
+
+
+class IntegrityFlagsRequest(BaseModel):
+    """Client-side camera anti-cheat flags (current_gaps.md Gap 9, v0).
+
+    Video is processed entirely in the candidate's browser and never uploaded —
+    only these aggregate counters reach the server (PDPA data-minimization).
+    Soft signals for org-side review context, never an automatic fail.
+    """
+
+    face_absent_seconds: int = Field(0, ge=0, le=86400)
+    max_faces_seen: int = Field(0, ge=0, le=100)
+    gaze_away_events: int = Field(0, ge=0, le=100000)
+    tab_switches: int = Field(0, ge=0, le=100000)
+    camera_permission: Literal["granted", "denied", "unavailable"] = "granted"
 
 
 class AnswerFeedback(BaseModel):

@@ -18,10 +18,6 @@ interface PublicCampaign {
 }
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://volauraapi-production.up.railway.app";
-// Where the candidate actually takes the assessment. Empty until a v2-native
-// runner ships — we render an honest "valid, opening soon" state rather than
-// route a real candidate to a dead host. Never hardcode a domain that 404s.
-const ASSESSMENT_BASE = process.env.NEXT_PUBLIC_ASSESSMENT_URL || "";
 
 const COMPETENCY_NAMES: Record<string, string> = {
   communication: "Communication",
@@ -70,10 +66,6 @@ export default async function ScreeningPage({ params }: { params: { token: strin
   }
 
   const open = campaign.status === "active" && !campaign.is_full;
-  const assessmentReady = ASSESSMENT_BASE !== "";
-  const joinUrl = assessmentReady
-    ? `${ASSESSMENT_BASE}/en/screening/${params.token}`
-    : "";
 
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
@@ -109,24 +101,12 @@ export default async function ScreeningPage({ params }: { params: { token: strin
         </ul>
 
         {open ? (
-          assessmentReady ? (
-            <a
-              href={joinUrl}
-              className="mt-8 block rounded-xl bg-seal px-6 py-3.5 text-center font-display text-sm font-semibold text-white transition-colors hover:bg-seal/90"
-            >
-              Join this screening — free
-            </a>
-          ) : (
-            <div className="mt-8 rounded-xl border border-rule bg-paper-sunken px-5 py-4">
-              <p className="font-display text-sm font-semibold">
-                Your invite is valid.
-              </p>
-              <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
-                The assessment opens here shortly — keep this link, it&apos;s
-                tied to your spot.
-              </p>
-            </div>
-          )
+          <Link
+            href={`/screening/${encodeURIComponent(params.token)}/run`}
+            className="mt-8 block rounded-xl bg-seal px-6 py-3.5 text-center font-display text-sm font-semibold text-white transition-colors hover:bg-seal/90"
+          >
+            Join this screening — free
+          </Link>
         ) : (
           <p className="mt-8 border border-rule bg-paper-sunken px-4 py-3 text-sm text-ink-soft">
             This screening is no longer accepting candidates.

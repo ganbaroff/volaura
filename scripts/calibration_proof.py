@@ -26,6 +26,7 @@ us the precision ceiling of the current bank.
 Run:
     PYTHONUTF8=1 python scripts/calibration_proof.py
     PYTHONUTF8=1 python scripts/calibration_proof.py --n 1000 --bank prod_bank.json
+    PYTHONUTF8=1 python scripts/calibration_proof.py --sprint sprint-5
 """
 
 from __future__ import annotations
@@ -142,17 +143,26 @@ def _pearson(x: list[float], y: list[float]) -> float:
     return cov / (vx * vy) if vx > 0 and vy > 0 else 0.0
 
 
+# Default to the live prod bank snapshot — that is the bank candidates actually
+# face. Use --sprint when intentionally validating an agent-generated corpus.
+DEFAULT_BANK = str(REPO / "scripts" / "fixtures" / "prod-bank-2026-06-13.json")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=1000, help="synthetic candidates per competency")
-    ap.add_argument("--sprint", default="sprint-5")
+    ap.add_argument("--sprint", default=None, help="validate question-evolution sprint corpus instead of prod bank")
     ap.add_argument("--bank", default=None, help="JSON bank file [{competency,irt_a,irt_b,irt_c}]")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
     random.seed(args.seed)
 
-    bank = load_bank_file(args.bank) if args.bank else load_evo_bank(args.sprint)
-    src = args.bank or f"question-evolution/{args.sprint}"
+    if args.sprint:
+        bank, src = load_evo_bank(args.sprint), f"question-evolution/{args.sprint}"
+    elif args.bank:
+        bank, src = load_bank_file(args.bank), args.bank
+    else:
+        bank, src = load_bank_file(DEFAULT_BANK), f"{DEFAULT_BANK} (live prod snapshot — default)"
 
     print("=" * 78)
     print(f"VOLAURA — Calibration Proof  ·  bank: {src}  ·  {args.n} synthetic candidates/competency")

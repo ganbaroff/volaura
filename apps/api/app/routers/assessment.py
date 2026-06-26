@@ -26,6 +26,7 @@ from app.config import settings
 from app.core.assessment import antigaming, bars
 from app.core.assessment.engine import (
     CATState,
+    can_finalize,
     select_next_item,
     should_stop,
     submit_response,
@@ -1045,6 +1046,26 @@ async def complete_assessment(
             )
 
     state = CATState.from_dict(session["answers"] or {})
+
+    # D-1 min-items guard: reject premature completion (crystal-farm exploit)
+    guard_metadata = session.get("metadata") or {}
+    guard_energy = guard_metadata.get("energy_level", "full") if isinstance(guard_metadata, dict) else "full"
+    finalize_allowed, min_required = can_finalize(state, energy_level=guard_energy)
+    if not finalize_allowed:
+        remaining = min_required - len(state.items)
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "MIN_ITEMS_NOT_REACHED",
+                "message": (
+                    f"This assessment needs at least {min_required} answered questions "
+                    f"before it can be scored. Answer {remaining} more to complete it."
+                ),
+                "questions_answered": len(state.items),
+                "min_required": min_required,
+            },
+        )
+
     already_completed = session.get("status") == "completed"
 
     if already_completed and existing_job is None:

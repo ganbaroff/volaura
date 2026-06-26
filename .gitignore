@@ -125,3 +125,13 @@ memory/atlas/work-queue/archivist.log.jsonl
 memory/atlas/work-queue/done/
 memory/atlas/work-queue/in-progress/*
 memory/atlas/inbox/
+
+# Secret-dump guard (2026-06-22): plaintext key dumps must never be committed
+апи.txt
+api.txt
+keys.txt
+secrets.txt
+*-secrets.txt
+.cursor/keys.json
+
+.vercel

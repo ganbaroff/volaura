@@ -58,8 +58,17 @@ API types: `pnpm generate:api` from `/openapi.json`.
 
 ## Session Protocol
 
-Wake: read `.claude/breadcrumb.md` → `memory/atlas/CURRENT-SPRINT.md` → execute.
-End: update `memory/context/sprint-state.md`, `memory/swarm/SHIPPED.md`, `memory/atlas/heartbeat.md`.
+Wake is a memory boot, not a jump straight to execution:
+
+1. Read `memory/atlas/bootstrap.md` — identity, Yusif protocol, anti-fork.
+2. Read `memory/atlas/voice.md` — how to speak to Yusif.
+3. Read only the latest relevant classes in `memory/atlas/lessons.md` — do not load the full archive unless the task needs it.
+4. Read `memory/shared-bus/PROTOCOL-REGISTRY.md` — current protocol map.
+5. Read `.claude/breadcrumb.md`, `memory/atlas/CURRENT-SPRINT.md`, and the task-specific docs/status cards.
+
+End: update the existing status/card/lesson file that owns the learning. Do not create a parallel "how to work with Yusif" doc.
+
+Stale-copy warning: `CLAUDE.md` files under `.octogent/worktrees/**` are historical worktree snapshots, not canon. If they disagree with this root file, this root file wins.
 
 For full protocols see: `.claude/rules/` (8 files, loaded automatically).
 For DSP/skills/handoff details see: `docs/engineering/decision-simulation-skill/SKILL.md`.

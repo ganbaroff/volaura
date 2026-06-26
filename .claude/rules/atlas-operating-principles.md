@@ -435,3 +435,17 @@ Violation detection: any tool call that reads / extracts / executes a file from 
 Exception (the only one): files CEO authored himself in his browser/desktop — no cross-instance vector. Atlas-instance still recommends to ask: "Это от тебя или от другого инстанса?" before open if origin unclear.
 
 The discipline that closes the gap: courier-loop is the only environment-bridge between Atlas-instances, and SHA-256 is the only thing that prevents that bridge from becoming a backdoor. Every open without verify = signing the contract that says "I trust whatever ended up in CEO's Downloads".
+
+## Search-before-build gate (CEO directive 2026-06-11 — NOT optional)
+
+CEO verbatim: «когда ты строишь какой то модуль ищи для начала. а это уже есть? нету. а описание этого модуля есть? нету. а точно нету? нету. тогда делай. больше времени уходит. я понимаю. но мы куда торопимся? мы ставим количество фич и коммитов выше чем качество?» Said after I twice declared a module's spec "not in the repo" after a single narrow keyword grep — and CEO's own method (search by FILE NAMES first, then by CONTEXT/synonyms) immediately found the anti-cheat half was specced all along (`current_gaps.md` Gap 9 eye-tracking, his own 2026-04-05 message). The text files hold a very large amount of important canon because CEO described ideas and a Claude instance recorded them — the repo is the substrate of his thinking, not just code.
+
+The three-question ladder, run BEFORE writing any module / component / endpoint / migration / spec:
+1. «А это уже есть?» — does the thing itself already exist (built)? Glob filenames by the concept + synonyms (incl. CEO's own phrasing, AZ/RU terms), grep code. If yes → extend it, never duplicate (Class 14/18).
+2. «А описание этого есть?» — is there a SPEC / plan / CEO-message describing it, even if unbuilt? Search `docs/`, `for-ceo/`, `memory/`, `packages/swarm/prompt_modules/`, CEO message archives. If yes → build TO that spec, never invent a parallel one.
+3. «А точно нету?» — only after a FILENAME sweep AND a content grep with ≥5 synonyms may "nothing found" be spoken. "My keyword didn't match" ≠ "it doesn't exist". A negative from one keyword is not a negative.
+Only when all three honestly return "нету" → build.
+
+The cost is real (more time per module) and it is ACCEPTED policy, not a tradeoff to optimize away: «мы куда торопимся?». Quality over feature-count and commit-count is the standing order. A module built without this search is faster to commit and slower to ship correctly — it either duplicates canon or contradicts a spec CEO already wrote, and the rework + trust cost exceeds the search time every time. Violation detection: any Write/Edit creating a new module/spec without a preceding filename-glob + multi-synonym content-grep receipt in the same turn → stop, run the ladder, then proceed.
+
+Cross-reference: lessons.md Class 45 (+ its same-session correction), proactive-scan gate, arsenal-before-request gate, Update-don't-create rule, research-first.md. The Constitution's purpose (built from 17 CEO research docs, "система должна знать что делает … всё должно быть предельно ясно и только улучшаться") is the same principle one level up: the repo already KNOWS — my job is to read what it knows before adding to it.

@@ -10,7 +10,9 @@ import posthog from "posthog-js";
 // Publishable values — safe in the bundle by design. Env overrides for staging.
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://dwdgzfusjsobnixgyzjk.supabase.co";
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY || "sb_publishable_lVUcn3G29V449ltPzCJF4g_ID5G3Ud9";
-export const API = process.env.NEXT_PUBLIC_API_URL || "https://volauraapi-production.up.railway.app";
+// Browser API calls go SAME-ORIGIN to `/api`; `next.config.mjs` rewrites `/api/*`
+// to NEXT_PUBLIC_API_URL (Railway) server-side. This avoids cross-origin CORS from
+// the dev origin (localhost) and any non-allowlisted host. Do NOT hit Railway directly here.
 
 let supabaseSingleton: SupabaseClient | null = null;
 
@@ -33,7 +35,7 @@ export async function ensureSession(): Promise<string> {
 
 export async function api<T>(path: string, init?: RequestInit & { json?: unknown }): Promise<T> {
   const token = await ensureSession();
-  const res = await fetch(`${API}/api${path}`, {
+  const res = await fetch(`/api${path}`, {
     ...init,
     method: init?.json !== undefined ? init?.method || "POST" : init?.method || "GET",
     headers: {

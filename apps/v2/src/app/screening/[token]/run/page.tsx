@@ -38,16 +38,25 @@ interface AnswerFeedback {
 }
 
 type Lang = "az" | "en";
+type EnergyMode = "full" | "mid" | "low";
 type Phase = "consent" | "preparing" | "question" | "switching" | "done" | "error";
+
+const ENERGY_LABELS: Record<EnergyMode, { az: string; en: string }> = {
+  full: { az: "Tam", en: "Full" },
+  mid: { az: "Orta", en: "Mid" },
+  low: { az: "Sakit", en: "Low" },
+};
 
 const STRINGS = {
   az: {
     title: "Qiymətləndirmə",
     consentTitle: "Başlamazdan əvvəl",
     consentBody:
-      "Bu qiymətləndirmə avtomatik qiymətləndirmə sistemindən istifadə edir (AURA balı). Davam etməklə bunu qəbul edirsiniz.",
+      "Bu qiymətləndirmə avtomatik bal (AURA) çıxarır. Nəticə təşkilatın qərarına yalnız KÖMƏK edir — onu əvəz etmir. Yekun qərarı insan verir.",
     cameraBody:
       "Dürüstlük üçün kamera aktiv olacaq. Video heç yerə göndərilmir və saxlanılmır — yalnız brauzerinizdə işlənir.",
+    rightsBody:
+      "Hüquqlarınız: avtomatik qiymətləndirməyə etiraz edə və insan tərəfindən yenidən baxılmasını tələb edə bilərsiniz. Bu işə qəbul qərarı deyil və peşəkar sertifikatı əvəz etmir. İştirak könüllüdür.",
     agree: "Qəbul edirəm — başla",
     preparing: "Hazırlanır…",
     submit: "Cavabı göndər",
@@ -58,15 +67,21 @@ const STRINGS = {
     error: "Xəta baş verdi",
     retry: "Yenidən cəhd et",
     camDenied: "Kamera olmadan davam edirsiniz — bu, hesabatda qeyd olunacaq.",
+    tierLabel: "Assessment Completed",
+    tierBody:
+      "Şəxsiyyət təsdiqi hələ qoşulmadığı üçün bu sessiya “Verified Skills” kimi göstərilməyəcək.",
+    atlasHint: "Atlas yalnız lazım olanı göstərir. Aşağı enerji rejimində ekran daha sakit olur.",
     progress: (a: number, t: number) => `Bacarıq ${a} / ${t}`,
   },
   en: {
     title: "Assessment",
     consentTitle: "Before you start",
     consentBody:
-      "This assessment uses automated scoring (your AURA score). By continuing you acknowledge this.",
+      "This assessment produces an automated score (your AURA score). The result only SUPPORTS an organization's decision — it does not make it. A human makes the final decision.",
     cameraBody:
       "Your camera will be on for integrity. Video is never uploaded or stored — it is processed only in your browser.",
+    rightsBody:
+      "Your rights: you may contest the automated scoring and request review by a human. This is not a hiring decision and not a substitute for professional certification. Participation is voluntary.",
     agree: "I agree — start",
     preparing: "Preparing…",
     submit: "Submit answer",
@@ -77,13 +92,92 @@ const STRINGS = {
     error: "Something went wrong",
     retry: "Try again",
     camDenied: "Continuing without camera — this will be noted in the report.",
+    tierLabel: "Assessment Completed",
+    tierBody:
+      "Because identity assurance is not connected yet, this session will not be shown as “Verified Skills”.",
+    atlasHint: "Atlas keeps the screen focused. Low energy mode makes the page quieter.",
     progress: (a: number, t: number) => `Competency ${a} of ${t}`,
   },
 } as const;
 
+function ScreeningHeader({
+  lang,
+  setLang,
+  energy,
+  setEnergy,
+  progress,
+}: {
+  lang: Lang;
+  setLang: (lang: Lang) => void;
+  energy: EnergyMode;
+  setEnergy: (energy: EnergyMode) => void;
+  progress?: string;
+}) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-rule/50 bg-paper/95 backdrop-blur">
+      <div className="mx-auto flex max-w-[680px] flex-wrap items-center justify-between gap-3 px-6 py-3.5">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-gradient-to-br from-seal to-[#a78bfa] text-sm font-bold text-white">
+            V
+          </span>
+          <span className="font-display text-base font-bold tracking-tight">VOLAURA</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs font-medium">
+          {progress && <span className="hidden text-ink-faint sm:inline">{progress}</span>}
+          <div className="flex rounded-full border border-rule bg-paper-sunken p-1">
+            {(Object.keys(ENERGY_LABELS) as EnergyMode[]).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                aria-pressed={energy === mode}
+                onClick={() => setEnergy(mode)}
+                className={`rounded-full px-3 py-1 transition-colors ${
+                  energy === mode ? "bg-seal text-white" : "text-ink-faint hover:text-ink"
+                }`}
+              >
+                {ENERGY_LABELS[mode][lang]}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => setLang(lang === "az" ? "en" : "az")}
+            className="rounded-full border border-rule bg-paper-sunken px-3 py-2 text-ink-soft transition-colors hover:border-seal hover:text-ink"
+          >
+            {lang === "az" ? "EN" : "AZ"}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function ConsentDisclosure({
+  title,
+  body,
+  defaultOpen = false,
+}: {
+  title: string;
+  body: string;
+  defaultOpen?: boolean;
+}) {
+  return (
+    <details
+      open={defaultOpen}
+      className="rounded-[14px] border border-rule bg-paper-sunken px-4 py-3 text-sm text-ink-soft"
+    >
+      <summary className="cursor-pointer list-none font-semibold text-ink">
+        {title}
+      </summary>
+      <p className="mt-2 text-[13px] leading-relaxed">{body}</p>
+    </details>
+  );
+}
+
 export default function RunnerPage({ params }: { params: { token: string } }) {
   const { token } = params;
   const [lang, setLang] = useState<Lang>("az");
+  const [energy, setEnergy] = useState<EnergyMode>("full");
   const [phase, setPhase] = useState<Phase>("consent");
   const [error, setError] = useState("");
   const [plan, setPlan] = useState<JoinedSession[]>([]);
@@ -114,6 +208,7 @@ export default function RunnerPage({ params }: { params: { token: string } }) {
             automated_decision_consent: true,
             assessment_plan_competencies: slugs,
             assessment_plan_current_index: index,
+            energy_level: energy,
             language: lang,
           },
         });
@@ -142,7 +237,7 @@ export default function RunnerPage({ params }: { params: { token: string } }) {
         fail(e);
       }
     },
-    [lang],
+    [energy, lang],
   );
 
   const begin = async () => {
@@ -151,8 +246,19 @@ export default function RunnerPage({ params }: { params: { token: string } }) {
     try {
       watcher.current = new IntegrityWatcher();
       if (videoRef.current) {
-        const ok = await watcher.current.start(videoRef.current);
-        if (!ok) setCamDenied(true);
+        // Camera must never block the assessment. getUserMedia can hang indefinitely
+        // when the permission prompt is ignored — race it against a short timeout so
+        // /join and /assessment/start always fire. Resolves → continue with camera;
+        // rejects (ok=false) → camera_unavailable; neither within CAMERA_START_TIMEOUT_MS
+        // → camera_timeout. In every case we proceed; the integrity snapshot records the
+        // honest camera_permission ("granted" | "denied" | "unavailable").
+        const CAMERA_START_TIMEOUT_MS = 6000;
+        const started = watcher.current.start(videoRef.current);
+        const outcome = await Promise.race([
+          started.catch(() => false as const),
+          new Promise<"timeout">((resolve) => setTimeout(() => resolve("timeout"), CAMERA_START_TIMEOUT_MS)),
+        ]);
+        if (outcome !== true) setCamDenied(true);
       }
       const joined = await api<{ campaign_id: string; sessions: JoinedSession[] }>(
         `/campaigns/public/${encodeURIComponent(token)}/join`,
@@ -233,41 +339,53 @@ export default function RunnerPage({ params }: { params: { token: string } }) {
   const qText = q ? (lang === "az" && q.question_az ? q.question_az : q.question_en) : "";
   const isMcq = Boolean(q?.options?.length);
 
+  const progress = plan.length > 0 && phase !== "done" ? t.progress(planIndex + 1, plan.length) : undefined;
+  const lowEnergy = energy === "low";
+
   return (
-    <main className="mx-auto max-w-xl px-6 py-10">
-      <div className="flex items-baseline justify-between">
-        <p className="font-display text-lg font-bold">
-          VOLAURA<span className="text-seal">.</span>
-        </p>
-        <div className="flex items-center gap-3">
-          {plan.length > 0 && phase !== "done" && (
-            <span className="text-xs text-ink-faint">{t.progress(planIndex + 1, plan.length)}</span>
-          )}
-          <button
-            onClick={() => setLang(lang === "az" ? "en" : "az")}
-            className="border border-rule bg-paper-sunken px-2 py-1 text-xs text-ink-soft"
-          >
-            {lang === "az" ? "EN" : "AZ"}
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-paper text-ink" data-energy={energy}>
+      <ScreeningHeader
+        lang={lang}
+        setLang={setLang}
+        energy={energy}
+        setEnergy={setEnergy}
+        progress={progress}
+      />
+
+      <main className={`mx-auto max-w-[640px] px-6 pb-20 ${lowEnergy ? "pt-8" : "pt-12"}`}>
 
       {/* Camera strip: small, visible, honest — candidate always sees what the camera sees */}
-      <div className={phase === "consent" || phase === "done" ? "hidden" : "mt-4 flex items-center gap-3"}>
-        <video ref={videoRef} muted playsInline className="h-16 w-20 rounded-lg border border-rule object-cover" />
+      <div className={phase === "consent" || phase === "done" ? "hidden" : "mb-6 flex items-center gap-3 rounded-[14px] border border-rule bg-paper-raised p-3"}>
+        <video ref={videoRef} muted playsInline className="h-16 w-20 rounded-[10px] border border-rule object-cover" />
         <p className="text-xs leading-snug text-ink-faint">
           {camDenied ? t.camDenied : lang === "az" ? "Video yalnız brauzerinizdə işlənir." : "Video stays in your browser."}
         </p>
       </div>
 
       {phase === "consent" && (
-        <div className="mt-8 rounded-xl border border-rule bg-paper-raised p-7">
-          <h1 className="font-display text-2xl font-bold tracking-tight">{t.consentTitle}</h1>
-          <p className="mt-4 text-sm leading-relaxed text-ink-soft">{t.consentBody}</p>
-          <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t.cameraBody}</p>
+        <div className="rounded-[18px] border border-rule bg-paper-raised p-6 shadow-[0_0_48px_rgba(124,92,252,0.08)]">
+          <div className="mb-6 inline-flex rounded-full border border-seal/20 bg-seal-soft/40 px-3 py-1 text-xs font-semibold text-[#c4b5fd]">
+            {t.tierLabel}
+          </div>
+          <h1 className="font-display text-[clamp(28px,5vw,40px)] font-bold leading-tight tracking-tight">
+            {t.consentTitle}
+          </h1>
+          {!lowEnergy && <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t.atlasHint}</p>}
+
+          <div className="mt-6 space-y-3">
+            <ConsentDisclosure title={lang === "az" ? "AI balı və insan qərarı" : "AI score and human decision"} body={t.consentBody} defaultOpen />
+            <ConsentDisclosure title={lang === "az" ? "Kamera dürüstlük siqnalı" : "Camera integrity signal"} body={t.cameraBody} />
+            <ConsentDisclosure title={lang === "az" ? "Hüquqlarınız" : "Your rights"} body={t.rightsBody} />
+            {!lowEnergy && (
+              <p className="rounded-[14px] border border-rule bg-paper-sunken px-4 py-3 text-[13px] leading-relaxed text-ink-faint">
+                {t.tierBody}
+              </p>
+            )}
+          </div>
+
           <button
             onClick={begin}
-            className="mt-7 block w-full rounded-xl bg-seal px-6 py-3.5 text-center font-display text-sm font-semibold text-white transition-colors hover:bg-seal/90"
+            className="mt-7 flex w-full items-center justify-center rounded-[14px] bg-seal px-8 py-[18px] font-display text-base font-bold tracking-tight text-white transition-shadow hover:shadow-[0_0_32px_rgba(124,92,252,0.35)]"
           >
             {t.agree}
           </button>
@@ -332,8 +450,15 @@ export default function RunnerPage({ params }: { params: { token: string } }) {
 
       {phase === "done" && (
         <div className="mt-8 rounded-xl border border-rule bg-paper-raised p-7">
+          {/* Honest tier-2 badge: neutral violet, never the green "Verified Skills" treatment (§A.1) */}
+          <div className="mb-5 inline-flex rounded-full border border-seal/20 bg-seal-soft/40 px-3 py-1 text-xs font-semibold text-[#c4b5fd]">
+            {t.tierLabel}
+          </div>
           <h1 className="font-display text-2xl font-bold tracking-tight">{t.doneTitle}</h1>
           <p className="mt-4 text-sm leading-relaxed text-ink-soft">{t.doneBody}</p>
+          <p className="mt-4 rounded-[14px] border border-rule bg-paper-sunken px-4 py-3 text-[13px] leading-relaxed text-ink-faint">
+            {t.tierBody}
+          </p>
         </div>
       )}
 
@@ -352,6 +477,7 @@ export default function RunnerPage({ params }: { params: { token: string } }) {
           </button>
         </div>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

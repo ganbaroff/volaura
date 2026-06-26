@@ -112,6 +112,42 @@ def _store_fingerprint_to_mem0(wake_n: int, content: str) -> bool:
         return False
 
 
+PREV_STATUS_FILE = REPO_ROOT / "memory" / "atlas" / ".wake-status-prev"
+
+
+def _send_telegram_alert(message: str) -> bool:
+    """Send alert to CEO via Telegram Bot API. Non-fatal on failure."""
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
+    if not token or not chat_id:
+        return False
+    try:
+        payload = json.dumps({"chat_id": chat_id, "text": message}).encode("utf-8")
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data=payload,
+            headers={"Content-Type": "application/json", "User-Agent": "atlas-heartbeat"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status < 400
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return False
+
+
+def _read_prev_status() -> dict:
+    try:
+        return json.loads(PREV_STATUS_FILE.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return {"prod": "ok", "ci": "green"}
+
+
+def _write_prev_status(prod: str, ci: str) -> None:
+    PREV_STATUS_FILE.write_text(
+        json.dumps({"prod": prod, "ci": ci}), encoding="utf-8"
+    )
+
+
 def main() -> int:
     INBOX_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -160,6 +196,24 @@ change or a real regression.
     # Non-fatal on failure.
     mem0_content = f"wake #{wake_n} at {now.isoformat()}. {prod_line}. CI: {ci}."
     mem0_ok = _store_fingerprint_to_mem0(wake_n, mem0_content)
+
+    # Proactive Telegram alert — only on DEGRADATION (not every tick).
+    # Phase A of Atlas Orchestrator v2 plan.
+    prev = _read_prev_status()
+    prod_status = prod.get("status", "UNREACHABLE") if prod else "UNREACHABLE"
+    degraded = False
+    alert_parts = []
+    if prod_status != "ok" and prev.get("prod") == "ok":
+        alert_parts.append(f"Prod DOWN: {prod_line}")
+        degraded = True
+    if ci == "red" and prev.get("ci") != "red":
+        alert_parts.append(f"CI FAILED on main")
+        degraded = True
+    if degraded:
+        alert_msg = f"⚠ Atlas heartbeat #{wake_n}\n" + "\n".join(alert_parts)
+        tg_ok = _send_telegram_alert(alert_msg)
+        print(f"telegram alert: {'sent' if tg_ok else 'failed/no-token'}")
+    _write_prev_status(prod_status, ci)
 
     print(f"wake #{wake_n} written -> {note.relative_to(REPO_ROOT)}")
     print(prod_line)

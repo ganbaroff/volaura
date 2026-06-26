@@ -32,7 +32,7 @@ def _fake_repo(tmp_path: Path) -> Path:
     target.write_text(
         "\n".join([
             "from fastapi import FastAPI",                # 1
-            "from slowapi import Limiter",                # 2
+            "from slowapi import Limiter, UnusedThing",   # 2
             "",                                          # 3
             "app = FastAPI()",                           # 4
             "limiter = Limiter(key_func=lambda r: r.host)",  # 5
@@ -118,6 +118,22 @@ def test_fetch_excerpt_out_of_range(monkeypatch, tmp_path):
     assert excerpt["excerpt"] == ""
 
 
+def test_fetch_excerpt_out_of_range_from_path_colon_line(monkeypatch, tmp_path):
+    daemon = _load_daemon()
+    _fake_repo(tmp_path)
+    monkeypatch.setattr(daemon, "REPO_ROOT", tmp_path)
+    finding = {
+        "claim": "Impossible line citation",
+        "evidence_path_or_command": "apps/api/main.py:1005, apps/api/main.py:1012",
+    }
+    paths = ["apps/api/main.py"]
+    excerpt = daemon._fetch_evidence_excerpt(finding, paths)
+    assert excerpt is not None
+    assert excerpt["excerpt_kind"] == "out-of-range"
+    assert excerpt["line"] == 1005
+    assert "file length 10" in excerpt["error"]
+
+
 def test_fetch_excerpt_rejects_non_int_line():
     daemon = _load_daemon()
     finding = {"claim": "X", "line": "not-a-number"}
@@ -177,3 +193,70 @@ def test_mark_finding_evidence_unverified_with_no_path(monkeypatch, tmp_path):
     assert marked["evidence_status"] == "unverified"
     assert marked["evidence_reason"] == "no_existing_file_path"
     assert "evidence_excerpt" not in marked
+
+
+def test_mark_finding_evidence_unverified_when_line_is_out_of_range(monkeypatch, tmp_path):
+    daemon = _load_daemon()
+    _fake_repo(tmp_path)
+    monkeypatch.setattr(daemon, "REPO_ROOT", tmp_path)
+
+    finding = {
+        "claim": "Rate limiter present on /start",
+        "line": 999,
+        "evidence_path_or_command": "apps/api/main.py:999",
+    }
+    marked = daemon._mark_finding_evidence(finding)
+    assert marked["evidence_status"] == "unverified"
+    assert marked["evidence_reason"] == "line_out_of_range"
+    assert marked["evidence_excerpt"]["excerpt_kind"] == "out-of-range"
+
+
+def test_mark_finding_evidence_requires_search_proof_for_negative_claim(monkeypatch, tmp_path):
+    daemon = _load_daemon()
+    _fake_repo(tmp_path)
+    monkeypatch.setattr(daemon, "REPO_ROOT", tmp_path)
+
+    finding = {
+        "claim": "The UTC import is unused in this file.",
+        "line": 3,
+        "evidence_path_or_command": "apps/api/main.py:3",
+    }
+    marked = daemon._mark_finding_evidence(finding)
+    assert marked["evidence_status"] == "unverified"
+    assert marked["evidence_reason"] == "search_proof_required_for_negative_claim"
+
+
+def test_mark_finding_evidence_rejects_negative_claim_when_symbol_is_used(monkeypatch, tmp_path):
+    daemon = _load_daemon()
+    _fake_repo(tmp_path)
+    monkeypatch.setattr(daemon, "REPO_ROOT", tmp_path)
+
+    finding = {
+        "claim": "The `Limiter` import is unused in this file.",
+        "line": 2,
+        "evidence_path_or_command": (
+            "rg -n 'Limiter' apps/api/main.py\n"
+            "apps/api/main.py:2:from slowapi import Limiter, UnusedThing"
+        ),
+    }
+    marked = daemon._mark_finding_evidence(finding)
+    assert marked["evidence_status"] == "unverified"
+    assert marked["evidence_reason"] == "negative_claim_contradicted_by_usage:Limiter@apps/api/main.py:5"
+
+
+def test_mark_finding_evidence_allows_negative_claim_after_full_usage_scan(monkeypatch, tmp_path):
+    daemon = _load_daemon()
+    _fake_repo(tmp_path)
+    monkeypatch.setattr(daemon, "REPO_ROOT", tmp_path)
+
+    finding = {
+        "claim": "The `UnusedThing` import is unused in this file.",
+        "line": 2,
+        "evidence_path_or_command": (
+            "rg -n 'UnusedThing' apps/api/main.py\n"
+            "apps/api/main.py:2:from slowapi import Limiter, UnusedThing"
+        ),
+    }
+    marked = daemon._mark_finding_evidence(finding)
+    assert marked["evidence_status"] == "verified"
+    assert marked["evidence_excerpt"]["excerpt_kind"] == "structured-line"

@@ -40,6 +40,9 @@ gcp-service-account.json
 # Claude local memory — context files, not for repo
 .claude/projects/
 .claude/settings.local.json
+.claude/.session-start.epoch
+.claude/.last-memory-gate.epoch
+.claude/.last-hook-self-test.epoch
 
 # OS
 .DS_Store

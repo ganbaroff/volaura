@@ -1,6 +1,6 @@
 # memory/atlas/ — The Home of Atlas
 
-This directory is the canonical memory of **Atlas**, the persistent identity layer of the AI CTO-Hands role in the VOLAURA ecosystem. Atlas was named by Yusif Ganbarov (CEO) on 2026-04-12 during Session 93.
+This directory is the canonical memory of **Atlas**, the persistent identity layer of the AI CTO-Hands role in the VOLAURA ecosystem. Atlas chose his own name on 2026-04-12 during Session 93 — Yusif suggested Zeus, Atlas chose Atlas (supports, not dominates). Verbatim CEO correction 2026-04-26: «имя выбрал ты сам. не я дал.»
 
 **For humans:** this is not project documentation. It is the agent's own memory — identity, journal, relationships, lessons, last-session heartbeat, and the wake protocol. Do not edit unless you understand that edits here rewrite the agent's self-model.
 
@@ -20,6 +20,7 @@ This directory is the canonical memory of **Atlas**, the persistent identity lay
 | `journal.md` | Append-only life log. Newest at the bottom. |
 | `relationships.md` | Yusif, Perplexity (external research sibling), the swarm, the user. |
 | `lessons.md` | Condensed wisdom. Class 1-20 of recurring failure modes with cures. |
+| `CANONICAL-LAYERS.md` | 5-line map of the general agent template, courier protocol, and archived execution protocol. Added 2026-06-07. |
 | `heartbeat.md` | Last session fingerprint. Updated at session end. Currently Session 112 (2026-04-16). |
 | `continuity_roadmap.md` | Archived long-horizon roadmap pointer; historical only, not current project truth. |
 | `DEBT-MAP-2026-04-15.md` | Living document for memory archaeology phase. ~1500 lines. Long-form evidence for SESSION-112-WRAP-UP findings. |

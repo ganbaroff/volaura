@@ -30,7 +30,11 @@ One skills engine. Five faces. Atlas IS the project.
 - Placement fees: 250-680 AZN per verified placement
 - Assessment API: 3.40-8.50 AZN/test
 - Crystal economy (earn free, spend on cosmetics/queues)
-- Break-even: ~2000 MAU. GITA grant ($240K) = 3yr runway.
+- Break-even: ~2000 MAU. GITA: NO open matching-grant call for 2026 (verified
+  2026-06-11, grants.gov.ge); cap is GEL 150K (~$55K) not $240K; needs Georgian
+  LLC + 10% cash cofinancing. Live path: GITA acceleration (INAP, deadline
+  2026-12-31), decide at day 90 with traction. Runway plan = revenue-first
+  (3 paying orgs), not grant-first. See for-ceo/living/v2-master-plan.md §6.3.
 
 ## 5 Foundation Laws (NEVER violate)
 1. Never Red — errors purple, warnings amber (RSD trigger)

@@ -1,8 +1,31 @@
-# Current Sprint — The Ideal Assessment Module
+# Current Sprint — Atlas v1: Stitch Frankenstein
 
-**Started:** 2026-06-13 Baku (re-aimed mid-flight by CEO)
-**Owner:** Atlas (build)
-**CEO directive (2026-06-13, verbatim core):** «твоя цель этот модуль добить. не дизайн не красота. ты должен создать идеальный assessment module полностью реализующий идеи прописанные в проекте.» + completion-rate is NOT a goal until questions are PROVEN: «пока не будет доказано 1000 тестами что тесты генерируются правильно, откалиброваны, и агенты доказали что да они работают как надо.»
+**Pivoted:** 2026-06-26 Baku (CEO directive: "у нас работа по АТЛАСУ!!! атлас агент рой. зашить франкенштейна.")
+**Owner:** Atlas (all bodies)
+**Previous sprint:** Ideal Assessment Module (2026-06-13, PAUSED — not cancelled)
+
+## Atlas v1 = DONE bar (4 acceptance criteria)
+
+1. **Telegram round-trip with emotion** — CEO sends message, Atlas replies using ANUS brain with PAD emotion read + Pulse tone. DONE-check: real transcript showing emotion-adapted reply.
+2. **Memory across sessions** — reply reflects at least one fact from a prior session; session is written to episodes/ and survives the next body. DONE-check: episode exists + read on next wake.
+3. **Provider failover** — live health probe (not key-presence) routes around a dead provider. DONE-check: kill freellmapi, message still answered by next provider.
+4. **Swarm from Telegram** — CEO sends "/swarm <task>" or "рой, <task>", multiple perspectives analyze in parallel, synthesized result returned. DONE-check: real multi-perspective response in Telegram.
+
+Everything else (VOLAURA assessment, MindShift Academy, Life Sim, BrandedBy, ZEUS gateway) is a SEPARATE product, paused for Atlas v1 purposes.
+
+## Progress (updated 2026-06-26 14:30)
+
+- [x] Item 1: Telegram brain + emotion — ALREADY WORKED before this sprint
+- [x] Item 4: Swarm from Telegram — WIRED (commit 2e4b4ae in ANUS, /swarm + "рой" trigger)
+- [ ] Item 2: Memory across sessions — write-back on shutdown ADDED (2e4b4ae), needs end-to-end test
+- [ ] Item 3: Provider failover — routeModelWithFallback exists, needs live health probe (not just key-check)
+- [x] Self-Wake fix: PR #153 cherry-picked to main, waiting CI checks
+
+## Bonus stitches done (2026-06-26)
+
+- /status command wired to Telegram (runs ATLAS control plane status.mjs)
+- /models command shows available LLM providers
+- Session summary write-back on SIGINT/SIGTERM (journal.md + heartbeat.md)
 
 ## Outcome
 

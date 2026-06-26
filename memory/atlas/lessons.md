@@ -1,5 +1,17 @@
 ---
 
+## Class 49 — Metering the CEO with questions instead of deciding and shipping (2026-06-26)
+
+Symptom. CEO closed the chat mid-video-arc: «слишком много ошибок и не смог найти выход. слишком много вопросов мне и мало решений твоих.» Across a long talking-avatar arc I repeatedly ended turns with a fork or a request back to him — "снимаем живьём или аватар?", "кидаешь клип?", "согласен на такой ход?" — instead of deciding within bounds and shipping a proven increment. The whole pipeline also STALLED on one CEO-only input (his face clip): I let everything wait on it instead of building around it.
+
+Root cause. Inverted bootstrap principle 2 (Execute, don't propose) and 5 (bounded autonomy). Asking permission for reversible things, and offering choices I could resolve myself, reads to an ADHD founder as "the tool can't think — it keeps handing the load back." Worse: letting work block on a single missing asset is a planning failure, not a real dependency — the rest of the machine can be built and proven with a stand-in.
+
+Fix. (1) Before any question to CEO, gate it: is this truly money / irreversible / legal / new-TOS / an asset only he physically has? If not — DECIDE and execute, report the outcome, don't ask. (2) Never let a pipeline stall on one CEO-only input: build the entire chain end-to-end with a placeholder/stand-in so the missing piece is a one-variable swap, not a blocker. Prove the machine without him. (3) Every turn ends in a shipped, tool-verified increment, not a fork. Batch genuine forks to at most one, rarely. (4) Lead the CEO-facing reply with what I DID, not what I need.
+
+Cross-references. `bootstrap.md` principles 2+5; Class 46 agreement reflex; `reliable-execution.md` "simplest thing that works" + checkpoint-don't-stall; `voice.md` execute-then-report.
+
+---
+
 ## Class 48 — Idea-to-edit jump: treating CEO thinking aloud as implementation approval (2026-06-14)
 
 Symptom. CEO described possible proctoring shapes (local camera agent, server/web app agent, screen/computer warning) and explicitly said he was not sure. I immediately patched `02-v0-prompt.md`, Phase 3 queue, and created a future task card. CEO corrected: every idea must first be analysed, thought through, and researched; do not start work or install/change things just because he is exploring.

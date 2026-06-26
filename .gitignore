@@ -43,6 +43,9 @@ gcp-service-account.json
 .claude/.session-start.epoch
 .claude/.last-memory-gate.epoch
 .claude/.last-hook-self-test.epoch
+.claude/last-verification-gap.flag
+memory/atlas/swarm-runs/
+memory/atlas/telegram-conversations/
 
 # OS
 .DS_Store

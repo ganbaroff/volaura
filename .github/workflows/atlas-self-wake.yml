@@ -57,7 +57,7 @@ jobs:
         run: |
           git config user.name "Atlas Heartbeat"
           git config user.email "atlas-heartbeat@volaura.app"
-          git add memory/atlas/inbox/ memory/atlas/.wake-counter
+          git add -f memory/atlas/inbox/ memory/atlas/.wake-counter
           if git diff --staged --quiet; then
             echo "Nothing to commit."
             exit 0

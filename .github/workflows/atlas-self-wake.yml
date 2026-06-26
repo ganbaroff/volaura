@@ -38,6 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
         run: python scripts/atlas_heartbeat.py
 
       - name: Scope guard
@@ -46,7 +48,7 @@ jobs:
         run: |
           CHANGED=$(git status --porcelain | awk '{print $2}')
           if [ -z "$CHANGED" ]; then exit 0; fi
-          OUTSIDE=$(echo "$CHANGED" | grep -v '^memory/atlas/inbox/' | grep -v '^memory/atlas/\.wake-counter$' || true)
+          OUTSIDE=$(echo "$CHANGED" | grep -v '^memory/atlas/inbox/' | grep -v '^memory/atlas/\.wake-counter$' | grep -v '^memory/atlas/\.wake-status-prev$' || true)
           if [ -n "$OUTSIDE" ]; then
             echo "::error::Heartbeat touched files outside allowed scope:"
             echo "$OUTSIDE"
@@ -57,7 +59,7 @@ jobs:
         run: |
           git config user.name "Atlas Heartbeat"
           git config user.email "atlas-heartbeat@volaura.app"
-          git add -f memory/atlas/inbox/ memory/atlas/.wake-counter
+          git add -f memory/atlas/inbox/ memory/atlas/.wake-counter memory/atlas/.wake-status-prev
           if git diff --staged --quiet; then
             echo "Nothing to commit."
             exit 0

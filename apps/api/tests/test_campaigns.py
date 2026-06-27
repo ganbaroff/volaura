@@ -6,16 +6,15 @@ validation, campaign creation, public join, and report ranking.
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
-from unittest.mock import AsyncMock, MagicMock
 import uuid
+from datetime import UTC, datetime
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
 from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
-
 
 ORG_USER_ID = str(uuid.uuid4())
 ORG_ID = str(uuid.uuid4())
@@ -400,3 +399,86 @@ async def test_join_and_report_campaign_flow_ranks_fully_completed_candidate_fir
     assert report_body["candidates"][0]["professional_id"] == PROFESSIONAL_ID
     assert report_body["candidates"][0]["campaign_score"] == 80.0
     assert report_body["candidates"][1]["campaign_score"] == 88.0
+
+
+def _full_campaign_row() -> dict:
+    return {
+        "id": CAMPAIGN_ID,
+        "org_id": ORG_ID,
+        "created_by": ORG_USER_ID,
+        "title": "Customer Support Lead",
+        "description": "Candidate-facing campaign",
+        "competency_slugs": ["communication", "reliability"],
+        "invite_token": TOKEN,
+        "status": "active",
+        "deadline_days": 21,
+        "candidate_cap": 42,
+        "created_at": datetime.now(UTC).isoformat(),
+    }
+
+
+@pytest.mark.asyncio
+async def test_report_paywall_blocks_without_access_returns_402():
+    """org_billing_enabled=True + no entitlement → 402 PAYMENT_REQUIRED, report not built."""
+    tables = {
+        "organizations": _make_table_mock(
+            "organizations",
+            {"execute": AsyncMock(return_value=MagicMock(data={"id": ORG_ID, "name": "Atlas Org", "logo_url": None}))},
+        ),
+        "screening_campaigns": _make_table_mock(
+            "screening_campaigns", {"execute": AsyncMock(return_value=MagicMock(data=_full_campaign_row()))}
+        ),
+    }
+    db = MagicMock()
+    db.table = MagicMock(side_effect=lambda name: tables[name])
+
+    app.dependency_overrides[get_supabase_admin] = _admin_override(db)
+    app.dependency_overrides[get_current_user_id] = _uid_override(ORG_USER_ID)
+
+    with (
+        patch("app.routers.campaigns.settings") as ms,
+        patch("app.routers.campaigns.org_has_report_access", new=AsyncMock(return_value=False)),
+    ):
+        ms.org_billing_enabled = True
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            resp = await ac.get(f"/api/campaigns/{CAMPAIGN_ID}/report", headers={"Authorization": "Bearer owner"})
+
+    assert resp.status_code == 402, resp.text
+    body = resp.json()
+    assert body["detail"]["code"] == "PAYMENT_REQUIRED"
+    assert body["detail"]["campaign_id"] == CAMPAIGN_ID
+    assert body["detail"]["unlock_url"].endswith(f"/{CAMPAIGN_ID}/unlock")
+
+
+@pytest.mark.asyncio
+async def test_report_paywall_allows_with_access_returns_200():
+    """org_billing_enabled=True + entitlement granted → gate passes, report builds (200)."""
+    tables = {
+        "organizations": _make_table_mock(
+            "organizations",
+            {"execute": AsyncMock(return_value=MagicMock(data={"id": ORG_ID, "name": "Atlas Org", "logo_url": None}))},
+        ),
+        "screening_campaigns": _make_table_mock(
+            "screening_campaigns", {"execute": AsyncMock(return_value=MagicMock(data=_full_campaign_row()))}
+        ),
+        # No members → report returns early with empty candidates (still 200).
+        "campaign_candidates": _make_table_mock(
+            "campaign_candidates", {"execute": AsyncMock(return_value=MagicMock(data=[]))}
+        ),
+    }
+    db = MagicMock()
+    db.table = MagicMock(side_effect=lambda name: tables[name])
+
+    app.dependency_overrides[get_supabase_admin] = _admin_override(db)
+    app.dependency_overrides[get_current_user_id] = _uid_override(ORG_USER_ID)
+
+    with (
+        patch("app.routers.campaigns.settings") as ms,
+        patch("app.routers.campaigns.org_has_report_access", new=AsyncMock(return_value=True)),
+    ):
+        ms.org_billing_enabled = True
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            resp = await ac.get(f"/api/campaigns/{CAMPAIGN_ID}/report", headers={"Authorization": "Bearer owner"})
+
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["campaign"]["id"] == CAMPAIGN_ID

@@ -122,12 +122,7 @@ async def _ensure_stripe_customer(stripe, db_admin: SupabaseAdmin, org: dict, us
             params["email"] = user_email
         customer = stripe.Customer.create(**params)
         customer_id = customer["id"]
-        await (
-            db_admin.table("organizations")
-            .update({"stripe_customer_id": customer_id})
-            .eq("id", org["id"])
-            .execute()
-        )
+        await db_admin.table("organizations").update({"stripe_customer_id": customer_id}).eq("id", org["id"]).execute()
         logger.info("Org Stripe customer created and persisted", org_id=org["id"])
         return customer_id
     except Exception as e:  # noqa: BLE001
@@ -398,9 +393,11 @@ async def _mark_org_stripe_event_processed(event_id: str, event_type: str) -> No
         supabase_key=settings.supabase_service_key,
     )
     try:
-        await admin.table("processed_stripe_events").insert(
-            {"event_id": event_id, "event_type": event_type}, upsert=False
-        ).execute()
+        await (
+            admin.table("processed_stripe_events")
+            .insert({"event_id": event_id, "event_type": event_type}, upsert=False)
+            .execute()
+        )
     except Exception as e:  # noqa: BLE001 — best-effort; event already processed
         logger.warning("Could not record processed org Stripe event", event_id=event_id, error=str(e)[:200])
 
@@ -458,9 +455,7 @@ async def _handle_org_subscription_upsert(sub: dict) -> bool:
     current_period_end: int | None = sub.get("current_period_end")
 
     if stripe_status in _ACTIVE_SUB_STATUSES:
-        ends_at = (
-            datetime.fromtimestamp(current_period_end, tz=UTC).isoformat() if current_period_end else None
-        )
+        ends_at = datetime.fromtimestamp(current_period_end, tz=UTC).isoformat() if current_period_end else None
         updates = {
             "subscription_tier": "growth",
             "subscription_expires_at": ends_at,

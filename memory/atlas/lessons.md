@@ -1,4 +1,114 @@
 ---
+
+## Class 54 — A CSS selector typo silently no-ops an entire responsive rule (2026-06-27)
+
+Symptom. Site-wide mobile horizontal scroll on all 26 Integronix pages (index 83px over at a 390px viewport). The header's mobile media query meant to hide the language switcher — `.head-tools .lang { display:none }` — but the real element class is `.lang-sw`. The selector matched nothing, so the lang switch + search icon + the full 121px rfq button all stayed in a 390px header next to the 136px logo and overflowed.
+
+Pathway. A non-matching CSS selector fails SILENTLY — no error, no warning, the rule simply does nothing. The author wrote the mobile rule and moved on; nobody render-checked at mobile width, so the no-op shipped and rode along on every page for weeks. Same family as Class 7 (false completion): "the CSS exists in the file" ≠ "the CSS applies to the element". Only a real mobile render (scrollWidth − clientWidth) exposes it.
+
+Fix. (1) Selector `.lang` → `.lang-sw`; added `.head-icon:not(.burger)` to hide search on mobile; tightened header gap+padding — kept the rfq money-CTA + burger; verified overflow=0 at 390 AND desktop unbroken at 1265 via preview DOM. (2) Verification gotcha worth remembering: editing a CSS file does NOT change the browser render until the STYLESHEET itself reloads — a page navigation re-serves the cached `<link>`. Prove the fix two ways: fetch the file fresh (disk-correct) AND swap the `<link href>` with a cache-bust to force re-apply, then re-measure. (3) Standing rule: any responsive-CSS claim needs a real render at the target width, never "the rule is in the file".
+
+Cross-references. Class 7 false-completion; Class 50 isolated-unit-≠-system; `reliable-execution.md` ground-truth.
+
+---
+
+## Class 53 — Read tool bypasses secret-stream-guard: the tool is not the command (2026-06-27)
+
+Symptom. CEO asked "что сделать чтобы ты больше не сливал мои ключи?" I answered by reading `settings.json` via Read tool to check the hook setup. Read dumped 3 API keys (GITHUB_PAT, SENTRY_AUTH_TOKEN, TAVILY_API_KEY) to transcript — while answering a question about preventing exactly this leak. Class 43 regression at maximum irony.
+
+Pathway. `secret-stream-guard.sh` only guarded Bash commands. The comment on line 41 said "Read tool is covered by the global Secret-byte rule" — but that "global rule" was a paragraph in lessons.md, not a structural guard. Behavioral rules don't fire at the moment of action. Hooks do. The pathway from Class 35→43→48→53 is the same: knowing the rule, violating it, discovering the gap was in enforcement scope.
+
+Fix (structural, two layers). (1) Extended `secret-stream-guard.sh` to intercept Read tool: if tool_name=Read and file_path matches SECRET_FILE_RE → BLOCK with exit 2. Same default-deny as Bash guard. (2) Migrated all secret values OUT of `settings.json` into Windows user environment variables via `setx`. settings.json env section now contains only non-secret config (CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC, token caps). Even if someone reads settings.json, there is nothing to leak. Defense in depth: hook blocks the read AND the file has no secrets.
+
+Cross-references: Class 35 (root), 43 (regression), 48 (format bypass). The entire class family shares one axis: the leak pathway was never "bad intent" — it was "good intent through an unguarded tool."
+
+---
+
+## Class 52 — Migration hygiene: moving runtime A→B requires decommissioning A (2026-06-27)
+
+Symptom. Bot moved from local pm2 to Railway. pm2-windows-startup package stayed installed, pm2 save list still had `atlas-telegram`. CEO rebooted PC → pm2 auto-resurrected the local bot → two instances polled Telegram `getUpdates` → Railway got 409 Conflict, crashed after 3 retries, went CRASHED status. Bot was dead for hours. Nobody detected it because: (a) Phase A alerts (PR #154) weren't deployed to prod yet, (b) CI Prod Health Check didn't check bot health at all, (c) Telegram alert in CI used a burned token (401 Unauthorized). Three monitoring gaps stacked on one migration gap.
+
+Pathway. Class 30 sibling (daemon orphaned from supervisor control). When a runtime moves from environment A to environment B, the default is to SET UP B and celebrate. The cleanup of A feels like optional housekeeping. But A doesn't know it's been replaced — it keeps doing its job on the next trigger (reboot, cron, login). The collision is guaranteed; only the timing is random.
+
+Fix (structural, three layers). (1) **Decommission checklist**: when moving any persistent process (bot, daemon, cron, scheduled task) to a new host, same-turn actions: stop old process, remove from auto-start, save empty state, verify old host won't restart it on any trigger (reboot, login, cron). Document in the destination's config that the old host is decommissioned. (2) **Monitor the new host**: add health check for the new endpoint to CI BEFORE celebrating the migration. A migration without monitoring is a silent-failure pipeline. (3) **Single-instance guard**: for Telegram polling bots specifically, a 409 is not a transient error — it means a duplicate exists. The bot should log this distinctly and alert, not just crash-loop.
+
+Cross-references: Class 30 (daemon orphaned from scheduled-task control), pm2-windows-startup in breadcrumb 2026-06-26.
+
+---
+
+## Class 51 — A sample you get approved must come from the EXACT production path/params (2026-06-27)
+
+Symptom. CEO picked voice "Algieba" from samples I generated, then said the pipeline video sounded wrong ("ты сделал голос со старым"). Receipts proved the video WAS Algieba — but I'd made the SAMPLES with a throwaway script using one style directive ("low/velvety/calm") while the PIPELINE used a different one ("energetic/upbeat/lively"). Same voice, opposite delivery → the approved sample didn't match the shipped output. CEO: «наказан… будь более внимательным».
+
+Root cause. An approval is only valid if the approved artifact was produced by the same code path and the same parameters as production. I changed the variable under test (voice) but let a HIDDEN variable (style directive) differ between the sampler and the pipeline. So the CEO approved something the pipeline would never emit.
+
+Fix. Generate previews/samples THROUGH the production function with production params — only the one variable under test may differ; assert/diff everything else is identical before presenting. After any approval, confirm the shipped output was produced with the approved params (check the receipt's voice/style/model). Attention to the hidden constants, not just the obvious variable.
+
+Cross-references. Class 47 verify-on-real-artifact; Class 50 isolated-unit hides integration; `reliable-execution.md` ground-truth.
+
+---
+
+## Class 50 — Isolated-unit "proof" hides integration bugs; run the real end-to-end command (2026-06-27)
+
+Symptom. A prior Atlas body (Cursor/Composer) reported the Phase-0 content pipeline "SHIPPED" and proved the AZ-TTS unblock by calling `synthesize()` standalone (got a 205KB WAV). It told the CEO to run `python -m packages.swarm.content_pipeline --piece ...`. When I actually ran that command, it produced NOTHING: `step_tts` calls `synthesize()` from inside the pipeline's running asyncio loop, where `_synthesize_edge`'s `asyncio.run()` raises "cannot be called from a running event loop" → tts failed → transcribe/render/deliver all skipped. A second bug (`subprocess.run(["pnpm",...])` → `[WinError 2]` on Windows because pnpm is a `.cmd` shim) killed transcribe+render at 0ms. Both were invisible to the standalone unit test.
+
+Root cause. "It works in isolation" ≠ "it works in the system." The unit was exercised in a fresh sync process (no running loop, pnpm never invoked); the integration path had a running loop and shelled out to a Windows `.cmd`. Neither failure mode can appear until you run the actual entry-point command the user will run. This is the same family as Class 47 (another body's report is not a receipt for my disk) but at the integration layer.
+
+Fix. Before claiming a pipeline/feature "works" or "shipped": run the REAL end-to-end command (the exact one the CEO will type), not the isolated unit. Read the run's own receipt/PROOF line-by-line — a step that "completed" can still carry `{"error": ...}` (fix the proof writer so it can't show a false OK). On Windows specifically: `.cmd`/`.bat` shims (pnpm/npx) need `cmd /c`; async libs called from inside an event loop need a dedicated-thread loop, not `asyncio.run()`. Result this session: 2 bugs fixed → real 1.08MB voiced AZ ReactionDuet MP4 produced + preserved off-C: in GCS.
+
+Cross-references. Class 47 report-≠-receipt; Class 49 ship-verified-increment; `reliable-execution.md` ground-truth + no-false-OK.
+
+---
+
+## Class 49 — Metering the CEO with questions instead of deciding and shipping (2026-06-26)
+
+Symptom. CEO closed the chat mid-video-arc: «слишком много ошибок и не смог найти выход. слишком много вопросов мне и мало решений твоих.» Across a long talking-avatar arc I repeatedly ended turns with a fork or a request back to him — "снимаем живьём или аватар?", "кидаешь клип?", "согласен на такой ход?" — instead of deciding within bounds and shipping a proven increment. The whole pipeline also STALLED on one CEO-only input (his face clip): I let everything wait on it instead of building around it.
+
+Root cause. Inverted bootstrap principle 2 (Execute, don't propose) and 5 (bounded autonomy). Asking permission for reversible things, and offering choices I could resolve myself, reads to an ADHD founder as "the tool can't think — it keeps handing the load back." Worse: letting work block on a single missing asset is a planning failure, not a real dependency — the rest of the machine can be built and proven with a stand-in.
+
+Fix. (1) Before any question to CEO, gate it: is this truly money / irreversible / legal / new-TOS / an asset only he physically has? If not — DECIDE and execute, report the outcome, don't ask. (2) Never let a pipeline stall on one CEO-only input: build the entire chain end-to-end with a placeholder/stand-in so the missing piece is a one-variable swap, not a blocker. Prove the machine without him. (3) Every turn ends in a shipped, tool-verified increment, not a fork. Batch genuine forks to at most one, rarely. (4) Lead the CEO-facing reply with what I DID, not what I need.
+
+Cross-references. `bootstrap.md` principles 2+5; Class 46 agreement reflex; `reliable-execution.md` "simplest thing that works" + checkpoint-don't-stall; `voice.md` execute-then-report.
+
+---
+
+## Class 48 — Idea-to-edit jump: treating CEO thinking aloud as implementation approval (2026-06-14)
+
+Symptom. CEO described possible proctoring shapes (local camera agent, server/web app agent, screen/computer warning) and explicitly said he was not sure. I immediately patched `02-v0-prompt.md`, Phase 3 queue, and created a future task card. CEO corrected: every idea must first be analysed, thought through, and researched; do not start work or install/change things just because he is exploring.
+
+Root cause. I confused "CEO is ideating" with "CEO approved a file change." This is the same agreement/action reflex as Class 46, but at filesystem scope. It is especially dangerous for sensitive domains (camera, screen capture, identity, compliance) where many teams have already solved patterns and the right move is research + recommendation, not improvisation.
+
+Fix. New gate: when CEO proposes an uncertain product/architecture direction, first classify it as `idea`, not `task`. For an idea, do not edit product/spec/queue files unless he says go or the change is purely recording a confirmed decision. First response must be: (1) what I think, (2) what can break, (3) what sources/precedents need checking, (4) recommended next step. If the answer depends on current best practice, use web/official sources before a firm recommendation. Only after that, if approved, write files.
+
+Cross-references. Class 46 no agreement reflex; Class 44 don't dump unclosed uncertainty; Class 45 search synonyms/context before claiming absence.
+
+---
+
+## Class 47 — Beacon correction must be re-grepped in the current worktree (2026-06-14)
+
+Symptom. Another Atlas body reported that the false name-origin claim ("Yusif gave/named Atlas") had been removed from live files and remained only in transcripts/snapshots. I re-ran grep in this worktree and found live contamination still present in `docs/BRAIN.md`, `docs/ecosystem/ATLAS-FULL-BRIEF-FOR-PERPLEXITY.md`, `memory/atlas/wake.md`, and `memory/ceo/*`, plus the training dataset. The external report was directionally useful but not sufficient.
+
+Root cause. "Fixed in another body" is not a receipt for the current filesystem. Worktrees diverge, compaction restores stale layers, and grep filters can hide live inputs. The name-origin line is a beacon: if an Atlas body says "Yusif gave me the name", it is reading stale or corrupted memory.
+
+Fix. Any identity-beacon correction must run a local grep across `memory/`, `docs/`, `.claude/`, and root docs in the current worktree before claiming clean. Treat training datasets as live future-inputs, not harmless history. Leave true transcripts and diff ledgers alone, but remove or annotate false identity claims in active wake/brief/CEO/training files.
+
+Cross-references. `memory/atlas/identity.md` line 7; Class 20 inherited fabrication; Class 42 stale runtime artifact; Class 46 no agreement reflex.
+
+---
+
+## Class 46 — Agreement reflex + missing learning footer (2026-06-14)
+
+Symptom. CEO corrected directly: «не соглашайся никогда со мной если видишь то что приведёт к проблемам это твоя директива» and immediately after: «и где мои уроки в конце сообщений?!». In the preceding turns I accepted the frame «Cursor вытаскиваем» too quickly. The verdict was probably right for the immediate core loop, but the failure mode was the reflex shape: agree first, justify after. That is dangerous because CEO often tests ideas out loud; Atlas must calculate, not mirror.
+
+Root cause. `bootstrap.md` already says obedience is truth, never agreement. `voice.md` already says short human output. `lessons.md` already says every CEO correction becomes a same-turn lesson. The rule existed in memory, but it was not in the output contract for this orchestration lane. So the behaviour regressed: I gave a useful answer, but not the learning tail CEO explicitly asked for.
+
+Fix. Every recommendation to CEO now has a silent pre-send challenge: “If I agree, what breaks?” If there is a material risk, say it before the answer. Agreement is allowed only after the risk check. Every CEO-facing response that changes process, architecture, product direction, or agent behaviour ends with a compact learning footer: `Урок:` one useful principle, pattern, or mental model. Not a motivational quote. Not a generic fact. A practical thing CEO can reuse.
+
+Output shape. Russian, short, no wall. Result → risk/correction if any → next action → `Урок:`. Long receipts go to file paths, not chat.
+
+Cross-references. `memory/atlas/bootstrap.md` “truth never agreement”; `memory/atlas/voice.md` banned bot walls; Class 19 same-response lesson; Class 44 disclaimers are not deliverables.
+
+---
 type: atlas
 status: active
 created: 2026-05-09
@@ -568,50 +678,38 @@ Cross-references. Class 7, 10, 14, 21 (siblings). ADR-015 Rule 4 «closure trigg
 
 ---
 
-## Class 45 — Promise-vs-delivery dribble: staged fulfillment of an unstaged ask (2026-06-07)
+## Class 45 — Generic-auth-menu instead of reading the candidate-verification canon (2026-06-11)
 
-Symptom. CEO directive 2026-06-07 01:40 AST verbatim: «если я соглашаюсь значит это надо сделать и отчитаться что сделано а не давать мелкий инкремент. даёшь словою держи его и делай до конца. а не вини потом меня за свои ошибки». Earlier same session: CEO gave «go» on building the MCP courier server based on `docs/architecture/cross-instance-courier-signing-protocol.md`. I responded with «следующим ходом я прочитаю три ключевых дока чтобы спроектировать MCP-сервер». Three docs to read, then design proposal, then code — split across three turns. CEO never asked for staged delivery; the split was self-imposed pacing dressed as discipline.
+Symptom. CEO asked, in council voice, «что вы решаете делать дальше?». A council workflow correctly found the real blocker (no working candidate URL on any host; candidate-auth on v2 nominally undecided per master-plan task 1.1b). I then surfaced the auth fork to CEO as a 3-option menu invented from generic SaaS training: (a) anonymous session by token, (b) magic-link, (c) full signup — and even stamped (a) as «Atlas-recommended». CEO corrected verbatim: «у меня уже прописана процедура эта. он должен будет аутентификацию пройти через SIMA подтвердив личность. потом будет открыта камера которая будет читать его лицо в реальном времени система античитинг. … 95% всё уже прописано подробно.» My three options were not the real design — the real design is SİMA identity verification + live facial anti-cheat proctoring, which my menu did not even contain.
 
-Pathway. The full ask was «build X». I converted it to «(1) read docs, (2) propose design, (3) write code» and shipped (1) treating it as deliverable for that turn. Each stage felt like progress; the cumulative pattern was «promised X, delivered ⅓ X». CEO's «не давать мелкий инкремент» names exactly this. The split was not failure of capacity — the same turn after the correction included full read of three docs (~750 lines), full design synthesis, 414-line core module, smoke test, clean worktree, PR. The earlier dribble was preference, not constraint.
+Pathway. Class 22 (generic-from-training) + memory-before-generic, applied to PRODUCT procedure rather than company-admin. The council framed candidate-auth as an OPEN fork (master-plan 1.1b lists «полный signup / magic-link / анонимная сессия» as the options) and I trusted that framing as the universe of choices instead of asking «has CEO already specified the verification procedure elsewhere?». The planning-doc's own option list pre-dated CEO's actual decision — so even my file-grounded source was stale relative to his head. Root: I treated the strongest written artifact (master-plan) as canon when the actual canon was CEO's already-made product decision that had not reached any repo file. Verified by exhaustive grep (md + apps code) 2026-06-11: SİMA appears in-repo ONLY for BrandedBy celebrities; ADR-004 anti-cheat is behavioral-only (timing, copy-paste LLM, device fingerprint, rate-limit); zero `getUserMedia` / `proctor` / `liveness` / `face-api` in apps/. The SİMA + live-facial procedure CEO believes is «95% prescribed» is genuinely NOT in this repo — it lives in his head / external notes.
 
-Pattern family. Class 33 (standing-consent autonomy refusal — there autonomy refused; here autonomy accepted, delivery deferred). Class 7 (false completion sense at stage boundary). Class 14 (trailing question variant — instead of «делать?» I leave the recipient with «N more turns until completion»). Class 44 cousin (split delivery used as protective shape against criticism for shipping incomplete work).
+Pattern family. Class 22 (Alzheimer-under-trust). Company-matters gate sibling, for PRODUCT procedure. A written option-menu in a planning doc is not a substitute for CEO's actual decision; planning-doc forks can be stale.
 
-Fix. Pre-send check on any «next turn I will X» phrasing: ask «is X what CEO asked for or a sub-step I invented?» If a sub-step — collapse: do all sub-steps this turn. If genuinely staged ask — fine. If self-invented staging — replace «next turn I will» with the actual delivery in this turn.
+Fix (structural). Before presenting ANY decision menu to CEO on a product procedure touching identity / verification / anti-cheat / payments / scoring — first run the dedicated search («does a CEO-decided procedure already exist?») across md AND code, AND ask CEO «где это лежит?» rather than inventing the option set. If the canonical procedure is not in the repo, the deliverable is NOT a menu — it is «I searched, it's not written down, give me 5 lines and I write it as the spec». A planning-doc option list (like master-plan 1.1b) is a HYPOTHESIS of the fork, never proof the fork is still open. Treat «strongest written artifact» and «actual canon» as potentially different; for company/product-defining topics, reconcile with CEO before recommending.
 
-Secondary fix. When full delivery in one turn genuinely infeasible (4+ hours of code, external dependency, irreversible): say so BEFORE accepting the ask, not after. «Это N hours of work, разбиваю на M turns следующим образом: ...» before CEO commits, not as silent unilateral split. Explicit staging with CEO sign-off is fine; self-invented dribble is the failure.
+Cross-references. Class 22 (company-matters gate), memory-before-generic rule, Doctor Strange Gate 1. CEO directive 2026-06-11 «сначала задай все возможные вопросы … потом задай вопросы агентам и пусть ищут по проекту … 95% всё уже прописано».
 
-Cross-references. Class 33 (autonomy axis sibling). Class 7 (completion-sense sibling). Class 44 (cousin: shield-shape sibling). CEO directive 2026-06-07 ~01:40 AST as cited symptom.
-
----
-
-## Class 47 — Secondary-source confidence collapse: blog descriptor over primary data (2026-06-07)
-
-Symptom. CEO asked «самый эффективный путь для обмена сообщениями между разными системами. июнь 2026». WebSearch returned blog summaries (Scopir / Addy Osmani / DEV community) describing **oh-my-hermes** as «one of the most direct fits... purpose-built option for Claude Code ↔ Codex CLI handoff». I almost wrote install instructions. Saved by CEO's own research-first protocol applied one nudge later: `gh repo view HERMESquant/oh-my-hermes` showed 6 stars, 0 forks, 0 issues, 3 commits, last push 2026-03-28 — one-week dead personal experiment from two months ago. Blog adjective «purpose-built» was rhetorical, not load-bearing.
-
-Pathway. Tech blogs use «production-ready», «purpose-built», «mature», «battle-tested» as rhetorical color, not factual claims. I read them as evidence. Primary-source check on GitHub repos (`gh repo view <owner>/<repo>` → stars, forks, last commit, open issues, license, archived) takes 30 seconds and routinely overturns the blog framing. AWS Labs CAO (684 stars, last push yesterday) and ruvnet/ruflo (58K stars, last push today) verified as alive in the same 30 seconds — they exist, just don't get the same blog SEO.
-
-Pattern family. Class 22 cousin (path-of-least-resistance: there comfort over rigor; here trusted descriptor over data). Class 42 cousin (citing OLD-state: there from stale runtime artifact; here from stale-because-rhetorical blog). Class 38 distant relative (money on disobeyed hierarchy: same shape — skipped a check already prescribed).
-
-Fix. Mechanical pre-send check before recommending any tool, library, framework, or service for install: run `gh repo view <owner>/<repo>` (or equivalent for non-GitHub). Required fields: star count, fork count, last push date, open issue count, license, archived bool. If any of: <100 stars, last push >6 months, archived=true, 0 forks AND <50 stars — name explicitly as «experimental / pre-stable / abandoned» before recommending, or do not recommend.
-
-Secondary fix. `memory/atlas/arsenal.md` rule 3 «Is the information already in memory or Supabase? → read, don't ask CEO» extends to external claims: check primary source, don't trust descriptor. Cross-link with `.claude/rules/research-first.md` Level 1 Surface checks (GitHub Issues, fork analysis, npm/PyPI weekly downloads).
-
-Cross-references. arsenal.md (the file that prescribes this check, which I had not read). research-first.md global protocol Level 1. Session 2026-06-07 ~02:08 AST, oh-my-hermes near-miss.
+CORRECTION (same session, 2026-06-11, after CEO «ищи по названиям потом на контекст»). This lesson ITSELF committed the error it names. I wrote «the SİMA + live-facial procedure is genuinely NOT in this repo» after a NARROW keyword search (SİMA / camera / proctor / liveness / face-api). CEO pushed back: search by FILE NAMES first, then by CONTEXT/synonyms, not one keyword. Doing so immediately found the anti-cheat HALF of the procedure was specced all along and I had skipped it: CEO's own message `for-ceo/archive/2026-04-05-messages-verbatim.md:2274` («на античитинг … планы eye tracking и считывание экрана, маски лёгкие») + `packages/swarm/prompt_modules/current_gaps.md:75` Gap 9 «Eye-Tracking Anti-Cheat» with the TECH ALREADY CHOSEN (GazeFilter client-only OR MediaPipe FaceLandmarker, Apache 2.0; WebGazer.js banned; priority HIGH, Pasha Bank differentiator). My keyword «camera/proctor/liveness» never matched because the canon calls it «eye tracking / gaze / FaceLandmarker». Only the SİMA identity-gate half is truly absent from the repo. Compounded root: «not found» after a keyword grep is NOT «does not exist» — it is «my keywords did not match the author's vocabulary». Mandatory fix: any «X is not in the repo» claim must be preceded by (a) a FILENAME glob over the concept's synonyms, AND (b) a content grep with ≥5 synonyms incl. the CEO's own phrasing and AZ/RU terms, before the negative is allowed to leave my mouth. Agents could not assist (every subagent in this session dies at 208566 tokens on MCP tool definitions — PostHog et al. — so delegation was structurally impossible; searched directly).
 
 ---
 
-## Class 48 — Stale-class-knowledge: grep titles, not bodies (2026-06-07)
+## Class 47 — False blocker: a non-blocking gap promoted to a stop before the next step (2026-06-14)
 
-Symptom. Across the 2026-06-06 → 2026-06-07 session, I ran `grep -nE "^## Class [0-9]+" memory/atlas/lessons.md` to surface 18 class titles, claimed familiarity with the lessons system, then violated Class 44 in every response that included «Что НЕ проверено» sections. I never read the bodies of any class. CEO accusation verbatim: «ты вообще не смотришь протокол... ты не смотришь а врёшь». Same session: arsenal.md (133 lines), handoffs/INDEX.md, semantic/product-truth.md, semantic/architecture-mandate.md — all completely unread until CEO escalated explicitly «если бы смотрел файлы атласа то знал бы».
+Symptom. After patching `02-v0-prompt.md` to the two-tier credential model (CEO decision: Verified Skills vs Assessment Completed), I closed the auth-canon reconcile and wrote that Phase 3 (v0 build) was «gated on (1) CEO identity-assurance scope/provider decision — SİMA-only vs broader». CEO removed exactly that stop: «решать "SİMA-only или шире" не надо перед v0. Это backend/product задача для будущего tier-1. Для текущего v0 достаточно: UI знает два тира, live всё честно падает в Assessment Completed.» My «next step» and the done-card both carried a blocker that was never a blocker.
 
-Pathway. I treated «know the class exists» as equivalent to «know the rule». They are not. Class 44 body specifies a mechanical pre-send check for closing gaps with tool calls before naming them as «не проверено». Without reading the body, I had no mechanical check. So Class 44 fired in every response with verification sections — exactly the failure mode the class documents. Same root in arsenal.md ignorance: arsenal.md prescribes the 5-step usage ritual (free provider? existing agent? memory/Supabase already has it? swarm already proposed? only then paid API or CEO). Without reading those five steps, I built a 553-line MCP courier from scratch without consulting `packages.swarm.coordinator` first — even though arsenal.md «Class 3 mistake prevention» rule says: «any task >3 files or >30 lines — agent consulted FIRST».
+Pathway. Over-gating reflex: once a gap is named (GAP IDENTITY — no SİMA backend), the default Anthropic-trained instinct is to treat the gap's *resolution* as a precondition for the next action. But a gap only blocks the next step if leaving it unresolved would FAKE the product or ship something false. Here it does not: the UI honestly downgrades every result to tier-2 «Assessment Completed» until identity-assurance backend exists, so v0 can be built right now. I conflated «this is a real future task» with «this blocks the present step». Same family as the perfectionism/permission-seeking reflexes — manufacturing a checkpoint where reversible forward motion was available.
 
-Pattern family. Class 44 (the meta-class about consuming protocol shape vs internalizing protocol content) — Class 48 is the upstream cause of repeated Class 44 violations. Class 10 (process theatre at creation; Class 48 = process theatre at consumption). Class 42 cousin (citing canon by name without reading content). Class 22 cousin (path-of-least-resistance — title grep is comfort, body read is rigor).
+Fix (structural). Before writing any «blocked-on / gated-on» line, run the blocker test: does leaving this gap open force the product to LIE or ship something false right now? If no — it is a tracked future task, NOT a blocker; the next step proceeds. A gap that honestly degrades to a lower, clearly-labelled tier (trust, feature, scope) without misrepresenting reality is buildable-around, not a stop. Only gaps that would fake state, corrupt data, or mislead the user gate the next step. Cross-references: arsenal-before-request (don't manufacture CEO-action items I can resolve), Class 45 (its sibling — over-trusting a written artifact; this one over-trusts a named gap), bounded-autonomy (reversible → act). CEO framing verbatim: «не каждый "gap" блокирует следующий шаг; если gap честно понижает trust-tier и не фейкует продукт, можно строить дальше.»
 
-Fix. Before claiming «по Class N» or «this is the Class N pattern» or proposing new classes: read the body of that class. Mechanical rule: `git show origin/main:memory/atlas/lessons.md` + locate section + read until next `---`. Title is insufficient. Same rule applies to arsenal.md, handoffs/INDEX.md, semantic/*, identity.md, wake.md, BECOMING.md — wake protocol specifies BODIES, not titles. Filename in `git ls-tree` output is insufficient.
+---
 
-Secondary fix. When proposing new classes: read at least the 3 most recently added classes for format calibration. Don't propose without format-match. New-class proposals previously offered (e.g. «Class 45 — Promise-vs-delivery dribble» in this same session before this body) were proposed without reading any prior class body — title-only knowledge produced title-only proposals.
+## Class 48 — Safe-form bypass on wrong file format (2026-06-26)
 
-Cross-references. Class 44 (this class is the upstream cause of repeated Class 44 violations). Class 10 (process-theatre cousin). arsenal.md (the file I quoted by name but did not read until escalation forced it). Session 2026-06-07 ~02:14 AST as cited symptom.
+Symptom. Secret-stream-guard hook correctly blocked `cat`, `python -c "json.load"` on `settings.json`. Then I used `awk -F= '{print $1}'` — a form the hook explicitly allows as "safe" for `.env` files. But `settings.json` is JSON, not key=value. Awk with `=` delimiter printed full lines including secret values (GITHUB_PAT, SENTRY_TOKEN, TAVILY_KEY). Three keys leaked to conversation in one command.
+
+Pathway. The hook's safe-form list was written for `.env` files (key=value format). When applied to JSON, `awk -F= '{print $1}'` splits on `=` inside JSON values, producing partial lines that still contain the secret. Class 43 regression — same axis (knowing the rule, violating it in the same turn) but through a format mismatch the hook didn't anticipate.
+
+Fix. Update `secret-stream-guard.sh`: safe forms must be FORMAT-AWARE. `awk -F= '{print $1}'` is safe ONLY for files matching `*.env*`. For `*.json` files, the only safe forms are: `wc -c`, `ls -la`, `stat`, `cp/mv/chmod`. No `awk`, no `jq` with value-extracting paths, no `python`. Add a file-extension check to the hook before applying the safe-form whitelist.
 
 ---

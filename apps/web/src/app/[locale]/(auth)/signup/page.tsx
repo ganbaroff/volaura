@@ -59,6 +59,10 @@ function SignupForm() {
   // used by screening campaign invite links to bring candidates back after signup
   const rawNext = searchParams.get("next");
   const nextPath = rawNext?.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
+  // Screening campaign invite: ?next=/<locale>/screening/<token>. The campaign link
+  // is itself the invitation, so a valid active token lets the candidate skip the
+  // global beta-invite gate (verified server-side via /campaigns/public/{token}).
+  const screeningToken = nextPath?.match(/\/screening\/([^/?#]+)/)?.[1] ?? null;
 
   // Pre-select org type if coming from "Find talent" hero CTA
   const initialType: AccountType = searchParams.get("type") === "organization" ? "organization" : "professional";
@@ -79,6 +83,9 @@ function SignupForm() {
   const [openSignup, setOpenSignup] = useState<boolean | null>(
     searchParams.get("invite") ? false : null
   );
+  // A valid screening campaign invite waives the beta-code requirement.
+  const [campaignInvite, setCampaignInvite] = useState(false);
+  const inviteRequired = openSignup === false && !campaignInvite;
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -90,6 +97,15 @@ function SignupForm() {
       .catch(() => { if (isMounted.current) setOpenSignup(true); }); // fail open on network error
     return () => { isMounted.current = false; };
   }, []);
+
+  // Validate the screening campaign token — a real active campaign means this
+  // candidate was invited and skips the beta-code gate.
+  useEffect(() => {
+    if (!screeningToken) return;
+    fetch(`${API_BASE}/campaigns/public/${encodeURIComponent(screeningToken)}`)
+      .then((r) => { if (isMounted.current && r.ok) setCampaignInvite(true); })
+      .catch(() => { /* leave gate as-is on error */ });
+  }, [screeningToken]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -105,8 +121,9 @@ function SignupForm() {
     setLoading(true);
 
     try {
-      // Invite gate: validate code before creating Supabase account
-      if (openSignup === false) {
+      // Invite gate: validate code before creating Supabase account.
+      // Campaign invitees (valid screening token) skip this entirely.
+      if (inviteRequired) {
         const validateRes = await fetch(`${API_BASE}/auth/validate-invite`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -363,8 +380,8 @@ function SignupForm() {
           </p>
         </div>
 
-        {/* Invite code — only shown when signup is invite-only */}
-        {openSignup === false && (
+        {/* Invite code — only shown when signup is invite-only (waived for campaign invitees) */}
+        {inviteRequired && (
           <div className="space-y-1.5">
             <label htmlFor="invite-code" className="text-sm font-medium">
               {t("auth.inviteCodeLabel", { defaultValue: "Invite code" })}
@@ -383,6 +400,13 @@ function SignupForm() {
               {t("auth.inviteCodeHint", { defaultValue: "Volaura is currently invite-only. Ask a friend or contact us to get a code." })}
             </p>
           </div>
+        )}
+
+        {/* Campaign invitee — reassure them no beta code is needed */}
+        {openSignup === false && campaignInvite && (
+          <p className="rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+            {t("auth.campaignInviteNote", { defaultValue: "You've been invited to this screening — no invite code needed." })}
+          </p>
         )}
 
         {/* Privacy + Terms consent — GDPR-compliant with linked policies */}
@@ -428,7 +452,7 @@ function SignupForm() {
         )}
         <button
           type="submit"
-          disabled={loading || !privacyConsented || !ageConfirmed || (openSignup === false && !inviteCode.trim())}
+          disabled={loading || !privacyConsented || !ageConfirmed || (inviteRequired && !inviteCode.trim())}
           className="h-10 w-full rounded-md bg-primary font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
           {loading ? (

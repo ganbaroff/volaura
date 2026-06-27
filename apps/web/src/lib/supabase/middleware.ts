@@ -42,11 +42,20 @@ export async function updateSession(request: NextRequest, response: NextResponse
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  // Org/admin surfaces are added here so an ANONYMOUS Supabase session (introduced
+  // by the screening candidate flow) cannot even render their UI shell. The backend
+  // already fail-closes these for anon users (_get_owned_org → 403 NOT_ORG_OWNER,
+  // require_platform_admin → 403 NOT_PLATFORM_ADMIN), so this is defense-in-depth on
+  // the client. Note: this redirects *unauthenticated* visitors to /login; anonymous
+  // sessions DO carry a Supabase user, so they are also kept out by the per-page
+  // org-ownership / admin guards, which return empty/redirect for anon (see security_check).
   const isProtectedRoute =
     pathname.includes("/dashboard") ||
     pathname.includes("/aura") ||
     pathname.includes("/profile") ||
-    pathname.includes("/settings");
+    pathname.includes("/settings") ||
+    pathname.includes("/my-organization") ||
+    pathname.includes("/admin");
 
   if (!user && isProtectedRoute) {
     // Extract locale from path (e.g., /az/dashboard → az)

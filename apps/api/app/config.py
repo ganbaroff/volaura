@@ -70,6 +70,7 @@ class Settings(BaseSettings):
     # NVIDIA NIM — 160+ open-source models, OpenAI-compatible, free tier — added 2026-04-02
     # Base URL: https://integrate.api.nvidia.com/v1 — drop-in OpenAI SDK replacement
     # Swarm routing: nemotron-ultra-253b (reasoning agents) + llama-3.3-70b (speed agents)
+    # NOTE 2026-06-11: NGC key went 401 (dead). Demoted in model_router below FreeLLMAPI.
     nvidia_api_key: str = ""
 
     # FreeLLMAPI gateway — OpenAI-compatible router, Balanced strategy — added 2026-06-11

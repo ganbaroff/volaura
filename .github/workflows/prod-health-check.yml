@@ -34,22 +34,37 @@ jobs:
       - name: Probe VOLAURA Frontend
         id: web
         run: |
+          # Use Vercel deployment URL — volaura.app returns 403 from GH Actions IPs
+          # due to Vercel bot protection (false positive, not real downtime).
           STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
             --max-time 10 \
             --location \
-            https://volaura.app)
+            https://volaura-v2.vercel.app)
           echo "status=$STATUS" >> "$GITHUB_OUTPUT"
           echo "Frontend health: $STATUS"
+
+      - name: Probe Atlas Telegram Bot
+        id: bot
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            --max-time 10 \
+            https://fantastic-generosity-production-df90.up.railway.app/health)
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          echo "Bot health: $STATUS"
 
       - name: Evaluate results
         id: eval
         run: |
           API=${{ steps.api.outputs.status }}
           WEB=${{ steps.web.outputs.status }}
+          BOT=${{ steps.bot.outputs.status }}
           FAILED=""
           if [ "$API" != "200" ]; then FAILED="API($API)"; fi
           if [ "$WEB" != "200" ] && [ "$WEB" != "307" ] && [ "$WEB" != "308" ]; then
             FAILED="${FAILED:+$FAILED, }Web($WEB)"
+          fi
+          if [ "$BOT" != "200" ]; then
+            FAILED="${FAILED:+$FAILED, }Bot($BOT)"
           fi
           echo "failed=$FAILED" >> "$GITHUB_OUTPUT"
           if [ -n "$FAILED" ]; then
@@ -65,7 +80,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID:   ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
         run: |
-          MSG="🔴 Prod health alert — ${{ steps.eval.outputs.failed }} DOWN. API: ${{ steps.api.outputs.status }}, Web: ${{ steps.web.outputs.status }}. Run: ${{ github.run_id }}"
+          MSG="🔴 Prod health alert — ${{ steps.eval.outputs.failed }} DOWN. API: ${{ steps.api.outputs.status }}, Web: ${{ steps.web.outputs.status }}, Bot: ${{ steps.bot.outputs.status }}. Run: ${{ github.run_id }}"
           curl -sS -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
             -d chat_id="$CHAT_ID" \
             -d text="$MSG"

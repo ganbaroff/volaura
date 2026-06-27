@@ -16,6 +16,7 @@ def _mock_settings(**overrides):
         "gemini_api_key": "",
         "groq_api_key": "",
         "anthropic_api_key": "",
+        "freellmapi_api_key": "",
         "ollama_enabled": False,
         "ollama_url": "http://localhost:11434",
         "ollama_model": "qwen3:8b",

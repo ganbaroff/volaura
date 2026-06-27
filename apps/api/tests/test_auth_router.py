@@ -1051,3 +1051,45 @@ class TestE2ESetup:
                 await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret")
 
         assert exc.value.status_code == 500
+
+
+@pytest.mark.asyncio
+async def test_register_campaign_token_bypasses_beta_gate(monkeypatch):
+    """A valid active campaign token lets a candidate register without a beta invite code."""
+    monkeypatch.setattr(auth_router.settings, "open_signup", False)
+    auth_resp = _make_auth_response()
+    db_anon = _make_db()
+    db_anon.auth = MagicMock()
+    db_anon.auth.sign_up = AsyncMock(return_value=auth_resp)
+    # db_admin sequence: campaign lookup (valid+active) -> policy row -> consent insert
+    db_admin = _make_db(
+        _result(data={"id": "camp-1"}),
+        _result(data={"id": POLICY_ROW_ID}),
+        _result(data=[{"id": "consent-id"}]),
+    )
+    payload = RegisterRequest(
+        **{**_make_valid_register_payload(), "campaign_token": "pilot-token", "invite_code": None}
+    )
+
+    result = await register(FAKE_REQUEST, payload, db_anon, db_admin)
+
+    assert result.user_id == USER_ID  # registration succeeded -> beta gate bypassed
+
+
+@pytest.mark.asyncio
+async def test_register_invalid_campaign_token_still_requires_invite(monkeypatch):
+    """A fabricated/inactive campaign token does NOT open the gate -- invite code still required."""
+    monkeypatch.setattr(auth_router.settings, "open_signup", False)
+    db_anon = _make_db()
+    db_anon.auth = MagicMock()
+    db_anon.auth.sign_up = AsyncMock(return_value=_make_auth_response())
+    db_admin = _make_db(_result(data=None))  # campaign lookup finds nothing
+    payload = RegisterRequest(
+        **{**_make_valid_register_payload(), "campaign_token": "fake-token", "invite_code": None}
+    )
+
+    with pytest.raises(HTTPException) as exc:
+        await register(FAKE_REQUEST, payload, db_anon, db_admin)
+
+    assert exc.value.status_code == 403
+    assert exc.value.detail["code"] == "INVITE_REQUIRED"

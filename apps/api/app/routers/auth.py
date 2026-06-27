@@ -41,6 +41,10 @@ class RegisterRequest(BaseModel):
     # carries the invite code; the guard at the top of register() verifies it
     # against beta_invite._load_valid_codes() when open_signup is False.
     invite_code: str | None = None
+    # Candidates invited via a screening campaign link present that campaign's
+    # invite token instead of a beta code; register() validates it server-side
+    # against an active campaign and waives the beta gate when it matches.
+    campaign_token: str | None = None
 
     @field_validator("password")
     @classmethod
@@ -161,19 +165,36 @@ async def register(
     # backend matches the same _load_valid_codes() allowlist used by the
     # /auth/validate-invite and /invite/validate endpoints.
     if not settings.open_signup:
-        from app.routers.beta_invite import _load_valid_codes  # noqa: PLC0415
+        # A valid, active screening campaign link is itself the invitation —
+        # candidates invited to a campaign bypass the global beta-invite gate.
+        # The token is verified server-side so a fabricated ?campaign_token can't
+        # open the gate; only a real active campaign waives the beta code.
+        campaign_invited = False
+        if payload.campaign_token and payload.campaign_token.strip():
+            camp = (
+                await db_admin.table("screening_campaigns")
+                .select("id")
+                .eq("invite_token", payload.campaign_token.strip())
+                .eq("status", "active")
+                .maybe_single()
+                .execute()
+            )
+            campaign_invited = bool(camp and camp.data)
 
-        if not payload.invite_code or not payload.invite_code.strip():
-            raise HTTPException(
-                status_code=403,
-                detail={"code": "INVITE_REQUIRED", "message": "Invite code required for controlled-beta signup."},
-            )
-        valid_codes = _load_valid_codes()
-        if payload.invite_code.strip().upper() not in valid_codes:
-            raise HTTPException(
-                status_code=403,
-                detail={"code": "INVALID_INVITE", "message": "Invite code is invalid or expired."},
-            )
+        if not campaign_invited:
+            from app.routers.beta_invite import _load_valid_codes  # noqa: PLC0415
+
+            if not payload.invite_code or not payload.invite_code.strip():
+                raise HTTPException(
+                    status_code=403,
+                    detail={"code": "INVITE_REQUIRED", "message": "Invite code required for controlled-beta signup."},
+                )
+            valid_codes = _load_valid_codes()
+            if payload.invite_code.strip().upper() not in valid_codes:
+                raise HTTPException(
+                    status_code=403,
+                    detail={"code": "INVALID_INVITE", "message": "Invite code is invalid or expired."},
+                )
 
     # GDPR consent — forward into user_metadata so onboarding (POST /profiles/me)
     # can copy the values into profiles.age_confirmed / terms_version / terms_accepted_at.

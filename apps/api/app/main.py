@@ -69,6 +69,7 @@ from app.routers import (
     invites,
     lifesim,
     notifications,
+    org_billing,
     organizations,
     profiles,
     skills,
@@ -230,6 +231,7 @@ app.include_router(character.router, prefix="/api")
 app.include_router(brandedby.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
+app.include_router(org_billing.router, prefix="/api")  # B2B org-side monetization (report paywall)
 app.include_router(tribes.router, prefix="/api")
 app.include_router(admin.router)  # prefix already set in router (/api/admin)
 app.include_router(atlas_consult.router, prefix="")  # Atlas self-consult — Layer 3 mirror consultation

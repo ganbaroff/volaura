@@ -88,7 +88,26 @@ class Settings(BaseSettings):
     payment_enabled: bool = False
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
-    stripe_price_id: str = ""  # Monthly subscription price ID (e.g. price_xxx from Stripe dashboard)
+    stripe_price_id: str = ""  # B2C monthly subscription price ID (e.g. price_xxx from Stripe dashboard)
+
+    # Org-side billing (B2B screening pivot) — the paid surface is the ranked candidate report.
+    # ── KILL SWITCH ──────────────────────────────────────────────────────────────
+    # org_billing_enabled=False (default): the campaign report stays FREE — no paywall.
+    #   This is the design-partner phase (refounding brief §3, days 14-45: free pilots).
+    # org_billing_enabled=True: GET /api/campaigns/{id}/report requires either an active
+    #   org subscription OR a one-time unlock for that campaign (refounding brief §3,
+    #   days 45-90: charge from the 11th org). Flip to True on Railway when ready to charge.
+    # Independent of payment_enabled: payment_enabled is the master Stripe switch (B2C + B2B
+    # checkout endpoints), org_billing_enabled only controls whether the report is gated.
+    org_billing_enabled: bool = False
+    # Separate Stripe webhook endpoint + signing secret for org billing (isolated from B2C
+    # webhook so the two flows can never cross-write). Register a second webhook endpoint in
+    # the Stripe dashboard → /api/org-billing/webhook and paste its secret here.
+    stripe_org_webhook_secret: str = ""
+    # Recurring price for the org "package" tier (refounding brief: 250-500 AZN/month).
+    stripe_org_subscription_price_id: str = ""
+    # One-time price for a single-campaign report unlock (refounding brief: per-candidate/per-vacancy).
+    stripe_campaign_report_price_id: str = ""
 
     # Transactional email via Resend
     # ── KILL SWITCH ──────────────────────────────────────────────────────────────
@@ -249,6 +268,15 @@ def assert_production_ready() -> None:
             "STRIPE_WEBHOOK_SECRET is not set but PAYMENT_ENABLED=True — webhook endpoint "
             "accepts unsigned Stripe events. Attacker can grant free Pro subscriptions. "
             "Set STRIPE_WEBHOOK_SECRET on Railway before enabling payments."
+        )
+    # RISK-N02 (org billing): same guard for the org-billing webhook. If org_billing_enabled
+    # is True but the org webhook secret is missing, unsigned events are accepted — an attacker
+    # could POST a fake checkout.session.completed and unlock paid reports for free.
+    if settings.org_billing_enabled and not settings.stripe_org_webhook_secret:
+        errors.append(
+            "STRIPE_ORG_WEBHOOK_SECRET is not set but ORG_BILLING_ENABLED=True — the org-billing "
+            "webhook accepts unsigned Stripe events. Attacker can unlock paid reports for free. "
+            "Set STRIPE_ORG_WEBHOOK_SECRET on Railway before enabling org billing."
         )
     # RISK-011: Old Supabase project guard — prevent split writes after migration.
     # If SUPABASE_URL still points to the old free-tier project, writes go to the wrong

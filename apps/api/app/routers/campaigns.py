@@ -16,6 +16,7 @@ from datetime import UTC, datetime, timedelta
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 
+from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin
 from app.middleware.rate_limit import limiter
 from app.schemas.campaign import (
@@ -28,6 +29,7 @@ from app.schemas.campaign import (
     JoinedSession,
     PublicCampaignResponse,
 )
+from app.services.org_entitlements import org_has_report_access
 
 router = APIRouter(prefix="/campaigns", tags=["Screening Campaigns"])
 
@@ -364,6 +366,22 @@ async def get_campaign_report(
         )
     campaign = campaign_result.data
     campaign_slugs: list[str] = campaign["competency_slugs"]
+
+    # ── Paywall gate (refounding pivot 2026-06-11) ────────────────────────────
+    # The ranked report is the paid B2B deliverable. When org_billing_enabled is
+    # False the report is free (design-partner phase). When True, the org needs an
+    # active subscription OR a one-time unlock for this campaign — otherwise 402.
+    if settings.org_billing_enabled and not await org_has_report_access(db_admin, org["id"], campaign_id):
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "code": "PAYMENT_REQUIRED",
+                "message": "Unlock this campaign's ranked report to view verified candidates.",
+                "campaign_id": campaign_id,
+                "subscribe_url": "/api/org-billing/subscribe",
+                "unlock_url": f"/api/org-billing/campaigns/{campaign_id}/unlock",
+            },
+        )
 
     members_result = (
         await db_admin.table("campaign_candidates")

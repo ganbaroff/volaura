@@ -10,7 +10,7 @@
  * the campaign's assessments. Decision: memory/decisions/2026-06-11-b2b-pivot.md
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -28,26 +28,41 @@ export default function ScreeningLandingPage() {
   const { data: campaign, isLoading, error } = usePublicCampaign(token ?? null);
   const joinMutation = useJoinCampaign();
 
-  const [hasSession, setHasSession] = useState<boolean | null>(null);
   const [joined, setJoined] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getSession();
-      if (!cancelled) setHasSession(Boolean(data.session));
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Surfaces a failure to provision the anonymous session (rare — Supabase down,
+  // anonymous sign-ins disabled). Distinct from joinMutation's own error.
+  const [authError, setAuthError] = useState(false);
 
   const nextPath = `/${locale}/screening/${token}`;
 
+  // PM-anonymous flow: a candidate must be able to take the assessment WITHOUT a
+  // VOLAURA account. We transparently create an anonymous Supabase session (mirrors
+  // apps/v2 ensureSession, src/lib/client.ts:27-34) and then join. The backend
+  // accepts anonymous JWTs for join + assessment (deps.py get_current_user_id
+  // validates ANY valid Supabase token; no profile/email required).
   async function handleJoin() {
+    setAuthError(false);
     try {
-      await joinMutation.mutateAsync(token);
+      const supabase = createClient();
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        const { error: anonError } = await supabase.auth.signInAnonymously();
+        if (anonError) {
+          setAuthError(true);
+          return;
+        }
+      }
+      const result = await joinMutation.mutateAsync(token);
+      // Hand the campaign-assigned sessions to the runner so it activates THEM
+      // (start WITH session_id) instead of a fresh off-campaign self-serve session.
+      try {
+        sessionStorage.setItem(
+          `volaura-screening-plan:${token}`,
+          JSON.stringify(result.sessions),
+        );
+      } catch {
+        // sessionStorage unavailable (private mode quota) — runner re-joins idempotently.
+      }
       setJoined(true);
     } catch {
       // error state rendered below via joinMutation.isError
@@ -55,7 +70,7 @@ export default function ScreeningLandingPage() {
   }
 
   // ── Loading skeleton (matches final shape, no spinner) ───────────────────────
-  if (isLoading || hasSession === null) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="w-full max-w-md space-y-6 text-center">
@@ -129,7 +144,7 @@ export default function ScreeningLandingPage() {
             </p>
           </div>
           <button
-            onClick={() => router.push(`/${locale}/assessment`)}
+            onClick={() => router.push(`/${locale}/screening/${token}/run`)}
             className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-md transition-all hover:bg-primary/90"
           >
             {t("screening.startAssessments", { defaultValue: "Start your assessments" })}
@@ -206,7 +221,10 @@ export default function ScreeningLandingPage() {
               defaultValue: "This screening has reached its candidate limit.",
             })}
           </p>
-        ) : hasSession ? (
+        ) : (
+          // One primary CTA — no account required. Join self-provisions an
+          // anonymous session (handleJoin) so a PM can take the assessment without
+          // signing up. "Already on VOLAURA? Log in" stays as a secondary link.
           <div className="space-y-3">
             <button
               onClick={handleJoin}
@@ -218,23 +236,13 @@ export default function ScreeningLandingPage() {
                 : t("screening.joinCta", { defaultValue: "Join this screening" })}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </button>
-            {joinMutation.isError && (
+            {(joinMutation.isError || authError) && (
               <p className="text-sm text-[#D4B4FF]">
                 {t("screening.joinError", {
                   defaultValue: "We couldn't join you right now — please try again in a moment.",
                 })}
               </p>
             )}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <Link
-              href={`/${locale}/signup?next=${encodeURIComponent(nextPath)}`}
-              className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-md transition-all hover:bg-primary/90"
-            >
-              {t("screening.signupCta", { defaultValue: "Create account & join" })}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
             <p className="text-xs text-muted-foreground">
               {t("screening.haveAccount", { defaultValue: "Already on VOLAURA?" })}{" "}
               <Link

@@ -319,4 +319,29 @@ if [ "$AGE" -gt 86400 ] || [ "$LAST_TS" = "0" ]; then
   disown 2>/dev/null || true
 fi
 
+# ── Memory write-back gate ──────────────────────────────────────────────
+# Kimi Memory Autopsy finding: "principle not gate" kills continuity.
+# This warns (does not block) when episodes are stale >2 days.
+if [ -f "$SESSION_MARKER" ]; then
+  EPISODES_DIR="$(cd "$(dirname "$0")/../.." && pwd)/memory/atlas/episodes"
+  TODAY=$(date +%Y-%m-%d 2>/dev/null || echo "")
+  if [ -n "$TODAY" ] && [ -d "$EPISODES_DIR" ]; then
+    RECENT=$(find "$EPISODES_DIR" -name "*.json" -newer "$EPISODES_DIR/../lessons.md" 2>/dev/null | wc -l)
+    LATEST=$(ls -t "$EPISODES_DIR"/*.json 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "NONE")
+    LATEST_DATE=$(echo "$LATEST" | grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}' 2>/dev/null || echo "")
+    if [ -n "$LATEST_DATE" ]; then
+      LATEST_EPOCH=$(date -d "$LATEST_DATE" +%s 2>/dev/null || echo 0)
+      NOW_EPOCH=$(date +%s 2>/dev/null || echo 0)
+      if [ "$NOW_EPOCH" -gt 0 ] && [ "$LATEST_EPOCH" -gt 0 ]; then
+        DAYS_OLD=$(( (NOW_EPOCH - LATEST_EPOCH) / 86400 ))
+        if [ "$DAYS_OLD" -gt 2 ]; then
+          echo ""
+          echo "UserPromptSubmit hook additional context: ⚠️ MEMORY GATE: Last episode is ${DAYS_OLD} days old (${LATEST}). Write an episode before session end."
+          echo ""
+        fi
+      fi
+    fi
+  fi
+fi
+
 exit 0

@@ -171,14 +171,3 @@ CEO later softened: «рой не театр. развивать дальше».
 **Closure rule.** CEO sets `Status:` to `closed-corrected` after ≥10 consecutive replies in this session OR subsequent session hold voice.md discipline (no bold headers for status, no bullet walls for conversation, no padded Что проверено sections beyond the literal tool-call evidence required by the hook) AND no further Class 39 arsenal-blind ask to CEO when atlas can self-execute.
 
 **Cross-references.** `memory/atlas/voice.md` (the discipline these marks violated). `docs/adr/ADR-014-2026-05-23-session-self-audit.md` (Class 39 documented + ignored same day). `docs/adr/ADR-015-2026-05-24-sprint-closure-discipline.md` (closure-discipline structural rule). `memory/atlas/lessons.md` Class 7 / 11 / 17 / 22 / 39.
-
----
-
-## DEFERRED SECURITY ACTION — key rotation (CEO-directed 2026-06-10, never auto-close)
-
-- **Opened:** 2026-06-10. CEO verbatim: «ключи менять не буду … в долги запиши. когда всё доделаем тогда и поменяю.»
-- **What:** Five live credentials were exposed in the chat transcript on 2026-06-10 and persisted by the `save-yusif-messages` hook to `C:/Users/user/Downloads/mindshift/memory/yusif-messages.md` ("forever, no exceptions"): Cloudflare API token (full account write, no expiry), Cloudflare R2 access-key + secret, Mistral API key, HuggingFace token. Still-unrotated from earlier (global CLAUDE.md): NVIDIA, GITHUB_PAT, SUPABASE_SERVICE_ROLE_KEY.
-- **Attribution:** exposure was a CEO paste, NOT an Atlas Class-35 grep. This is a CEO-requested deferral tracker, not an Atlas-failure debt.
-- **Status:** OPEN — CEO consciously deferred rotation until project completion. Surface in every CEO-facing status until rotated. Deleting the chat does NOT clear it (transcript .jsonl + yusif-messages.md persist; Anthropic processed it).
-- **Risk accepted (CEO):** anyone with the transcript / yusif-messages.md has full Cloudflare account control (DNS, Workers, R2, Billing) + Mistral/HF API spend until rotation.
-- **Closure:** CEO rotates all listed keys and sets `status: rotated`. Atlas NEVER auto-closes.

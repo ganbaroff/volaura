@@ -1,5 +1,23 @@
 # Claude Code Instance State
-**Updated:** 2026-04-16T04:00 Baku | **Instance:** Atlas | **Session:** 108
+**Updated:** 2026-06-27T02:15 Baku | **Instance:** atlas-overseer | **Session:** atlas-v1-stitch + v2-orchestrator
+
+## Reality Probe 2026-06-27 (7 of 9 probes complete)
+
+Probe 1 PROD: ok v0.2.0 sha:ab3bd1e. v2: 200. Bot Railway: 200 (5 providers, 13min uptime).
+Probe 2 SENTRY: UNVERIFIED — DSN not in local .env, need Railway dashboard check.
+Probe 3 STANDALONE: MindShift Academy 3 commits, 11 dirty. Others frozen.
+Probe 4 TESTS: 2928 passed, 1 failed (pre-existing fixture).
+Probe 5 E2E: files exist (`full-journey.spec.ts`), NOT RUN.
+Probe 6 CONSTITUTION: not run.
+Probe 7 RAILWAY ENV: bot project confirmed (8 vars). VOLAURA API project not linked.
+Probe 8 GIT: 22 dirty on codex/docs-archive-banner.
+Probe 9 BRIDGE: not run.
+
+KEY: Kimi's Gate 1 (orphaned sessions) = 0 = ALREADY PASS. Gate 4 (<15 questions) = all 15-16 = ALREADY PASS. 2 of 5 Beta gates already green WITHOUT any code changes.
+
+---
+
+**Previous:** 2026-04-16T04:00 Baku | Session 108
 
 ## Open Protocols (2026-04-16)
 

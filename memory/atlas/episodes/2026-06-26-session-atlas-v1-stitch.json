@@ -1,0 +1,43 @@
+{
+  "date": "2026-06-26",
+  "session_id": "atlas-v1-stitch",
+  "agent": "atlas-overseer",
+  "duration_hours": 7,
+  "summary": "Atlas v1 sprint — stitched Frankenstein. Swarm wired to Telegram (5/5 perspectives 16.8s, CEO verified). /status dashboard. CWD stitch-breaker fixed. Brain identity injection. pm2 service. Self-Wake PR #153 merged to main. ANUS PR #1 merged to main (18 commits).",
+  "shipped": [
+    "ANUS commit 2e4b4ae: swarm + status + memory wired to Telegram",
+    "ANUS commit 31ba74d: CWD stitch-breaker fix",
+    "ANUS commit 11ce957: swarm fork→in-process, status format fix",
+    "ANUS commit 1c44700: periodic memory write-back",
+    "ANUS commit 5e115df: brain identity injection",
+    "VOLAURA commit 5bd0bc3: can_finalize security gate + 22 safe files",
+    "VOLAURA commit c7d1a26: 47 files batch (memory, episodes, daemon, work-queue cleanup)",
+    "VOLAURA PR #153 merged: Self-Wake git-add -f fix + router test via OpenAPI",
+    "ANUS PR #1 merged: 18 commits squashed to main"
+  ],
+  "verified_e2e": [
+    "Telegram bot reply via freellmapi/gemini-2.5-flash (CEO tested)",
+    "/status dashboard formatted (CEO tested)",
+    "/swarm 5/5 perspectives 16798ms (CEO tested, bot log receipt)",
+    "Brain identity: 'freellmapi/gemini-2.5-flash' not 'Claude Opus' (CEO tested)",
+    "CWD fix: models/health/operator from C:/WINDOWS (bash receipt)",
+    "pm2: 60+ min uptime, 0 restarts (pm2 status receipt)"
+  ],
+  "not_verified": [
+    "Memory write-back e2e (only 2 messages processed, need 10)",
+    "Self-Wake heartbeat (just merged, next cron in ≤30 min)",
+    "Provider failover (routeModelWithFallback exists, no live kill-test)"
+  ],
+  "lessons": [
+    "Class 7 regression: said 'зашит' for swarm without starting bot",
+    "CWD-dependence was THE stitch-breaker — validator-shadow found it by running from wrong dir",
+    "app.routes internal structure differs between FastAPI versions — use app.openapi() for stability",
+    "SIGTERM write-back doesn't fire under Telegraf — use periodic write-back instead"
+  ],
+  "v1_bar": {
+    "telegram_reply_emotion": "DONE",
+    "memory_across_sessions": "PARTIAL (code done, e2e pending)",
+    "provider_failover": "PARTIAL (code exists, no live test)",
+    "swarm_from_telegram": "DONE"
+  }
+}

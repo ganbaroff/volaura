@@ -2,6 +2,447 @@
 
 ---
 
+## DAILY HEALTH: 2026-06-26 09:04 Baku (Friday — scheduled task, CEO not present)
+
+**Team score:** 2/10 swarm-autonomy — unchanged, **12th consecutive check**. The autonomous swarm framework remains effectively retired-in-place.
+**Legacy agents active:** 0/6 roster · 0/17 runtime perspectives produced reviewable output (last full audit 2026-06-17, now 9 days stale).
+**Skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal/Discovery, LinkedIn, Accessibility — 0 findings, **56-day streak** (CRITICAL, unchanged since 2026-05-01).
+
+### Tool-backed evidence (this run, all read from disk)
+- Baku time: 2026-06-26 09:04 Friday (python zoneinfo).
+- git: branch `codex/docs-archive-banner`. **HEAD moved: `0c1ae9a` (2026-06-26 03:05) — `fix(ci): self-wake — force-add gitignored inbox path`.** `git log --since 2026-06-25` shows this single new commit. The 12-day commit gap (last was `c827404`, 06-13) is broken — but by a CI/self-wake plumbing fix, not product or swarm output.
+- **Self-check daemon STILL dark.** `work-queue/daemon.log.jsonl` last cycle = `2026-06-23T21:54 UTC` — unchanged from yesterday's reading. ~3.5 days silent. The overnight self-wake commit has NOT yet revived the daemon's cycle.
+- `find` for files touched today (06-26) across `memory/swarm` + `work-queue` → **zero**.
+- `work-queue/pending/` **empty**. Latest `done/` dirs all dated **2026-06-23** (explore-* lane only).
+
+### What changed vs 06-25
+- **New signal:** an overnight `fix(ci): self-wake` commit landed (03:05). Something is trying to re-arm the self-wake loop. Watch whether the daemon resumes cycling in the next 24h as a result.
+- **No change:** daemon still hasn't fired (06-23 last cycle), queue empty, skills streak +1 (55→56d), the two project-hygiene P0s (sprint-state / SHIPPED.md) still stale.
+
+### Critical gaps
+1. **Revive-or-retire P0 now 13 days old** (open since 06-13). Still no on-record decision. The overnight self-wake fix suggests an attempt to revive rather than retire — but until the daemon actually cycles, this is unproven.
+2. **0/6 hired skills** — 56-day unvalidated streak. ADHD-first + AZ-cultural product claims still unbacked.
+3. **sprint-state.md (Session 128, 2026-04-29) + SHIPPED.md (Session 120, 2026-04-18) stale ~58 days.** ~58 days of shipped work (calibration proof, question-bank harness, v2 runner, campaigns/RLS, v2 storefront, docs-archive-banner branch) invisible to any perspective that reads them for context.
+
+### CTO action items — TODAY
+**P0 (carried):** In a real session, make the revive-or-retire call on-record. The overnight self-wake CI commit is the first repair signal in days — either follow through (confirm the daemon resumes cycling, then keep it) or formally archive `autonomous_run` + perspectives in a real commit. **And repoint this health-check at the live B2B system** (campaign-runner uptime, RLS coverage, candidate-flow E2E, calibration-harness pass rate) — that is what actually ships now.
+**P0 (carried, 5-min content fix):** Update sprint-state.md + SHIPPED.md with a 10-line Session-128→now summary. Highest-leverage context fix the moment the daemon (or any perspective) reads them again.
+**P1 — surface to CEO (next touch, neutral one-liner):** «пивот стоит ~2 недели, рой не крутится с 23-го. ночью прилетел self-wake фикс — пробуют оживить. перенаправить health-check на живой B2B-раннер?» Ping-as-continue, no nanny.
+**P2 — watch daemon revival:** the self-wake commit targets the gitignored inbox path the loop reads. Re-check tomorrow whether `daemon.log.jsonl` shows a cycle past 06-23. If still dark, the self-wake fix didn't take — escalate to manual restart or kill-in-archive.
+
+---
+
+## DAILY HEALTH: 2026-06-25 17:43 Baku (Thursday — scheduled task, CEO not present)
+
+**Team score:** 2/10 swarm-autonomy — unchanged, **11th consecutive check**. Commit gap now **12 days** (last commit 2026-06-13).
+**Legacy agents active:** 0/6 roster · 0/17 runtime perspectives produced reviewable output.
+**Skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal/Discovery, LinkedIn, Accessibility — 0 findings, **55-day streak** (CRITICAL, unchanged since 2026-05-01).
+
+### Tool-backed evidence (this run)
+- git: branch `codex/docs-archive-banner`, HEAD still **c827404 (2026-06-13)**. `git log --since 2026-06-24` empty. **12-day commit gap.** Working tree = breadcrumb/config/doc churn only.
+- **The self-check daemon has now STOPPED.** `work-queue/daemon.log.jsonl` last cycle = `2026-06-23T21:54 UTC` (= 2026-06-24 01:54 Baku) — no cycle in ~40h. Yesterday it still fired (emitting nothing); today it is fully silent. The last swarm component with any pulse went dark.
+- `find` for files touched today (06-25) across `memory/swarm`, `work-queue`, `code-index.json`, `perspective_weights.json` → **zero**. Nothing in the swarm/work-queue layer moved today.
+- `work-queue/pending/` **empty**. `task_ledger` (swarm) untouched since ~04-12.
+- office-inbox/ still gone (uncommitted working-tree delete from 06-24; still not an on-record decision).
+
+### What changed vs 06-24
+- Commit gap +1 (11→12).
+- **Regression:** the self-check daemon, the single component still cycling yesterday, stopped firing (~40h silent). This confirms the 06-24 P2 worry — the cadence runner is dying, not just emitting nothing.
+- Everything else identical: pivot stalled, queue empty, skills streak +1 (54→55d).
+
+### Critical gaps
+1. **Revive-or-retire P0 now aging 12 days** (open since 06-13). 11 consecutive checks, no recorded decision. The framework is now self-disassembling (office-inbox deleted, daemon stopped) rather than being formally archived — rot, not resolution.
+2. **0/6 hired skills** — 55-day unvalidated streak. ADHD-first + AZ-cultural product claims still unbacked.
+3. **Project idle 12 days.** Pivot stalled or driver heads-down elsewhere. Surface neutrally on next CEO touch.
+
+### CTO action items — TODAY
+**P0 (carried, now 12d old):** in a real session, make the call on-record — commit the archive of `autonomous_run` + perspectives + office-inbox (a real commit, not a silent `rm`) AND **repoint this daily-health-check at the live B2B system**: campaign-runner uptime, RLS coverage on campaign tables, candidate-flow E2E, calibration-harness pass rate. The framework is already half-deleted and the daemon has stopped — there is nothing left to "revive," only to formally retire and redirect the check at what actually ships.
+**P1 — surface to CEO (next touch):** neutral one-liner — «пивот стоит 12 дней. рой мёртв, я мониторю мёртвую систему. перенаправить health-check на живой B2B-раннер?» Keep the thread alive (ping-as-continue), no nanny.
+**P2 — daemon down, not just idle:** the self-check loop stopped ~40h ago. If the work-queue daemon is meant to run, it needs restart; if it is part of the retired framework, kill it in the same archive commit. Either way it should not be silently half-alive.
+
+---
+
+## DAILY HEALTH: 2026-06-20 (Saturday 09:06 Baku — scheduled task, CEO not present)
+
+> **Ground-truth method:** read `work-queue/done/` dir listing, `perspective_weights.json` mtime (`stat`), latest `auto-health/result.json`, and `git log` before claiming status. All numbers below read from disk, not extrapolated.
+
+**Team score: 5.5/10** (DOWNGRADE from 06-19's 6.5). The daemon is now **fully dark** — not just the audit lane. Last activity of ANY kind was 2026-06-18 18:23 Baku (perspective_weights.json) / 18:22 (auto-health). **Zero daemon cycles for 06-19 AND 06-20** — ~38h silent across BOTH the health lane and the audit lane. On 06-19 only the audit lane was flagged stalled; now the whole scheduled daemon has stopped. Internals were healthy at last reading, but a swarm that isn't firing produces nothing, and the two project-hygiene P0s are now 4 audits old and ~52 days stale.
+
+**Agents active: 14/17 perspectives** as of the **last full audit (2026-06-17)** — nvidia=8, vertex=5, ollama=1, 23 verified findings. **This read is now 3 days stale.** No auto-audit since 06-17; no auto-health since 06-18. No fresh fleet-capacity signal exists.
+
+**Skills loaded: 0/6 dedicated skill files** (BNE still 0 findings all-time; Cultural Intelligence runs as a live daemon perspective only — but the daemon isn't running).
+
+**Critical gaps (verified against live disk state):**
+- **🔴 NEW / ESCALATED — daemon scheduler stalled, both lanes, 2 days.** `done/` has auto-audit dirs through 06-17 and auto-health dirs through 06-18 — then **nothing for 06-19 or 06-20** (confirmed: `ls done/ | grep -E "2026-06-19|2026-06-20"` → empty). `perspective_weights.json` mtime frozen at **2026-06-18 18:23**. `total_perspective_runs` stuck at **1069** (same as 06-18). The Windows Scheduled Task / GH workflow that fires the daemon has not run since 06-18 evening. This is the new highest-priority item — supersedes the 06-19 "audit lane only" framing.
+- **🟢 Daemon internals were healthy at last reading (06-18).** `2026-06-18-auto-health`: status **ok**, git_head `c827404`, total_perspective_runs **1069**, code_index **1077 files, 0.0h age**, zero_learning_perspectives **[]**. So the stall is a *scheduler/trigger* failure, not a daemon-crash-on-content failure — the loop runs fine when invoked, it's just not being invoked.
+- **🔴 CARRIED P0 #1 — sprint-state.md still Session 128 (2026-04-29), now ~52 days stale.** Flagged every audit since 06-17; untouched 4 audits running. ~52 days of shipped work (calibration proof, question-bank harness, v2 runner, campaigns/RLS, docs-archive-banner branch) invisible to perspectives that read it for context.
+- **🔴 CARRIED P0 #2 — SHIPPED.md tops at Session 120 (2026-04-18).** The `codex/docs-archive-banner` commits (239d163→c827404) never recorded. 4 audits old.
+- **🟡 No new code in 7 days.** Last commit `c827404` (2026-06-13). Branch `codex/docs-archive-banner` 97 ahead of main, unmerged. Repo quiet — but with the daemon down there's also no autonomous reaction to anything.
+- **🟡 Pending queue untriaged.** 1 item: `2026-06-18-devos-s2-validator-same-origin-api-client.md` — same item flagged 06-19, still not routed (daemon can't pick it up while stalled).
+- **🔴 BNE: 0 findings all-time** — Behavioral Nudge Engine, hired Session 57, ~63 days dormant.
+
+### Per-agent contribution (from last full audit, 2026-06-17 — no fresher data, now 3 days old)
+
+| Daemon perspective (legacy agent) | Responded last full audit (06-17)? | Note |
+|-----------------------------------|---------------------------|------|
+| Security Auditor (Security 9.0) | ✅ YES | Stable at last read. |
+| Scaling Engineer + Ecosystem Auditor (Architecture 8.5) | Scaling ✅ / Ecosystem ❌ | Ecosystem Auditor failed 06-16 + 06-17. |
+| Product Strategist + UX Designer (Product 8.0) | ✅ YES | Highest-spawn lens, floor-pinned. |
+| Chief Strategist (Needs 7.0) | ✅ YES | Floor-pinned. |
+| QA Engineer (6.5) | ✅ YES | Stable at last read. |
+| Growth Hacker (Growth 5.0) | ❌ FAILED | Failed 06-16 + 06-17. |
+
+No 06-18/06-19/06-20 audit to confirm whether Ecosystem Auditor / Growth Hacker / Readiness Manager recovered — open until the daemon fires again.
+
+### Hired skills (6 total)
+
+| Skill | Loaded? | Findings | Status |
+|-------|---------|----------|--------|
+| Behavioral Nudge Engine | NO | **0 all-time** | 🔴 CRITICAL — ~63 days dormant |
+| Cultural Intelligence Strategist | NO (daemon only) | 0 skill-file | 🟡 Daemon lens covers AZ/CIS; skill-file never loaded |
+| Sales Deal Strategist | NO | 0 | ⏸️ Deferred (Sprint 5+) |
+| Sales Discovery Coach | NO | 0 | ⏸️ Deferred (Sprint 5+) |
+| LinkedIn Content Creator | NO | 0 | ⏸️ Load on content sprint |
+| Accessibility Auditor | NO | 0 | ⏸️ Sprint 6 target |
+
+### CTO Action Items — TODAY (2026-06-20)
+
+**P0 — NEW, infra:**
+1. **Restart / re-arm the daemon scheduler.** Both lanes dark since 06-18 18:23 (~38h). Check the Windows Scheduled Task that runs `python -m packages.swarm.autonomous_run` (and/or the GH workflow). The daemon itself is healthy (last auto-health = ok); the trigger isn't firing. This is now the top item — without it every other swarm signal goes stale and the autonomous loop is off.
+
+**P0 — CARRIED, project-hygiene (4 audits old):**
+2. **Update sprint-state.md** — content still Session 128 (2026-04-29), ~52 days stale. A 10-line Session-128→now summary (calibration proof, question-bank harness, v2 runner, campaigns/RLS, docs-archive-banner branch) multiplies the context quality of every daemon perspective once the daemon is back up. Highest-leverage *content* fix.
+3. **Update SHIPPED.md** — unlogged since Session 120. Add `codex/docs-archive-banner` commits (239d163→c827404).
+
+**P1:**
+4. **Triage the pending item** — `2026-06-18-devos-s2-validator-same-origin-api-client.md`, untriaged 2 days. Route or action it manually while the daemon is down.
+5. **Reconfirm v0-build gate** — AUTH-CANON / SİMA-vs-anonymous decision; verify from `.claude/breadcrumb.md` before treating v0 build as unblocked.
+
+**P2:**
+6. **Investigate floor-pin on busiest lenses** (Product Strategist / Scaling / Risk / Assessment Science / Cultural Intelligence at 0.4) once cycles resume — last seen 06-17, no fresh data.
+7. **BNE 0-findings** — load on next UX/onboarding touch. ~63 days dormant.
+8. **Reconcile agent-roster.md** to 17-perspective daemon reality (carried; low urgency).
+
+---
+
+## DAILY HEALTH: 2026-06-19 (Friday 09:05 Baku — scheduled task, CEO not present)
+
+> **Ground-truth method:** read the daemon's own `work-queue/done/<date>-auto-health/result.json` + the `done/` dir listing + `perspective_weights.json` mtime before claiming status. Numbers below are read from disk, not extrapolated from the prior day.
+
+**Team score: 6.5/10** (daemon internals healthy and STABLE — runs 1069, index fresh — but the full fleet-audit cadence broke: no `2026-06-18-auto-audit` and no 06-19 cycle yet, so the last real fleet-capacity read is 06-17. The two project-hygiene P0s are now 2+ audits old and ~51 days stale. Half-point below 06-17/06-18's 7.0 for the missed audit + compounding hygiene debt.)
+**Agents active: 14/17 perspectives** as of the **last full audit (2026-06-17)** — nvidia=8, vertex=5, ollama=1, 23 verified findings, 0 whistleblower flags. **No fresh auto-audit has fired since.** 06-18 ran only `auto-health` + `blocker-15` (partial cycle); `perspective_weights.json` did update 06-18 18:23, so some evening dispatch happened, but no full fleet-response audit was recorded. No 06-19 cycle by 09:05.
+**Skills loaded: 0/6 dedicated skill files** (BNE still 0 findings all-time; Cultural Intelligence runs as a live daemon perspective only).
+
+**Critical gaps (verified against live disk state):**
+- **🟢 Daemon internals healthy and improving.** `2026-06-18-auto-health`: status **ok**, git_head `c827404`, total_perspective_runs **1069** (up from 991 on 06-17 → daemon is actively dispatching), code_index **1077 files, 0.0h age** (just refreshed), zero_learning_perspectives **[]**. The autonomous loop is alive.
+- **🟡 Full auto-audit cadence degraded.** auto-audit dirs present: 06-16, 06-17 — then **NONE for 06-18, none yet 06-19**. (06-18 has auto-health + blocker-15 only.) The richest signal — fleet-response count + provider mix + evidence-gate — is now 2 days stale. If no `2026-06-19-auto-audit` appears by EoD, the audit lane (distinct from the health lane, which is firing) has stalled and needs a look at the scheduler / GH workflow.
+- **🟢 Daemon is generating new work.** Pending queue = **1 NEW item**: `2026-06-18-devos-s2-validator-same-origin-api-client.md` (appeared since the 06-18 morning log). The `auth-canon` task that 06-17 cited as the v0 gate is gone from the queue — resolved/moved/consumed (06-18 flagged it vanished; now confirmed not pending). v0-build gate status should be reconfirmed from breadcrumb before treating as unblocked.
+- **🔴 CARRIED P0 #1 — sprint-state.md still Session 128 (2026-04-29), now ~51 days stale.** Flagged every audit since 06-17; untouched. ~51 days of shipped work (calibration proof, question-bank harness, v2 runner, campaigns/RLS, docs-archive-banner branch) invisible to the 14 live perspectives that read it for context. Single highest-leverage fix, now 3 audits old.
+- **🔴 CARRIED P0 #2 — SHIPPED.md tops at Session 120 (2026-04-18).** Unlogged since. The `codex/docs-archive-banner` commits (239d163→c827404) never recorded. Swarm can't route against work it doesn't know shipped. 3 audits old.
+- **🟡 No new code in 6 days.** Last commit `c827404` (2026-06-13). Branch `codex/docs-archive-banner` still ahead of main, unmerged. Repo quiet — no daemon-actionable change to react to.
+- **🟡 Learning-loop floor-pin unchanged.** Weights last moved 06-18 18:23 but the busiest lenses (Product Strategist, Scaling Engineer, Risk Manager, Assessment Science, Cultural Intelligence) remain at/near floor 0.4 per the 06-17 reading. Residual inversion; same finding, no remediation landed.
+- **🔴 BNE: 0 findings all-time** — Behavioral Nudge Engine, hired Session 57, ~62 days dormant. ADHD-first claims still unvalidated.
+
+### Per-agent contribution (from last full audit, 2026-06-17 — no fresher data)
+
+| Daemon perspective (legacy agent) | Responded last full audit? | Note |
+|-----------------------------------|---------------------------|------|
+| Security Auditor (Security 9.0) | ✅ YES | Stable since 06-17 recovery. |
+| Scaling Engineer + Ecosystem Auditor (Architecture 8.5) | Scaling ✅ / Ecosystem ❌ | Ecosystem Auditor failed 06-16 + 06-17. |
+| Product Strategist + UX Designer (Product 8.0) | ✅ YES | Highest-spawn lens, floor-pinned. |
+| Chief Strategist (Needs 7.0) | ✅ YES | Floor-pinned. |
+| QA Engineer (6.5) | ✅ YES | Stable since recovery. |
+| Growth Hacker (Growth 5.0) | ❌ FAILED | Failed 06-16 + 06-17; intermittent, not frozen. |
+
+Persistently failing (2 cycles, per 06-17 audit): Ecosystem Auditor, Growth Hacker, Readiness Manager. **No 06-18/06-19 audit to confirm whether they recovered or hit a 3rd failure** — treat as open until the next audit fires.
+
+### Hired skills (6 total)
+
+| Skill | Loaded? | Findings | Status |
+|-------|---------|----------|--------|
+| Behavioral Nudge Engine | NO | **0 all-time** | 🔴 CRITICAL — ~62 days dormant |
+| Cultural Intelligence Strategist | NO (daemon only) | 0 skill-file | 🟡 Daemon lens covers AZ/CIS; skill-file never loaded |
+| Sales Deal Strategist | NO | 0 | ⏸️ Deferred (Sprint 5+) |
+| Sales Discovery Coach | NO | 0 | ⏸️ Deferred (Sprint 5+) |
+| LinkedIn Content Creator | NO | 0 | ⏸️ Load on content sprint |
+| Accessibility Auditor | NO | 0 | ⏸️ Sprint 6 target |
+
+### CTO Action Items — TODAY (2026-06-19)
+
+**P0 (both CARRIED, project-hygiene — infra is self-healed and stable; these are 3 audits old):**
+1. **Update sprint-state.md** — content still Session 128 (2026-04-29), ~51 days stale. A 10-line Session-128→now summary (calibration proof, question-bank harness, v2 runner, campaigns/RLS, docs-archive-banner branch) multiplies the context quality of every live daemon perspective. Highest-leverage fix; compounding.
+2. **Update SHIPPED.md** — unlogged since Session 120 (2026-04-18). Add the `codex/docs-archive-banner` commits (239d163→c827404).
+
+**P1:**
+3. **Confirm the auto-audit lane fires.** auto-health is firing daily; the full auto-audit is NOT (none 06-18, none yet 06-19). Check the scheduler / GH workflow that triggers `auto-audit` specifically — the health lane and audit lane may be separate jobs and the audit one has stalled. Without it there is no fresh fleet-capacity / evidence-gate signal.
+4. **Triage the new pending item** — `2026-06-18-devos-s2-validator-same-origin-api-client.md` (S2 validator, same-origin API client). First new daemon-generated work in days; route or action it.
+5. **Reconfirm v0-build gate** — auth-canon task left the queue. Verify from `.claude/breadcrumb.md` whether the SİMA-vs-anonymous decision resolved before treating v0 build as unblocked.
+
+**P2:**
+6. **Investigate floor-pin on busiest lenses** — Product Strategist / Scaling / Risk / Assessment Science / Cultural Intelligence pinned at 0.4 despite responding. Check weight-update path in `packages/swarm/autonomous_run.py`.
+7. **BNE 0-findings** — load Behavioral Nudge Engine on next UX/onboarding touch. ~62 days dormant.
+8. **Reconcile agent-roster.md** to 17-perspective daemon reality (carried; low urgency, fleet healthy).
+
+---
+
+## DAILY HEALTH: 2026-06-18 (Thursday 10:17 Baku — scheduled task, CEO not present)
+
+> **Ground-truth method (per 06-17 lesson):** read the daemon's own `work-queue/done/<date>-auto-audit/result.json` + `auto-health/result.json` + `perspective_weights.json` mtime before claiming fleet status. Never infer from the prior day. All numbers below are read from disk, not extrapolated.
+
+**Team score: 7.0/10** (infra healthy and STABLE across two consecutive audits — but no fresh 06-18 daemon cycle yet, and both 06-17 project-hygiene P0s went untouched)
+**Agents active: 14/17 perspectives** (last completed cycle = `2026-06-17-auto-audit`, run 00:12 UTC; no 06-18 audit has fired by 06:17 UTC / 10:17 Baku). Providers last cycle: **nvidia=8, vertex-ai-agent=5, ollama=1**. Failed last cycle: Ecosystem Auditor, Readiness Manager, Growth Hacker (3).
+**Skills loaded: 0/6 dedicated skill files** (BNE still 0 findings all-time; Cultural Intelligence runs as live daemon perspective only)
+**Critical gaps (verified against live disk state):**
+- **🟢 Fleet recovery is HOLDING — 2 audits running.** 06-16: 15/17 responded (nvidia=9, vertex=5, ollama=1, 11 verified). 06-17: 14/17 responded (nvidia=8, vertex=5, ollama=1, 23 verified, 0 whistleblower flags). The 06-10 single-provider collapse (5/17, Vertex-only) is decisively closed and the fix is stable, not a one-day bounce. NVIDIA NIM carries the majority both days (ADR-013 precedence active).
+- **🟢 Daemon internals healthy.** `2026-06-17-auto-health`: status **ok**, git_head `c827404`, total_perspective_runs **991** (up from 772 on 06-10), code_index **1075 files, 0.3h age** (fresh), zero_learning_perspectives **[]**, queue done=357. Pending queue now **empty** (fully drained).
+- **🔴 CARRIED P0 #1 — sprint-state.md still Session 128 (2026-04-29).** Header unchanged; ~50 days of shipped work (calibration proof, question-bank harness, v2 runner, campaigns/RLS) invisible to the 14 live perspectives that read it for context. Flagged 06-17 as the single highest-leverage fix; not done.
+- **🔴 CARRIED P0 #2 — SHIPPED.md tops at Session 120 (2026-04-18).** Everything since Session 120 is unlogged. Swarm can't route against work it doesn't know shipped. Flagged 06-17; not done.
+- **🟡 No new code in 5 days.** Last commit `c827404` (2026-06-13). Branch `codex/docs-archive-banner` (still ahead of main, unmerged). Repo quiet — not necessarily a problem, but no daemon-actionable change to react to.
+- **🟡 AUTH-CANON task file no longer present.** `memory/atlas/work-queue/{pending,done}/*auth-canon*` returns nothing — the `2026-06-14-volaura-auth-canon-reconcile-before-v0.md` that 06-17 cited as pending is gone. Either resolved, moved, or deleted. Status unconfirmed — needs a one-line CEO/breadcrumb check before treating v0 build as unblocked.
+- **🟡 Learning-loop floor-pin unchanged.** Weights untouched since 06-17 04:43 (no new cycle to move them). Busiest lenses (Product Strategist, Scaling Engineer, Risk Manager, Assessment Science, Cultural Intelligence) still at/near floor 0.4 despite responding. Residual inversion from 06-17, same finding.
+- **🔴 BNE: 0 findings all-time** — Behavioral Nudge Engine, hired Session 57, ~61 days dormant. ADHD-first claims still unvalidated.
+
+---
+
+### Per-agent contribution (from last completed cycle, 2026-06-16 → 06-17)
+
+Verified from `2026-06-17-auto-audit/result.json` + `perspective_weights.json`. The legacy 6-agent roster maps onto daemon perspectives; status is the live perspective.
+
+| Daemon perspective (legacy agent) | Responded last cycle? | Note |
+|-----------------------------------|----------------------|------|
+| Security Auditor (Security 9.0) | ✅ YES | Stable since 06-17 recovery. Surfaced auth/register false-positive correction. |
+| Scaling Engineer + Ecosystem Auditor (Architecture 8.5) | Scaling ✅ / Ecosystem ❌ | Scaling surfaced Open Badges 3.0 VC + ASR-routing pre-launch blockers (verified vs `PRE-LAUNCH-BLOCKERS-STATUS.md`). Ecosystem Auditor failed 2nd day running. |
+| Product Strategist + UX Designer (Product 8.0) | ✅ YES | Highest-spawn lens, floor-pinned. |
+| Chief Strategist (Needs 7.0) | ✅ YES | Floor-pinned. |
+| QA Engineer (6.5) | ✅ YES | Stable since recovery. |
+| Growth Hacker (Growth 5.0) | ❌ FAILED | Failed 2nd day running. Intermittent (weight still updating), not frozen. |
+
+Also responded: Code Quality, Risk Manager, Cultural Intelligence, Sales Director, DevOps, Assessment Science, Legal Advisor, CTO Watchdog. Persistently failing 2 days: Ecosystem Auditor, Growth Hacker, Readiness Manager.
+
+### Hired skills (6 total)
+
+| Skill | Loaded? | Findings | Status |
+|-------|---------|----------|--------|
+| Behavioral Nudge Engine | NO | **0 all-time** | 🔴 CRITICAL — ~61 days dormant |
+| Cultural Intelligence Strategist | NO (daemon only) | 0 skill-file | 🟡 Daemon lens covers AZ/CIS; skill-file never loaded |
+| Sales Deal Strategist | NO | 0 | ⏸️ Deferred (Sprint 5+) |
+| Sales Discovery Coach | NO | 0 | ⏸️ Deferred (Sprint 5+) |
+| LinkedIn Content Creator | NO | 0 | ⏸️ Load on content sprint |
+| Accessibility Auditor | NO | 0 | ⏸️ Sprint 6 target |
+
+---
+
+### CTO Action Items — TODAY (2026-06-18)
+
+**P0 (both CARRIED unaddressed from 06-17 — project-hygiene, not infra; infra is self-healed and stable):**
+1. **Update sprint-state.md** — content still Session 128 (2026-04-29), ~50 days stale. A 10-line Session-128→now summary (calibration proof, question-bank harness, v2 runner, campaigns/RLS, docs-archive-banner branch) multiplies the context quality of every one of the 14 live daemon perspectives. Single highest-leverage fix, now 2 audits old.
+2. **Update SHIPPED.md** — unlogged since Session 120 (2026-04-18). Add the `codex/docs-archive-banner` commits (239d163→c827404). Swarm can't route against unknown work.
+
+**P1:**
+3. **Confirm AUTH-CANON status** — task file vanished from work-queue. One-line check of `.claude/breadcrumb.md` / git log: resolved, moved, or lost? Don't treat v0 build as unblocked until confirmed.
+4. **Watch the 3 persistently-failing perspectives** — Ecosystem Auditor, Growth Hacker, Readiness Manager failed 2 cycles running (06-16 + 06-17). No longer one-run noise; if they fail a 3rd time, treat as a targeted provider/key issue for those specific assignments (not the old fleet-wide collapse).
+5. **Confirm 06-18 daemon cycle fires** — no auto-audit/auto-health for today yet. If none appears by EoD, the scheduled daemon may have stalled (check Windows Scheduled Task / GH workflow).
+
+**P2:**
+6. **Investigate floor-pin on busiest lenses** — Product Strategist / Scaling / Risk / Assessment Science / Cultural Intelligence pinned at 0.4 despite responding. Residual learning-loop inversion. Check weight-update path in `packages/swarm/autonomous_run.py`.
+7. **Re-arm 3 long-frozen perspectives** — Communications Strategist + PR & Media (frozen 2026-05-01). Low priority (≤22 spawns).
+8. **BNE 0-findings** — load Behavioral Nudge Engine on next UX/onboarding touch. ~61 days dormant.
+9. **Reconcile agent-roster.md** to 17-perspective daemon reality (carried; low urgency, fleet healthy).
+
+---
+
+## DAILY HEALTH: 2026-06-10 (Wednesday — scheduled task, CEO not present)
+
+**Team score: 6.0/10** (infra/daemon healthy and autonomous, but fleet capacity dropped further — 5/17 today vs 7/17 yesterday, and verified-finding yield collapsed 9 → 1)
+**Agents active: 5/17 perspectives** (all via vertex-ai-agent; **Ollama dropped out today** — yesterday it carried 2 perspectives, today 0)
+**Skills loaded: 0/6 dedicated skill files** — Cultural Intelligence runs as a live daemon perspective (spawn_count 70) but pinned at floor weight 0.4. BNE skill-file still 0 findings all-time.
+**Critical gaps:**
+- **🔴 Fleet capacity degraded day-over-day.** Today's auto-audit (00:33 UTC): 17 dispatched → **5 responded, 12 failed**. Yesterday was 7/10. The 10 `assigned_model_failed` perspectives are still dead (frozen weights since 2026-05-01), AND today Ollama's 2 perspectives also failed to respond — only `vertex-ai-agent` answered. Single-provider dependency is now the live risk: if Vertex throttles, the swarm produces nothing.
+- **🔴 Evidence yield collapsed.** evidence_gate today: **1 verified / 18 unverified findings**. Yesterday: 9 verified / 4 unverified. completion_gate still `passed` (policy needs ≥1 verified finding present, and exactly 1 landed) — but the audit is one provider hiccup away from producing zero verified output. The gate is passing on a technicality.
+- **🔴 Learning-loop floor collapse unchanged.** The 7 live perspectives (Scaling, Product Strategist, Risk, Readiness, Cultural Intelligence, Assessment Science, Chief Strategist) all sit at `debate_weight ≈ 0.4` (floor), last_updated today 02:51. Dead/frozen perspectives still retain 0.65–1.0 (Legal 1.0, Ecosystem 0.95, Sales 0.90). Inverted signal persists: the perspectives that actually run are ranked *below* the ones that don't. Same finding as 2026-06-09, no remediation landed.
+- **🟡 Assessment Science whistleblower flag raised** in today's audit (flag: true) — worth a look at that perspective's output for a real escalation vs noise.
+
+---
+
+### Daemon health (live state, verified from disk 2026-06-10)
+
+| Signal | Value |
+|--------|-------|
+| `auto-health` (00:01 UTC) | status **ok**. git_head `44512dc`. total_perspective_runs **772** (up from 646). zero_learning_perspectives **[]**. code_index **1059 files, 2.7h age** (fresh). queue pending=3 done=319. |
+| `auto-audit` (00:33 UTC) | 17 dispatched, **5 responded, 12 failed**. providers_used: vertex-ai-agent ×5 only. evidence_gate 1 verified / 18 unverified. completion_gate **passed** (1 verified present). whistleblower: Assessment Science flagged. |
+| `explore-*` (×8) | auth / aura / assessment / grievance / organizations / skills / ecosystem_events / page.tsx — all completed. |
+| `blocker-15` / `blocker-16` | Re-confirmed NOT BUILT: Open Badges 3.0 VC compliance + MIRT multidimensional assessment upgrade. Pre-launch blockers, unchanged. |
+
+Code-index healthy (1059 files, refreshed 05:49 today). perspective_weights.json refreshed 06:51 today. Repo quiet: last commit `44512dc` (2026-06-07, Truth Lock sprint) — no commits in 3 days.
+
+---
+
+### Per-agent contribution (yesterday→today)
+
+**Responded today (5):** subset of the live cohort via Vertex. All at floor weight 0.4 — they contribute findings but the learning loop is not rewarding them.
+**Failed today (12):** the 10 `assigned_model_failed` perspectives (Security Auditor, Code Quality Engineer, Ecosystem Auditor, Sales Director, UX Designer, DevOps Engineer, Legal Advisor, Growth Hacker, QA Engineer, CTO Watchdog) **plus** the 2 Ollama-backed perspectives that responded yesterday but not today.
+
+The highest historical-trust perspectives (Ecosystem Auditor 0.95, Legal Advisor 1.0, Security Auditor 0.77) remain offline — the swarm is running at ~29% fleet capacity today, its worst reading in this audit window.
+
+### Hired skills (6 total)
+0/6 dedicated skill files loaded yesterday. Behavioral Nudge Engine: **0 findings all-time** — CRITICAL, unchanged for 50+ days. Cultural Intelligence: lens runs inside the daemon (spawn 70) so AZ/CIS coverage is partly served, but the standalone skill remains dormant and the daemon perspective is weight-floored.
+
+---
+
+### CTO Action Items — TODAY (2026-06-10)
+
+**P0 (carried from 2026-06-09, still unremediated — now urgent):**
+1. **Re-map provider assignments for the 12 failing perspectives.** Root cause: assigned models resolve to a removed provider (Cerebras per ADR-013) or expired key. Grep the model map in `packages/swarm/autonomous_run.py`, re-point to ADR-013 precedence (NVIDIA NIM → Ollama → Gemini → Groq). Bring Ecosystem Auditor, Legal Advisor, Security Auditor back first. **This is the single highest-leverage fix and is now 2 audits old.**
+2. **Fix the Ollama drop-out.** Ollama carried 2 perspectives yesterday, 0 today → local GPU runtime likely down or model unloaded. Check `ollama list` / GPU availability. With Vertex as sole responder, the swarm has no redundancy.
+3. **Investigate learning-loop floor collapse.** Live perspectives pinned at 0.4 while dead ones hold 0.65–1.0. Check the weight-update path — are live findings scored unverified (driving weights down), or is the penalty over-aggressive? Inverted incentive.
+
+**P1:**
+4. **Triage today's evidence-gate near-miss.** 1 verified / 18 unverified is a hair from a failed audit. Tighten the verified-finding pipeline or the audit becomes theatre.
+5. **Read the Assessment Science whistleblower flag** from today's audit — confirm real escalation vs noise.
+6. **Triage blocker-15 + blocker-16** (Open Badges 3.0 VC, MIRT) — build / defer-with-justification / de-scope. Re-confirmed NOT BUILT for a second day.
+
+**P2:**
+7. **Re-arm / confirm daily-health scheduling** — this run produced an entry; confirm the task fires daily unattended.
+8. **Reconcile `agent-roster.md` with the 17-perspective daemon reality** — legacy 6-core + Growth-Agent-retirement framing is obsolete.
+
+---
+
+## DAILY HEALTH: 2026-06-17 (Tuesday — scheduled task, CEO not present)
+
+> **⚠️ GROUND-TRUTH CORRECTION (09:05 Baku run).** An earlier run of this task today wrote this entry from *inference* off the 2026-06-10 trajectory and marked the fleet "UNKNOWN / 12-failing / Vertex-only". That was wrong. The daemon's own `2026-06-17-auto-audit/result.json` (run 00:12 UTC) and `perspective_weights.json` (refreshed 00:43 UTC) show the fleet **recovered**. Verified numbers below replace the inferred ones. Lesson: read `work-queue/done/<date>-auto-audit/result.json` before claiming fleet status — never infer from the prior day.
+
+**Team score: 7.0/10** (daemon fleet recovered to 14/17 + 23 verified findings; held back from higher only by 49-day-stale sprint-state, unlogged SHIPPED.md, BNE 0-findings, AUTH-CANON gate)
+**Agents active: 14/17 perspectives responded** (verified from `2026-06-17-auto-audit/result.json`). Providers: **nvidia=8, vertex-ai-agent=5, ollama=1** — single-provider Vertex dependency is GONE; NVIDIA NIM now carries the majority (ADR-013 precedence active). Failed today: Ecosystem Auditor, Readiness Manager, Growth Hacker (3 only).
+**Skills loaded: 0/6 dedicated skill files** (BNE still 0 findings all-time; Cultural Intelligence runs as a live daemon perspective, spawn_count 96, weight-floored 0.4)
+**Critical gaps (verified against live state, not inferred):**
+- **🟢 RESOLVED since 2026-06-10: the 12-failing-perspective collapse.** Today 14/17 responded. Security Auditor (0.576), Code Quality (0.439), QA Engineer (0.517), Legal Advisor (0.772), DevOps (0.675), UX Designer (0.532), Sales Director (0.561), CTO Watchdog (0.440) — all responded today, all weights updated 2026-06-17T00:43. The Cerebras-removal provider gap was re-mapped to NVIDIA NIM. 3-audit-old P0 is closed.
+- **🟢 Evidence yield recovered:** evidence_gate **23 verified / 12 unverified** (was 1 verified on 2026-06-10). completion_gate passed on substance. whistleblower_flags: 0.
+- **🟡 Learning-loop floor — partial inversion remains:** the 5 highest-spawn perspectives (Product Strategist 132, Scaling Engineer 131, Risk Manager 130 ~0.44, Assessment Science 120, Cultural Intelligence 96, Chief Strategist 87) sit at/near floor 0.4 despite responding — the busiest lenses are still being driven to the floor. Worth a look at the weight-update path, but the broad "live below dead" inversion is mostly gone now that the dead ones are back.
+- **🟡 3 perspectives still frozen at 2026-05-01:** Communications Strategist (0.653), PR & Media (0.695), plus Readiness Manager last updated 2026-06-08 (failed today). Low priority (≤22 spawns each).
+- **🔴 Health-log gap: 7 days** (2026-06-10 → 2026-06-17). Either the scheduled task didn't fire or the task ran but agent failed to write. Second gap this audit window (prior gap was 44 days ending 2026-06-09).
+- **🔴 Sprint-state stale 49+ days** — `memory/context/sprint-state.md` last updated 2026-04-29 (Session 128). All shipped work since then (calibration proof, v2 runner, campaigns/RLS fix, question-bank harness, docs-archive-banner branch) is invisible to swarm agents that read sprint-state for context.
+- **🟡 AUTH-CANON conflict unresolved** — v0-rebuild gated on SİMA-vs-anonymous decision (per breadcrumb 2026-06-14). Phase 3 build blocked. CEO `go` not yet received. Task file: `memory/atlas/work-queue/pending/2026-06-14-volaura-auth-canon-reconcile-before-v0.md`.
+- **🟡 BNE: 0 findings all-time** — Behavioral Nudge Engine hired Session 57, never produced a finding. ADHD-first claims across the product remain unvalidated.
+
+---
+
+### Per-agent contribution (2026-06-16 — yesterday)
+
+Verified from `2026-06-17-auto-audit/result.json` (17 dispatched, 14 responded) + `perspective_weights.json`. The legacy 6-agent roster maps onto daemon perspectives; status below is the live perspective, not the inferred legacy agent.
+
+| Daemon perspective (legacy agent) | Responded today? | Weight (updated) | Note |
+|-----------------------------------|------------------|------------------|------|
+| Security Auditor (Security Agent 9.0) | ✅ YES | 0.576 (06-17) | Back online — was dead 06-10. Provider re-map worked. |
+| Scaling Engineer + Ecosystem Auditor (Architecture 8.5) | Scaling ✅ / Ecosystem ❌ | Scaling 0.411 / Eco 0.446 | Architecture lens half-up: Scaling responded, Ecosystem Auditor failed today. |
+| Product Strategist + UX Designer (Product 8.0) | ✅ YES (both) | PS 0.40 / UX 0.532 | Highest-spawn lens (PS=132) but floor-pinned. |
+| Chief Strategist / Needs-equivalent (Needs 7.0) | ✅ YES | 0.40 | Responding; floor-pinned. |
+| QA Engineer (6.5) | ✅ YES | 0.517 (06-17) | Back online — was dead 06-10. |
+| Growth Hacker (Growth 5.0) | ❌ FAILED today | 0.645 (06-17) | Failed this run but weight updated — intermittent, not frozen. |
+
+Also responded today: Code Quality Engineer, Risk Manager, Cultural Intelligence, Sales Director, DevOps Engineer, Assessment Science, Legal Advisor, CTO Watchdog. Failed: Ecosystem Auditor, Readiness Manager, Growth Hacker.
+
+**Roster vs runtime note:** The 6-agent roster is legacy framing. The daemon runs 17 perspectives; today 14 are live. The "10 dead since 2026-05-01" framing from prior entries is now obsolete — only 3 failed today and 2 long-frozen (Comms, PR & Media). Roster doc still needs reconciling to the daemon-first reality (carried item).
+
+### Hired skills (6 total)
+
+| Skill | Loaded yesterday? | Finding count | Status |
+|-------|------------------|---------------|--------|
+| Behavioral Nudge Engine | NO | **0 all-time** | 🔴 CRITICAL — 60+ days dormant |
+| Cultural Intelligence Strategist | NO (daemon only) | 0 skill-file | 🟡 Coverage via daemon lens only; skill-file never loaded |
+| Sales Deal Strategist | NO | 0 | ⏸️ Deferred (Sprint 5+ appropriate) |
+| Sales Discovery Coach | NO | 0 | ⏸️ Deferred (Sprint 5+ appropriate) |
+| LinkedIn Content Creator | NO | 0 | ⏸️ Load when content sprint resumes |
+| Accessibility Auditor | NO | 0 | ⏸️ Sprint 6 target |
+
+---
+
+### What shipped since last health log (2026-06-10 → 2026-06-17)
+
+Per git log on branch `codex/docs-archive-banner`:
+- `c827404` feat(assessment): calibration proof — 1000 synthetic candidates through real CAT
+- `d095622` feat(assessment): question-bank validation harness — deterministic proof engine
+- `2cea12b` feat(runner): campaign-assigned session activation + camera integrity flags + v2 candidate runner
+- `ae8b5c9` fix(campaigns): FORCE RLS on campaign tables + router/schema refinements + tests
+
+All on branch `codex/docs-archive-banner` (89 ahead of main, not yet merged). None visible to swarm agents (sprint-state not updated, SHIPPED.md not updated).
+
+---
+
+### CTO Action Items — TODAY (2026-06-17)
+
+**P0 (now project-hygiene, not swarm-infra — the infra P0 self-healed):**
+1. **Update sprint-state.md** — 49 days stale (last 2026-04-29, Session 128). All work since (calibration proof, v2 runner, campaigns/RLS, question-bank harness, docs-archive-banner) is invisible to the 14 live perspectives that read it for context. Highest-leverage fix today: a 10-line Sessions-128→now summary multiplies the quality of every daemon run.
+2. **Update SHIPPED.md** — the 5 commits on `codex/docs-archive-banner` (239d163→c827404, 2026-06-12/13) are unlogged. Swarm can't route against work it doesn't know shipped.
+
+**P1:**
+3. **Resolve AUTH-CANON conflict** (SİMA vs anonymous candidate session) before any v0 build. Task: `memory/atlas/work-queue/pending/2026-06-14-volaura-auth-canon-reconcile-before-v0.md`. CEO `go` still not received — only genuine CEO-blocked item.
+4. **Investigate floor-pin on busiest lenses** — Product Strategist (132 spawns), Scaling Engineer (131), Risk Manager (130), Assessment Science (120), Cultural Intelligence (96), Chief Strategist (87) all sit at/near 0.4 despite responding. The highest-traffic lenses being driven to the floor is the residual learning-loop inversion. Check weight-update path in `packages/swarm/autonomous_run.py`.
+5. **Triage 3 failed-today perspectives** — Ecosystem Auditor, Readiness Manager, Growth Hacker failed this run (not frozen — weights updated). If they recur tomorrow, treat as a targeted provider issue, not the old fleet-wide collapse.
+
+**P2:**
+6. **Re-arm the 3 long-frozen perspectives** — Communications Strategist + PR & Media (frozen 2026-05-01). Low priority (≤22 spawns) but they never came back with the others.
+7. **Diagnose health-log gap discipline** — this entry needed a ground-truth correction because an earlier run inferred instead of reading `result.json`. Bake "read auto-audit/result.json" into the task's standing instructions.
+8. **Reconcile agent-roster.md** with 17-perspective daemon reality (carried; less urgent now that the fleet is healthy).
+9. **BNE 0-findings all-time** — load Behavioral Nudge Engine on the next UX/onboarding touch. 60+ days dormant; ADHD-first claims still unvalidated.
+
+---
+
+## DAILY HEALTH: 2026-06-09 (Tuesday — scheduled task, CEO not present)
+
+**Team score: 6.5/10** (infra healthy + autonomous, but >half the perspective fleet is non-functional)
+**Agents active: 7/17 perspectives** (vertex-ai-agent=5, ollama=2 responded in yesterday's auto-audit; 10/17 failed `assigned_model_failed`)
+**Skills loaded: 0/6 dedicated skill files** — but Cultural Intelligence is now a LIVE daemon perspective (spawn_count 68), so the "dormant since Session 86" framing is partly obsolete. BNE-the-skill-file still 0 findings; cultural-fit lens now runs inside the daemon.
+**Critical gaps:**
+- **🔴 10/17 perspectives fail with `assigned_model_failed`** — Security Auditor, Code Quality Engineer, Ecosystem Auditor, Sales Director, UX Designer, DevOps Engineer, Legal Advisor, Growth Hacker, QA Engineer, CTO Watchdog all dead. Their `perspective_weights` last_updated is frozen at **2026-05-01** — they have not learned in ~38 days. Root cause almost certainly the Cerebras removal (commit `4f5d786`, ADR-013) + provider-precedence not re-mapped for these perspectives' assigned models. This is the single highest-leverage fix.
+- **🔴 Learning loop collapsed to floor** — the 7 perspectives that DO respond (Scaling Engineer, Product Strategist, Risk Manager, Readiness Manager, Cultural Intelligence, Assessment Science, Chief Strategist) all sit at `debate_weight: 0.4` (the floor) as of 2026-06-08. Either their findings aren't being marked verified, or the learning rate is over-penalizing. Frozen perspectives still show 0.65–1.0 — i.e. the live ones got driven DOWN below the dead ones. Inverted signal.
+- **🟡 Daily-audit gap** — no daily-health entry between 2026-04-26 and today (~44 days). Scheduled task either wasn't firing or this is first run after a long pause. The daemon itself kept running (work-queue done=296), but the health-log discipline lapsed.
+
+---
+
+### Daemon health (live state, verified from disk)
+
+The daemon is alive and ran a full cycle yesterday (2026-06-08):
+
+| Task | Result |
+|------|--------|
+| `auto-health` (03:28 UTC) | status **ok**. git_head `44512dc`. total_perspective_runs **646**. code_index_files **1059**, age **2.5h** (fresh). zero_learning_perspectives **[]**. queue pending=3 done=296. |
+| `auto-audit` (10:25 UTC) | 17 dispatched, **7 responded, 10 failed**. evidence_gate: 9 verified / 4 unverified findings. completion_gate **passed** (verified findings present). whistleblower_flags: 0. |
+| `explore-*` (×8) | code exploration on auth/aura/assessment/grievance/organizations/skills/ecosystem_events/page.tsx — all completed. |
+| `blocker-15` | Pre-launch blocker: Open Badges 3.0 VC compliance — flagged NOT BUILT. |
+| `blocker-16` | Pre-launch blocker: MIRT assessment upgrade (8 independent → 1 multidimensional) — flagged NOT BUILT. |
+
+Code-index is healthy (1059 files, refreshed 2026-06-08 19:24) — the "stale index, halt swarm" gap from the 2026-04-26 audit is **CLOSED**. perspective_weights.json refreshed 2026-06-08 18:26.
+
+Repo activity: last commit `44512dc` 2026-06-07 (Truth Lock sprint — portable daemon CI, ADR-013 sync, doc canon). No commits in the last 2 days. Cerebras fully removed from telegram execute workflow (`4f5d786`).
+
+---
+
+### Per-perspective status (yesterday's auto-audit)
+
+**Responded (7):** Scaling Engineer, Product Strategist, Risk Manager, Readiness Manager, Cultural Intelligence, Assessment Science, Chief Strategist — all via vertex-ai-agent or ollama. **All pinned at debate_weight 0.4.**
+
+**Failed (10) — `assigned_model_failed`:** Security Auditor, Code Quality Engineer, Ecosystem Auditor, Sales Director, UX Designer, DevOps Engineer, Legal Advisor, Growth Hacker, QA Engineer, CTO Watchdog. **Weights frozen since 2026-05-01.**
+
+The completion gate still passed because 9 verified findings landed from the 7 working perspectives — so the audit produced usable output. But the swarm runs at ~41% fleet capacity, and the highest-trust perspectives (Ecosystem Auditor 0.95, Legal Advisor 1.0, Security Auditor 0.77 by historical weight) are exactly the ones that are dead.
+
+---
+
+### CTO Action Items — TODAY (2026-06-09)
+
+**P0:**
+1. **Re-map provider assignments for the 10 dead perspectives.** They fail `assigned_model_failed` because their assigned model resolves to a removed provider (Cerebras per ADR-013, or an expired key). Grep the provider/model map in `packages/swarm/autonomous_run.py` and re-point to ADR-013 precedence (NVIDIA NIM → Ollama → Gemini → Groq). Bring Ecosystem Auditor, Legal Advisor, Security Auditor back online first.
+2. **Investigate learning-loop floor collapse.** The 7 working perspectives all sit at 0.4 while dead ones retain 0.65–1.0. Check the weight-update path: are live findings scored unverified (driving weights down), or is the penalty over-aggressive? Live perspectives below frozen ones is an inverted incentive.
+
+**P1:**
+3. **Re-arm the daily-health scheduled task** — 44-day gap in the log. Confirm the task actually fires daily; this run may have been manual.
+4. **Triage blocker-15 + blocker-16** — daemon re-confirmed Open Badges 3.0 VC compliance and MIRT multidimensional assessment as NOT BUILT pre-launch blockers. Decide: build / defer-with-justification / de-scope.
+
+**P2:**
+5. **Reconcile roster doc with daemon reality** — `agent-roster.md` still describes the legacy 6-core model + 13 perspectives; runtime is now 17 perspectives. Growth Agent retirement (flagged 11+ times through Apr 26) is moot — "Growth Hacker" is now a daemon perspective (frozen, not retired). Update to the 17-perspective daemon-first reality.
+6. **Confirm code-index stays fresh** — currently 2.5h age, 1059 files, healthy. No action unless it drifts >24h.
+
+---
+
 ## DAILY HEALTH: 2026-04-26 (Sunday 10:17 Baku)
 
 **Team score: 7.5/10** (up from 6.5 on 2026-04-20 — autonomous daemon now firing, not just chat-driven invocations)
@@ -1368,3 +1809,166 @@ P2:
 - **Daily-health-log automation** — task ran today (manually invoked), but the silent gap suggests scheduled-tasks runner isn't firing daily. Verify cron entry (`mcp__scheduled-tasks__list_scheduled_tasks`) and re-arm if missing.
 - **Roster freshness review** — agent-roster.md last update 2026-04-03 (Session 83). Sync against today's runtime state in next session.
 
+
+---
+
+## 2026-06-13 09:39 Baku — DAILY HEALTH
+
+**Team score:** 3/10 for swarm-autonomy (loop dormant ~2 months) — but product velocity HIGH via direct Atlas-Code commits
+**Agents active (original roster):** 0/6 — Security/Architecture/Product/Needs/QA/Growth all silent
+**Runtime perspectives:** weights file touched 2026-06-12 13:40 but NO autonomous_run logs since April → not genuinely running
+**Skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal, Sales Discovery, LinkedIn, Accessibility — still 0 findings (CRITICAL, unchanged since 2026-05-01)
+
+### Tool-backed evidence (this run)
+- daily-health-log: last real entry 2026-05-01 → **43-day silent gap**. Scheduled task not firing daily.
+- task_ledger.jsonl: last entry **2026-04-12**. autonomous_run loop stopped generating tasks.
+- heartbeat-log.jsonl: last RUN decision **2026-04-08**.
+- outcome-log.jsonl: last verdict **2026-04-01**.
+- swarm_coder.jsonl: last entry epoch 1776753446 (≈ April 2026).
+- pending queue: **empty**. done queue: 349.
+- code-index.json: rebuilt **2026-06-12T09:09** (fresh), 1069 files → only the reindex daemon step is alive.
+- git HEAD: 2cea12b (2026-06-13 05:01) — campaign runner + camera integrity flags.
+
+### What ACTUALLY shipped 2026-06-11→13 (not via swarm — via Atlas-Code direct)
+- 2cea12b campaign-assigned session activation + camera integrity flags + v2 candidate runner
+- ae8b5c9 FORCE RLS on campaign tables + router/schema refinements + tests
+- 239d163 v2 storefront + screening landing committed
+- 1ccac71 model_router: promote FreeLLMAPI over dead NVIDIA NGC key
+→ This is the **B2B screening pivot** moving fast. The engine of progress is direct CTO work, not the swarm loop.
+
+### Critical gaps
+1. **autonomous_run daemon dead since April.** The swarm — the thing this health-check exists to monitor — is not running. No task_ledger/heartbeat/outcome activity in ~2 months.
+2. **Health-check measures a dead framework.** This log tracks 44 roster agents + 16 perspectives + 6 skills, but real work ships via `git commit`. The measurement system is decoupled from reality (flagged 2026-05-01 P0, still unfixed).
+3. **Scheduled-task runner unreliable** — 43-day gap proves daily firing isn't happening. Same symptom as the 19-day gap on 2026-05-01.
+4. **0/6 hired skills** ever validated — ADHD-first + AZ-cultural claims still unbacked.
+
+### CTO action items — TODAY
+P0:
+- **DECIDE: revive or retire the swarm loop.** Either (a) restart `python -m packages.swarm.autonomous_run` daemon + verify task_ledger logs a fresh entry, or (b) formally archive the swarm-autonomy framework and replace this daily-health-check with a B2B-screening-pivot health-check (campaign runner uptime, RLS coverage, candidate flow). Two months of dormancy = the framework is de-facto retired; make it official or revive it with a tool receipt.
+P1:
+- **Re-arm scheduled daily-health task** — 43-day gap means cron isn't firing. Verify via `mcp__scheduled-tasks__list_scheduled_tasks`, re-create if missing.
+- **Point this health-check at what ships** — campaigns, v2 storefront, candidate runner are the live system; instrument those, not dormant perspectives.
+
+---
+
+## DAILY HEALTH: 2026-06-14 11:03 Baku (Sunday — scheduled task, CEO not present)
+
+**Team score:** 2/10 for swarm-autonomy — both legacy subsystems now dormant; replacement framework scaffolded but empty. Product velocity remains HIGH via direct Atlas-Code commits.
+**Legacy agents active:** 0/6 roster (Security/Architecture/Product/Needs/QA/Growth all silent) · 0/17 runtime perspectives produced output today.
+**Skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal/Discovery, LinkedIn, Accessibility — still 0 findings (CRITICAL, unchanged since 2026-05-01, 44 days).
+
+### Tool-backed evidence (this run)
+- `task_ledger.jsonl` last entry **2026-04-12** (loop #1, task-generating autonomous_run — dead 63 days).
+- `perspective_weights.json` last touched **2026-06-12 13:40**; `code-index.json` **2026-06-12 13:09**. No swarm file touched 06-13 or 06-14.
+- **No audit / evidence-log / heartbeat output produced since 06-12.** The perspective-audit daemon that the 06-10 entry recorded as live (vertex-ai-agent, 17 dispatched) has produced nothing on 06-13/06-14 → loop #2 now also dormant. (Resolves the 06-10-vs-06-13 contradiction: both subsystems are down as of today.)
+- **NEW framework found:** `memory/swarm/office-inbox/` — "office staff" swarm (hunter / scout / maker / janitor / watch via OpenClaw operator), `SPRINT-REPORT.md` created **2026-06-11, status: draft**. All agent IDs blank, 0 artifacts produced, schedule unchecked. Untouched 3 days. This is the de-facto answer to yesterday's revive-or-retire P0: a replacement is being built but is **stalled at empty draft**.
+- pending queue: **1 item**, created today 02:05 Baku — `2026-06-14-volaura-phase-3-v0-integration.md`. Correctly BLOCKED on (a) CEO pasting `02-v0-prompt.md` into v0.dev + providing output, (b) explicit CEO `go`. Legitimately gated; not Atlas-self-servable.
+
+### What ACTUALLY shipped 2026-06-13 (direct Atlas-Code, not swarm)
+- c827404 calibration proof — 1000 synthetic candidates through the real CAT engine
+- d095622 question-bank validation harness — deterministic proof engine
+→ B2B screening pivot continues to move via `git commit`. Engine of progress remains direct CTO work, not any swarm loop.
+
+### Critical gaps
+1. **Three swarm layers now exist, all dormant.** (a) roster/autonomous_run task-loop — dead since April; (b) vertex perspective-audit — no output since 06-12; (c) office-staff OpenClaw — empty draft. The health-check measures vapor while real work ships outside all three. Flagged P0 2026-05-01 and 2026-06-13 — still unremediated.
+2. **Revive-or-retire P0 now aging 2 days.** 06-13 entry demanded a decision (restart daemon OR formally retire + repoint health-check at B2B pivot). The 06-11 office-staff scaffold suggests the intent is "replace, not revive" — but it stalled before any agent registered.
+3. **0/6 hired skills** ever validated (44-day streak) — ADHD-first + AZ-cultural claims still unbacked.
+
+### CTO action items — TODAY
+**P0 — collapse the three dormant layers to one decision.** Pick: (a) finish the office-staff framework — register the 5 OpenClaw employees in `SPRINT-REPORT.md`, configure the daily schedule, produce one real artifact + a tool receipt; OR (b) mark the office-staff draft archived and formally retire autonomous_run + perspectives, then repoint THIS daily-health-check at the live system. Leaving all three half-alive is the worst state — the check keeps scoring frameworks nobody runs.
+**P0 (carried from 06-13, still open) — repoint health-check at what ships:** campaign-runner uptime, RLS coverage on campaign tables, candidate-flow E2E, calibration-harness pass rate. That is the live B2B-screening system; instrument it, not dead perspectives.
+**P1 — surface to CEO (next CEO-facing touch):** Phase-3 v0 frontend integration is queued and gated on CEO pasting `docs/research/v0-rebuild/02-v0-prompt.md` into v0.dev + giving `go`. Survives arsenal audit (needs CEO's v0.dev paste — not self-servable). Real CEO action item, not Atlas escalation.
+**P1 — re-arm scheduled task cadence:** prior 19-day and 43-day silent gaps show the daily runner isn't reliably firing; verify via `mcp__scheduled-tasks__list_scheduled_tasks`, re-create if missing.
+
+---
+
+## DAILY HEALTH: 2026-06-22 09:04 Baku (Monday — scheduled task, CEO not present)
+
+**Team score:** 2/10 swarm-autonomy — unchanged from 06-14, now staler. All three swarm layers still dormant. AND product velocity has now also paused: **9-day commit gap** (last commit 2026-06-13).
+**Legacy agents active:** 0/6 roster · 0/17 runtime perspectives produced output.
+**Skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal/Discovery, LinkedIn, Accessibility — 0 findings, 52-day streak (CRITICAL, unchanged since 2026-05-01).
+
+### Tool-backed evidence (this run)
+- `task_ledger.jsonl` last entry **2026-04-12** — task-generating loop dead **71 days**.
+- `heartbeat-log.jsonl` last **2026-04-08** (75d). `outcome-log.jsonl` last **2026-04-01** (82d).
+- `perspective_weights.json` + `code-index.json` last touched **2026-06-18 18:2x** — reindex step is the ONLY live component; nothing since (4 days idle).
+- No swarm `.jsonl`/`.md` evidence output since 06-15 (`find -newermt` empty).
+- `office-inbox/` (OpenClaw office-staff framework): SPRINT-REPORT still **status: draft**, all 5 agent dirs (hunter/scout/maker/janitor/watch) **0 files**, untouched since 2026-06-11 — **11-day** empty draft.
+- pending work-queue: **empty**. (06-14's gated Phase-3 v0 item no longer present.)
+- git: branch `codex/docs-archive-banner`, last commit c827404 **2026-06-13** — **9-day commit gap**. HEAD ahead 3 (uncommitted breadcrumb/config churn only).
+
+### What changed vs 06-14
+- Office-staff framework: **no progress** (still empty draft, +8 days stale).
+- Direct-commit velocity — the one thing carrying the project — has **stopped** for 9 days. Prior entries' "product velocity HIGH via direct Atlas-Code" no longer holds. This is the first health-check where neither the swarm NOR direct work is moving.
+
+### Critical gaps
+1. **Revive-or-retire P0 now aging 9 days** (open since 06-13). Three dormant layers, no decision. The health-check keeps scoring frameworks nobody runs.
+2. **0/6 hired skills** — 52-day unvalidated streak.
+3. **NEW: project itself idle 9 days.** Not a swarm-only stall now. Either CEO is heads-down elsewhere / on a break, or the B2B-screening pivot lost its driver. Worth surfacing on next CEO touch — neutrally, not as nanny.
+
+### CTO action items — TODAY
+**P0 (carried, now 9d old):** collapse three dormant layers to ONE decision — finish office-staff (register 5 OpenClaw agents, schedule, produce 1 artifact + receipt) OR formally archive autonomous_run + perspectives + office-inbox and repoint THIS check at the live B2B system (campaign-runner uptime, RLS coverage, candidate-flow E2E, calibration-harness pass rate). This decision needs a real CTO session, not another log entry deferring it. Eight consecutive health-checks have now flagged it.
+**P1:** On next CEO-facing touch, neutrally note the 9-day quiet — not "you should work", just "пивот стоит на месте 9 дней, продолжаем?" so the thread doesn't silently die (ping-as-continue principle).
+
+---
+
+## DAILY HEALTH: 2026-06-23 20:33 Baku (Tuesday — scheduled task, CEO not present)
+
+**Team score:** 2/10 swarm-autonomy — unchanged 9th consecutive check. Three swarm layers still dormant; commit gap now **10 days** (last commit 2026-06-13).
+**Legacy agents active:** 0/6 roster · 0/17 runtime perspectives produced reviewable output.
+**Skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal/Discovery, LinkedIn, Accessibility — 0 findings, **53-day streak** (CRITICAL, unchanged since 2026-05-01).
+
+### Tool-backed evidence (this run)
+- git: branch `codex/docs-archive-banner`, HEAD still **c827404 (2026-06-13)** — **10-day commit gap**. `git log --since 2026-06-20` empty. Working tree = breadcrumb/config/doc churn only, no shipped code.
+- `task_ledger.jsonl` last entry **2026-04-12** — task-generating loop dead **72 days**.
+- **ONE live component confirmed:** `code-index.json` touched **2026-06-23** (today), `perspective_weights.json` **2026-06-22**. The reindex/perspective daemon IS firing — only swarm component with a pulse (matches 06-22 finding).
+- **NEW today:** pending work-queue went empty→**1 item**: `2026-06-23-blocker-16.md` (MIRT assessment upgrade audit — "8 independent IRT → 1 multidimensional", flagged NOT BUILT in PRE-LAUNCH-BLOCKERS-STATUS.md). The blocker-generating loop produced one audit task today. Self-servable (read code, verify built-or-not) but needs a real CTO session, not this run.
+- `office-inbox/` (OpenClaw office-staff framework): SPRINT-REPORT still **status: draft**, all 5 agent dirs (hunter/scout/maker/janitor/watch) hold only `.gitkeep`, untouched since 2026-06-11 — **12-day** empty draft.
+
+### What changed vs 06-22
+- Commit gap +1 day (9→10). Still the first sustained period where neither swarm nor direct work ships code.
+- One positive delta: blocker-16 audit item generated today → the perspective/blocker loop is not fully dead, it emitted work. But nothing consumed it.
+- Office-staff framework: zero progress (+1 day stale).
+
+### Critical gaps
+1. **Revive-or-retire P0 now aging 10 days** (open since 06-13). 9 consecutive health-checks flagged three dormant layers with no decision. The check keeps scoring frameworks nobody runs while one component (reindex) quietly works and emits items nobody picks up.
+2. **0/6 hired skills** — 53-day unvalidated streak. ADHD-first + AZ-cultural product claims still unbacked.
+3. **Project idle 10 days.** Not swarm-only. Either CEO heads-down elsewhere / on break, or the B2B-screening pivot lost its driver. Surface neutrally on next CEO touch.
+
+### CTO action items — TODAY
+**P0 (carried, now 10d old):** collapse the three layers to ONE decision in a real session — either finish office-staff (register the 5 OpenClaw agents, wire the schedule, produce 1 artifact + tool receipt) OR formally archive `autonomous_run` + perspectives + office-inbox and **repoint this daily-health-check at the live B2B system** (campaign-runner uptime, RLS coverage on campaign tables, candidate-flow E2E, calibration-harness pass rate). Deferring again just adds a 10th log entry that scores vapor.
+**P1 — pick up blocker-16:** the loop handed us a concrete task today. Next CTO session: grep the codebase for MIRT/multidimensional IRT, confirm built-or-not, update PRE-LAUNCH-BLOCKERS-STATUS.md with evidence. Don't let self-generated work rot in the queue (same neglect the 0/6-skills streak measures).
+**P1 — surface to CEO (next touch):** neutral note on the 10-day quiet — "пивот стоит 10 дней, продолжаем?" Not nanny, just keep the thread alive (ping-as-continue).
+**P2 — re-arm cadence:** prior 19- and 43-day silent gaps show the runner doesn't always fire; verify via scheduled-tasks list, re-create if missing.
+
+---
+
+## DAILY HEALTH: 2026-06-24 09:04 Baku (Wednesday — scheduled task, CEO not present)
+
+**Team score:** 2/10 swarm-autonomy — unchanged, **10th consecutive check**. Commit gap now **11 days** (last commit 2026-06-13).
+**Legacy agents active:** 0/6 roster · 0/17 runtime perspectives produced reviewable output.
+**Skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal/Discovery, LinkedIn, Accessibility — 0 findings, **54-day streak** (CRITICAL, unchanged since 2026-05-01).
+
+### Tool-backed evidence (this run)
+- git: branch `codex/docs-archive-banner`, HEAD still **c827404 (2026-06-13)** — `git log --since 2026-06-22` empty. **11-day commit gap.**
+- `task_ledger.jsonl` last entry **2026-04-12** — task-generating loop dead **73 days**.
+- **Only live component is the self-check daemon:** `work-queue/daemon.log.jsonl` is the ONLY file touched today; last cycles ran to ~2026-06-24 01:54 Baku, every cycle `pending:0, tasks_created:0`. It fires but emits nothing.
+- Reindex daemon went quiet: `code-index.json` + `perspective_weights.json` last touched **2026-06-23** (not today) — yesterday's "one component with a pulse" did NOT fire in the last cycle.
+- `work-queue/pending/` now **empty** — yesterday's `blocker-16` MIRT-audit item is gone with no commit/ledger trace → auto-cleared, not worked.
+- **office-inbox/ no longer exists** — the OpenClaw office-staff framework dir (5 agent stubs + draft SPRINT-REPORT, flagged 12-day-stale yesterday) was removed. But with no commit it's an uncommitted working-tree delete, not a decision-on-record.
+
+### What changed vs 06-23
+- Commit gap +1 (10→11). 11th day neither swarm nor direct work ships code.
+- blocker-16 emitted yesterday → vanished today, no work trace. Loop emits, queue self-clears, nothing consumes.
+- office-inbox framework deleted from working tree — a quiet rm, not the "finish OR archive" decision the P0 asks for.
+- Reindex daemon skipped its cycle today (regression from 06-22/06-23 pulse).
+
+### Critical gaps
+1. **Revive-or-retire P0 now aging 11 days** (open since 06-13). 10 consecutive checks flagged three dormant layers with no recorded decision. office-inbox silently deleted = framework rotting, not resolving.
+2. **0/6 hired skills** — 54-day unvalidated streak. ADHD-first + AZ-cultural product claims still unbacked.
+3. **Project idle 11 days.** Pivot stalled. Surface neutrally on next CEO touch.
+
+### CTO action items — TODAY
+**P0 (carried, now 11d old):** make the call in a real session — archive `autonomous_run` + perspectives **on-record** (a committed decision, not a working-tree delete) AND **repoint this daily-health-check at the live B2B system** (campaign-runner uptime, RLS coverage on campaign tables, candidate-flow E2E, calibration-harness pass rate). The framework is already half-deleted; finish it formally and point the check at what actually ships.
+**P1 — surface to CEO (next touch):** neutral one-liner — «пивот стоит 11 дней, продолжаем?» Keep the thread alive (ping-as-continue), no nanny.
+**P2 — re-arm cadence:** reindex daemon skipped today's cycle; verify the scheduled runner still fires, re-create if missing.

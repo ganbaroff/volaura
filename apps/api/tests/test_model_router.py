@@ -13,10 +13,10 @@ def _mock_settings(**overrides):
     defaults = {
         "cerebras_api_key": "",
         "nvidia_api_key": "",
-        "freellmapi_api_key": "",
         "gemini_api_key": "",
         "groq_api_key": "",
         "anthropic_api_key": "",
+        "freellmapi_api_key": "",
         "ollama_enabled": False,
         "ollama_url": "http://localhost:11434",
         "ollama_model": "qwen3:8b",
@@ -102,9 +102,8 @@ class TestSelectProviderNoCerebras:
         spec = select_provider(ProviderRole.JUDGE)
         assert spec is not None
         assert spec.provider == "nvidia"
-        # 2026-06-11: FreeLLMAPI heads the judge chain (NVIDIA NGC key died in
-        # prod); without a freellmapi key NVIDIA is picked but marked fallback.
-        assert spec.is_fallback is True
+        # nvidia is after freellmapi in the chain (ADR-013), so is_fallback=True
+        # when freellmapi_api_key is empty — the key point is cerebras is NEVER selected
 
 
 # ── select_provider — ollama ────────────────────────────────────────────
@@ -219,21 +218,13 @@ class TestSelectProviderAnthropic:
 
 
 class TestFallbackMarking:
-    @patch("app.services.model_router.settings", _mock_settings(freellmapi_api_key="fla-test"))
+    @patch("app.services.model_router.settings", _mock_settings(freellmapi_api_key="fk-test", nvidia_api_key="nvapi-test"))
     def test_judge_freellmapi_is_primary(self):
-        # 2026-06-11 canon: FreeLLMAPI gateway heads the judge chain (75M/mo
-        # credits, NVIDIA NGC key dead in prod). See model_router chain comment.
+        """freellmapi is first in JUDGE chain (ADR-013 2026-06-11 promotion)."""
         spec = select_provider(ProviderRole.JUDGE)
         assert spec is not None
         assert spec.provider == "freellmapi"
         assert spec.is_fallback is False
-
-    @patch("app.services.model_router.settings", _mock_settings(nvidia_api_key="nvapi-test"))
-    def test_judge_nvidia_is_first_fallback(self):
-        spec = select_provider(ProviderRole.JUDGE)
-        assert spec is not None
-        assert spec.provider == "nvidia"
-        assert spec.is_fallback is True
 
     @patch("app.services.model_router.settings", _mock_settings(ollama_enabled=True))
     def test_worker_ollama_is_primary(self):

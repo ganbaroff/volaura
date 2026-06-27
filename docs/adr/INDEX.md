@@ -2,7 +2,7 @@
 
 > **Canonical table:** [README.md](README.md) is the authoritative ADR index. This file is the Obsidian navigation view — keep in sync with README on every ADR change.
 
-## Current ADRs (001–011, 016–017 on main)
+## Current ADRs (001–011, 016 on main)
 
 - [[ADR-001-system-architecture|ADR-001 — System Architecture]] — Monorepo Turborepo + pnpm, apps/web Next.js 14, apps/api FastAPI, Supabase Postgres + RLS, Vercel + Railway hosting
 - [[ADR-002-database-schema|ADR-002 — Database Schema]] — Tables, RLS policies, character_events bus, atlas_obligations, atlas_debts patterns
@@ -16,15 +16,12 @@
 - [[ADR-010-defect-autopsy|ADR-010 — Defect Autopsy]] — Top root causes from fix commits and enforced Definition of Done
 - [[ADR-011-litellm-gateway-migration|ADR-011 — LiteLLM Gateway Migration]] — Proposed phased migration of Python swarm providers to LiteLLM Router
 - [[ADR-016-positioning-lock|ADR-016 — Positioning Lock]] — VOLAURA = verified professional talent platform; event/ops is the initial wedge, not the promise
-- [[ADR-017-cv-grounded-item-generation|ADR-017 — CV-Grounded Item Generation]] — Two-layer engine: calibrated CAT core (AURA) + CV-grounded Experience Interview; continuous multi-agent AIG with human review gate (Proposed)
 
 > **Lineage note:** ADR-012–015 exist on the `codex/swarm-queue-bridge` runtime lineage, not on `main`. The 011→016 gap on `main` is intentional until that lineage is reconciled.
 
 ## Pending / proposed
 
-- ADR-017 (Proposed) — implementation PR-1..PR-4 gated behind the assessment content fixes (FIX-1..3, see `memory/atlas/ASSESSMENT-CONTENT-AUDIT-2026-06-10.md`); LLM-touching code requires Codex review.
-
-New proposed ADRs should reserve the next collision-free number and be added to this index in the same PR.
+No pending ADR files are tracked on `main` at this time. New proposed ADRs should reserve the next collision-free number and be added to this index in the same PR.
 
 ## Cross-references
 

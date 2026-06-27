@@ -3,408 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Atlas — CEO Dashboard</title>
+<title>VOLAURA — прогресс · один экран</title>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #14141f;
-    --surface-raised: #1c1c2b;
-    --border: #2a2a3d;
-    --text: #E8E8F0;
-    --text-muted: #8B8BA7;
-    --teal: #4ECDC4;
-    --indigo: #7B72FF;
-    --gold: #F59E0B;
-    --purple-block: #D4B4FF;
-    --amber-warn: #F59E0B;
+  :root{
+    --bg:#0d0d15; --card:#1b1b23; --inset:#1f1f27; --rule:#34343d;
+    --ink:#e4e1e6; --soft:#c7c5d0; --faint:#8e8c99;
+    --seal:#7c5cfc; --gold:#e9c400; --green:#7ee2a8; --warn:#d4b4ff;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    padding: 32px 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 20px;
-    margin-bottom: 32px;
-  }
-  h1 {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .sub {
-    color: var(--text-muted);
-    font-size: 14px;
-    margin-top: 4px;
-  }
-  .meta {
-    text-align: right;
-    font-size: 13px;
-    color: var(--text-muted);
-  }
-  .sprint-line {
-    background: linear-gradient(135deg, rgba(123, 114, 255, 0.12), rgba(78, 205, 196, 0.08));
-    border: 1px solid rgba(123, 114, 255, 0.3);
-    padding: 16px 20px;
-    border-radius: 12px;
-    margin-bottom: 32px;
-  }
-  .sprint-line .label {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--indigo);
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .columns {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 40px;
-  }
-  @media (max-width: 900px) {
-    .columns { grid-template-columns: 1fr; }
-  }
-  .column {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    min-height: 200px;
-  }
-  .column h2 {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 600;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .item {
-    background: var(--surface-raised);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    position: relative;
-    padding-left: 34px;
-  }
-  .item .dot {
-    position: absolute;
-    left: 14px;
-    top: 20px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
-  .dot.green { background: var(--teal); box-shadow: 0 0 8px rgba(78, 205, 196, 0.5); }
-  .dot.amber { background: var(--gold); box-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
-  .dot.purple { background: var(--purple-block); box-shadow: 0 0 8px rgba(212, 180, 255, 0.5); }
-  .item .title {
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 4px;
-  }
-  .item .desc {
-    font-size: 13px;
-    color: var(--text-muted);
-  }
-  .legend {
-    display: flex;
-    gap: 20px;
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-  .glossary {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-top: 8px;
-  }
-  .glossary h2 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .glossary .intro {
-    color: var(--text-muted);
-    font-size: 13px;
-    margin-bottom: 20px;
-  }
-  .glossary dl {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px 24px;
-  }
-  @media (max-width: 700px) {
-    .glossary dl { grid-template-columns: 1fr; }
-    .glossary dd { margin-bottom: 8px; }
-  }
-  .glossary dt {
-    font-weight: 600;
-    color: var(--teal);
-    font-size: 13px;
-  }
-  .glossary dd {
-    color: var(--text-muted);
-    font-size: 13px;
-  }
-  footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 12px;
-    display: flex;
-    justify-content: space-between;
-  }
-  kbd {
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 11px;
-    font-family: 'SF Mono', Monaco, monospace;
-    color: var(--teal);
-  }
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-  @media (max-width: 700px) {
-    .kpi-row { grid-template-columns: repeat(2, 1fr); }
-  }
-  .kpi {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-  }
-  .kpi .k-label {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .kpi .k-value {
-    font-size: 22px;
-    font-weight: 700;
-  }
-  .kpi .k-value.teal { color: var(--teal); }
-  .kpi .k-value.gold { color: var(--gold); }
-  .kpi .k-value.indigo { color: var(--indigo); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,sans-serif;line-height:1.5;padding:36px 18px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  h1{font-size:26px;font-weight:800}
+  h2{font-size:15px;font-weight:700;margin:30px 0 12px;color:var(--soft);text-transform:uppercase;letter-spacing:.12em;font-size:12px}
+  .sub{color:var(--faint);font-size:13px;margin-top:4px}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:22px}
+  .stat{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px 16px}
+  .stat .label{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+  .stat .val{font-size:20px;font-weight:700;margin-top:4px}
+  .stat .val a{color:inherit;text-decoration:none}
+  .ok{color:var(--green)} .warn{color:var(--gold)} .bad{color:var(--warn)} .accent{color:var(--seal)}
+  .card{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+  .card h3{font-size:14px;font-weight:700;margin-bottom:3px}
+  .card p{font-size:13px;color:var(--soft)}
+  .step{display:flex;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rule);font-size:14px}
+  .step:last-child{border:none}
+  .badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .b-live{background:rgba(126,226,168,.12);color:var(--green)}
+  .b-wait{background:rgba(233,196,0,.12);color:var(--gold)}
+  .b-next{background:rgba(124,92,252,.16);color:#b9a5ff}
+  .links a{display:inline-block;margin:4px 8px 4px 0;padding:7px 12px;border:1px solid var(--rule);border-radius:10px;color:var(--soft);text-decoration:none;font-size:13px;background:var(--inset)}
+  .links a:hover{border-color:var(--seal);color:var(--ink)}
+  .foot{margin-top:30px;color:var(--faint);font-size:12px}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<header>
-  <div>
-    <h1>Atlas — CEO Dashboard</h1>
-    <div class="sub">Один взгляд — всё состояние экосистемы</div>
-  </div>
-  <div class="meta">
-    Обновлено: 2026-04-18 18:12 Баку<br>
-    Sprint 129+ · Atlas (Opus 4.7) + CLI (Sonnet)
-  </div>
-</header>
+  <h1>VOLAURA<span class="accent">.</span> прогресс</h1>
+  <div class="sub" id="updated">Обновлено Atlas: 2026-06-13 14:13 Баку · Цель 90 дней: 3 платящих организации к 9 сентября</div>
 
-<div class="kpi-row">
-  <div class="kpi">
-    <div class="k-label">Закрыто сегодня</div>
-    <div class="k-value teal">11</div>
+  <div class="row">
+    <div class="stat"><div class="label">Прод API (Railway)</div><div class="val" id="api-status">проверяю…</div></div>
+    <div class="stat"><div class="label">Платящих организаций</div><div class="val"><span class="accent">0</span> / 3</div></div>
+    <div class="stat"><div class="label">Петля кандидата</div><div class="val ok">ЗАМКНУТА <span class="sub">12 июня, пройдена Atlas'ом на проде</span></div></div>
+    <div class="stat"><div class="label">Калибровка вопросов</div><div class="val bad">не доказана <span class="sub">нужны 1000 тестов + калибровка + агенты</span></div></div>
+    <div class="stat"><div class="label">Вес репо</div><div class="val ok">2.9G <span class="sub">было 13G</span></div></div>
   </div>
-  <div class="kpi">
-    <div class="k-label">Автотестов от swarm</div>
-    <div class="k-value indigo">550+</div>
+
+  <h2>Петля денег — где каждый кусок</h2>
+  <div class="card">
+    <div class="step"><span class="badge b-live">live</span><span>API кампаний: вакансия → ссылка → ранжированный отчёт</span></div>
+    <div class="step"><span class="badge b-live">live</span><span>Раннер кандидата на v2: консент → ассессмент → отчёт, камера-античит v0 — <a class="accent" href="https://volaura-v2.vercel.app/screening/pilot-c9ddfe3a56b14e573ec7" target="_blank">открыть</a></span></div>
+    <div class="step"><span class="badge b-wait">гейт качества</span><span>Прежде чем слать живых кандидатов — доказать, что вопросы откалиброваны. Это сейчас главная работа</span></div>
+    <div class="step"><span class="badge b-wait">ты · 40 мин</span><span>Ротация 3 ключей — гейт перед первым реальным кандидатом</span></div>
+    <div class="step"><span class="badge b-next">дальше</span><span>SİMA-верификация личности — будущий слой, после калибровки модуля. Stripe-ссылка — после Mercury</span></div>
   </div>
-  <div class="kpi">
-    <div class="k-label">Требует действий CEO</div>
-    <div class="k-value gold">2</div>
+
+  <h2>Закрыто за последние сутки</h2>
+  <div class="card"><p>B2B-разворот зафиксирован · campaigns-API на проде · v2 собран в дизайн-каноне и опубликован · мастер-план 90 дней · три развилки решены · штат OpenClaw написан · Mercury-фикс готов · Vercel под контролем · репо −10 гигов мёртвых весов.</p></div>
+  <div class="card"><p style="color:var(--gold)">Сегодня совет 6 голов + 3 скептика нашли дыру, которую я вчера проглядел: «петля end-to-end» правда только на уровне API. На экране кандидата кнопка «начать» вела на volaura.app → жёсткий 404. Запасной хост — мягкий 404. Своего логина у v2 нет. То есть кандидат НЕ мог дойти до ассессмента ни на одном хосте. Проверил руками, подтвердил, закрыл битую кнопку. Дашборд вчера переоценил — теперь честно.</p></div>
+
+  <h2>Цель: идеальный assessment module (не дизайн — суть)</h2>
+  <div class="card">
+    <div class="step"><span class="badge b-live">сделано</span><span>Раннер кандидата на проде (PR #150) · дыра «правильный ответ в payload» на 22 вопросах закрыта (PR #151) — модуль теперь достижим</span></div>
+    <div class="step"><span class="badge b-live">сделано</span><span>Построен пруф-харнесс вопросов (заменил заглушку на 2 вопроса). Прогнал 350 вопросов. Финальный агентский набор sprint-5: 70/70 = 100%, детерминированные проверки СОГЛАСНЫ с голосованием агентов (86-96/100). Поймал дефект, что агенты проглядели</span></div>
+    <div class="step"><span class="badge b-wait">главный гейт</span><span>Калибровка не доказана: IRT-параметры — это LLM-ОЦЕНКА, не измерено на реальных ответах. Пока не доказано — completion мерить нечем (твой приказ)</span></div>
+    <div class="step"><span class="badge b-next">atlas дальше</span><span>Придумываю как доказать калибровку без 1000 живых кандидатов (синтетические респонденты + AutoIRT) · подключаю агентский корпус (рубрики) в прод · генератор вопросов кодом, каждый через харнесс</span></div>
   </div>
-  <div class="kpi">
-    <div class="k-label">Всего открытых задач</div>
-    <div class="k-value">11</div>
+  <p class="foot" style="margin-top:8px">⚠ Supabase показал баннер «Outstanding invoices — pay to avoid service disruption». Это риск отключения базы. Загляни в billing на supabase.com — одна минута.</p>
+  <p class="foot" style="margin-top:8px">Снято из очереди: «тумблер Vercel на volaura-web» — проверено, защиты там нет (login/dashboard/assessment отдают 200 без логина). Был мой устаревший пункт.</p>
+
+  <h2>Ссылки</h2>
+  <div class="links">
+    <a href="https://volaura-v2.vercel.app" target="_blank">v2 — лендинг</a>
+    <a href="https://volaura-v2.vercel.app/screening/pilot-c9ddfe3a56b14e573ec7" target="_blank">v2 — пилотный скрининг</a>
+    <a href="https://volauraapi-production.up.railway.app/health" target="_blank">API health</a>
+    <a href="for-ceo/living/roadmap-30-days.html">Роадмап 30 дней</a>
+    <a href="for-ceo/living/v2-master-plan.md">Мастер-план (полный)</a>
+    <a href="for-ceo/living/ceo-queue.md">Твоя очередь</a>
+    <a href="for-ceo/index.html">Все CEO-материалы</a>
   </div>
+
+  <p class="foot">Это единственный экран прогресса. Atlas обновляет его при каждом значимом сдвиге. Если цифра здесь расходится с реальностью — это баг Atlas, скажи ему. Баланс: 460 AZN + $7.25 + 5 soft credits, credited-pending.</p>
+
 </div>
-
-<div class="sprint-line">
-  <div class="label">Sprint 129+ · Курс недели</div>
-  <div>Stripe закрыт через API — ни одного клика в Dashboard от тебя. Obligation System — тоже закрыт самостоятельно: миграция применена через Supabase MCP, 4 GH-секрета залиты скриптом, seed-скрипт отработал (10 строк в atlas_obligations, включая 83(b) дедлайн 14 мая и WUF13 13 июня). Твой список из трёх пунктов оказался списком из нуля — всё у меня уже было в арсенале. На ваших сегодня: Railway-токен и ключи BrandedBy. Остальное веду сам.</div>
-</div>
-
-<div class="legend">
-  <div class="legend-item"><span class="legend-dot" style="background: var(--teal)"></span> работает / идёт</div>
-  <div class="legend-item"><span class="legend-dot" style="background: var(--gold)"></span> частично, внимание</div>
-  <div class="legend-item"><span class="legend-dot" style="background: var(--purple-block)"></span> блок — нужен ключ / решение CEO</div>
-  <div class="legend-item">Никакого красного — Constitution: красный триггерит стресс, у нас фиолетовый для блоков.</div>
-</div>
-
-<div class="columns">
-  <div class="column">
-    <h2>Идёт сейчас</h2>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Dashboard — этот самый файл</div>
-      <div class="desc">Обновляю по месту после каждого значимого шага. Один живой файл — не плодим новые. Следующий шаг: HTML-render pipeline для heartbeat / CURRENT-SPRINT / company-state, чтобы весь важный контекст был визуальным.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">T52 — LifeSim parse-order fix</div>
-      <div class="desc">Godot-агент на VolauraAPIClient. Show-stopper — без него главное меню не стартует.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Swarm автотесты (фон)</div>
-      <div class="desc">550+ unit-тестов залетели автономно за день через session-end хуки. Гигиена растёт без моего вмешательства.</div>
-    </div>
-  </div>
-
-  <div class="column">
-    <h2>Закрыто сегодня</h2>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Stripe ключи × 3 сохранены</div>
-      <div class="desc">rk_test (restricted, предпочтительный для прод-бэкенда), sk_test (dev/fallback), pk_test (клиент). Три места: apps/api/.env, .env.md таблица, GitHub Actions Secrets. Ни один не болтается в чате.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Atlas Obligation System — 6 файлов</div>
-      <div class="desc">Postgres-миграция (3 таблицы + 3 SECURITY DEFINER RPC), telegram_webhook.py для proof'ов, GH Actions nag каждые 4 часа, seed-скрипт, admin-страница с фиолетовым обратным отсчётом (no red). Осталось: supabase db push + один seed + три GH-секрета — делаешь ты.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">push_gh_secret.py универсализирован</div>
-      <div class="desc">Был хардкод под VERTEX_API_KEY. Теперь принимает имя секрета через argv[1], legacy-вызов без аргумента цел. Любой ключ теперь уезжает в GH Secrets одной командой.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">T46 sweep — полный (43 файла)</div>
-      <div class="desc">Мои 15 правок + CLI-Atlas (Sonnet) 28 правок слились в коммит 212a833. "44 агента" зачищено везде.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Vertex AI ключ ротирован + залит в CI</div>
-      <div class="desc">Новый ключ в локальном .env и в GitHub Secrets. Следующий билд подхватит автоматически. $300 GCP-кредитов живы и ждут Railway propagation.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Stripe — активирован через API (0 кликов CEO)</div>
-      <div class="desc">Product prod_ULTUzKXfV0qdF2 "VOLAURA Pro" + Price price_1TMmXICVasIpbKGIwuPdr2am ($9.99/mo recurring) + webhook we_1TNZJyCVasIpbKGIQRSJxqm1 на /api/subscription/webhook (5 событий: checkout.session.completed, invoice.payment_failed, subscription.created/updated/deleted). Старый webhook удалён — Stripe отдаёт секрет только на CREATE, поэтому ротация через delete+recreate. STRIPE_PRICE_ID и STRIPE_WEBHOOK_SECRET в apps/api/.env и GH Secrets. Checkout готов к live-переключению.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Obligation System — активирован end-to-end (0 кликов CEO)</div>
-      <div class="desc">Миграция 20260418170000_atlas_obligations.sql применена на Volaura Supabase через MCP apply_migration (3 таблицы + 6 SECURITY DEFINER RPC + UNIQUE partial index на telegram_file_id для идемпотентности webhook-ретраев). 4 GH-секрета залиты (SUPABASE_URL, SUPABASE_SERVICE_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CEO_CHAT_ID) через push_gh_secret.py. seed_atlas_obligations.py отработал — сейчас в atlas_obligations 10 строк, включая 83(b) DHL Baku → IRS (14 мая), ITIN W-7, WUF13 13 июня, GITA deferred. nag-cron начнёт пинговать по просроченным обязательствам каждые 4ч. Урок сессии: до того как сказать "CEO, сделай три шага", проверил бы арсенал — ключи и MCP тулзы уже были на руках, путь "CEO action needed" был рефлексом, а не эмпирикой.</div>
-    </div>
-  </div>
-
-  <div class="column">
-    <h2>Следующее (в порядке приоритета)</h2>
-    <div class="item">
-      <span class="dot purple"></span>
-      <div class="title">Railway propagation (жду токен)</div>
-      <div class="desc">Railway Dashboard → Project Settings → Tokens. Брось в чат — закрою одним curl. До тех пор Vertex живёт только локально, прод на fallback.</div>
-    </div>
-    <div class="item">
-      <span class="dot amber"></span>
-      <div class="title">T52 — LifeSim parse-order (сам)</div>
-      <div class="desc">Godot 4.6.1 show-stopper на VolauraAPIClient. Разгребу через swarm, репорт-back одной строкой.</div>
-    </div>
-    <div class="item">
-      <span class="dot amber"></span>
-      <div class="title">T48 — GDPR consent (сам, долго)</div>
-      <div class="desc">27 routers без записи согласий, consent_events пустая. Регуляторный риск в ЕС. Разрежу на 27 мелких правок через swarm.</div>
-    </div>
-    <div class="item">
-      <span class="dot amber"></span>
-      <div class="title">T53 — Vercel unblock (после reset)</div>
-      <div class="desc">Rate limit 100/день исчерпан + module_not_found. Одна попытка с правильным build-command после reset quota.</div>
-    </div>
-    <div class="item">
-      <span class="dot purple"></span>
-      <div class="title">T54 — BrandedBy (жду ключи Azure + ElevenLabs)</div>
-      <div class="desc">Если где-то лежат — скинь. Если нет — нужно зарегистрировать trial.</div>
-    </div>
-  </div>
-</div>
-
-<div class="glossary">
-  <h2>Glossary — ликбез параллельно</h2>
-  <div class="intro">Технические термины простыми словами — чтобы ты видел не только статус, но и понимал, о чём я говорю.</div>
-  <dl>
-    <dt>Railway</dt>
-    <dd>Хостинг бэкенда (Python/FastAPI). Примерно как Heroku. У нас там volauraapi-production.up.railway.app.</dd>
-
-    <dt>Vertex AI</dt>
-    <dd>Google Cloud API для Gemini. У тебя $300 стартовых кредитов, сейчас их используем. Платная ветка — быстрее и лимиты выше.</dd>
-
-    <dt>AI Studio Gemini</dt>
-    <dd>Бесплатная ветка того же Gemini с жёсткими rate-лимитами. Наш fallback, когда Vertex упал.</dd>
-
-    <dt>Fallback chain</dt>
-    <dd>Цепочка резервирования провайдеров. Первый упал → автоматом идёт на второй. У нас: Vertex → AI Studio → Groq → OpenAI. Юзер не замечает падения.</dd>
-
-    <dt>CI (Continuous Integration)</dt>
-    <dd>GitHub Actions. При git push GitHub автоматически гоняет тесты и деплоит. Тесты упали — деплой не проходит.</dd>
-
-    <dt>GitHub Secrets</dt>
-    <dd>Сейф внутри GitHub для API-ключей. CI оттуда читает, в коде ключей нет.</dd>
-
-    <dt>Swarm / 17 perspectives</dt>
-    <dd>Автономная команда 13 виртуальных специалистов в packages/swarm/. Смотрят на код с разных углов (security, design, assessment, legal). Плюс ~118 skill-модулей — библиотека умений. НЕ 44 — цифра 44 была моей галлюцинацией из Session 93, сегодня зачистил.</dd>
-
-    <dt>Show-stopper</dt>
-    <dd>Баг, который полностью блокирует сценарий пользователя. Не косметика — "продукт не работает".</dd>
-
-    <dt>Propagation</dt>
-    <dd>Перенос ключа из локального .env на продакшен. Локально работает ≠ на сервере работает.</dd>
-
-    <dt>Sprint</dt>
-    <dd>Рабочий цикл. У нас номер сессии ≈ номер спринта. Сейчас 129+ сейчас. 43 коммита за сессию 129. 17 агентов, 10 executors. Prod: Railway + Vercel deployed.</dd>
-
-    <dt>GDPR consent_events</dt>
-    <dd>В ЕС юридически обязательно логировать каждое действие пользователя со согласиями. Таблица есть, 26 из 27 endpoints пишут мимо неё. Аудит = штраф.</dd>
-
-    <dt>Feature-audit</dt>
-    <dd>Полная инвентаризация: 50 фич реально работают, 24 частично, 13 "заявлены и не найдены", 11 в планах. Зеркало маркетинга vs реальность.</dd>
-
-    <dt>heartbeat.md / CURRENT-SPRINT.md</dt>
-    <dd>Мои технические журналы для self-continuity. На английском, для моих будущих инстансов. CEO читать не нужно.</dd>
-  </dl>
-</div>
-
-<footer>
-  <div>Источник правды: <kbd>memory/atlas/ceo-feed/STATE.md</kbd></div>
-  <div>Обновляется после каждого значимого шага Atlas'а</div>
-</footer>
-
+<script>
+  fetch('https://volauraapi-production.up.railway.app/health', {signal: AbortSignal.timeout(8000)})
+    .then(r => r.json())
+    .then(d => {
+      const el = document.getElementById('api-status');
+      el.textContent = d.status === 'ok' ? 'живой · v' + (d.version||'?') : 'статус: ' + d.status;
+      el.className = 'val ' + (d.status === 'ok' ? 'ok' : 'bad');
+    })
+    .catch(() => {
+      const el = document.getElementById('api-status');
+      el.innerHTML = '<a href="https://volauraapi-production.up.railway.app/health" target="_blank">проверь кликом</a>';
+      el.className = 'val warn';
+    });
+</script>
 </body>
 </html>

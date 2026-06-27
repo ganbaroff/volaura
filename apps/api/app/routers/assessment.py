@@ -1022,6 +1022,19 @@ async def complete_assessment(
         raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "message": "Session not found"})
 
     session = session_result.data
+
+    # Guard: only active/in_progress/completed sessions may reach the scoring pipeline.
+    # Abandoned/expired sessions (set via RLS self-service or expiry cron) must never score.
+    completable_statuses = {"active", "in_progress", "completed"}
+    if session.get("status") not in completable_statuses:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "SESSION_NOT_COMPLETABLE",
+                "message": f"Session status '{session.get('status')}' cannot be completed.",
+            },
+        )
+
     existing_job = await get_completion_job(db_admin, session_id)
 
     def _parse_dt(value: str | None) -> datetime:

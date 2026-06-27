@@ -168,3 +168,29 @@ jobs:
             -q --tb=short
         env:
           APP_ENV: test
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[e2e]')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npx playwright test tests/e2e/full-journey.spec.ts --reporter=list
+        env:
+          E2E_TEST_SECRET: ${{ secrets.E2E_TEST_SECRET }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+          VOLAURA_API_URL: https://volauraapi-production.up.railway.app

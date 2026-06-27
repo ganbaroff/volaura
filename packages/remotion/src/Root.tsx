@@ -2,8 +2,11 @@ import React from "react";
 import { Composition } from "remotion";
 import { TikTokAZ } from "./compositions/TikTokAZ";
 import { LinkedInCarousel } from "./compositions/LinkedInCarousel";
+import { ReactionDuet } from "./compositions/ReactionDuet";
+import { calculateReactionDuetMetadata } from "./compositions/reaction-duet-metadata";
 import { tiktokAZ20260413Post2 } from "./data/tiktok-2026-04-13";
 import { carouselData20260413 } from "./data/carousel-2026-04-13";
+import { reaction20260627Post2 } from "./data/reaction-2026-06-27-post2";
 import { theme } from "./theme";
 
 /**
@@ -37,6 +40,22 @@ export const RemotionRoot: React.FC = () => {
         height={theme.size.carousel.height}
         defaultProps={
           { data: carouselData20260413 } as unknown as Record<string, unknown>
+        }
+      />
+      <Composition
+        id="ReactionDuet"
+        component={ReactionDuet as unknown as React.FC<Record<string, unknown>>}
+        durationInFrames={45 * 30}
+        fps={30}
+        width={theme.size.tiktok.width}
+        height={theme.size.tiktok.height}
+        defaultProps={
+          { data: reaction20260627Post2 } as unknown as Record<string, unknown>
+        }
+        calculateMetadata={
+          calculateReactionDuetMetadata as Parameters<
+            typeof Composition
+          >[0]["calculateMetadata"]
         }
       />
     </>

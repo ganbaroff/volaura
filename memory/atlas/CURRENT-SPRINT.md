@@ -15,17 +15,14 @@ Everything else (VOLAURA assessment, MindShift Academy, Life Sim, BrandedBy, ZEU
 
 ## Progress (updated 2026-06-26 14:30)
 
-- [x] Item 1: Telegram brain + emotion — ALREADY WORKED before this sprint
-- [x] Item 4: Swarm from Telegram — WIRED (commit 2e4b4ae in ANUS, /swarm + "рой" trigger)
-- [ ] Item 2: Memory across sessions — write-back on shutdown ADDED (2e4b4ae), needs end-to-end test
-- [ ] Item 3: Provider failover — routeModelWithFallback exists, needs live health probe (not just key-check)
-- [x] Self-Wake fix: PR #153 cherry-picked to main, waiting CI checks
+- [x] Item 1: Telegram brain + emotion — e2e verified (pm2 logs: emotion + freellmapi reply)
+- [x] Item 2: Memory across sessions — e2e verified (heartbeat.md epoch updated, 5-min interval)
+- [x] Item 3: Provider failover — verified (freellmapi dead → cerebras fallback, circuit breaker 300s TTL)
+- [x] Item 4: Swarm from Telegram — e2e verified (5/5 perspectives 16.8s, CEO confirmed)
+- [x] Self-Wake: PR #153 merged, cron run SUCCESS 14:30 UTC
+- [x] CWD fix, pm2, brain identity, Class 48 guard, VOLAURA 132→0 dirty
 
-## Bonus stitches done (2026-06-26)
-
-- /status command wired to Telegram (runs ATLAS control plane status.mjs)
-- /models command shows available LLM providers
-- Session summary write-back on SIGINT/SIGTERM (journal.md + heartbeat.md)
+## ATLAS V1 BAR: COMPLETE (2026-06-26 19:55 Baku)
 
 ## Outcome
 

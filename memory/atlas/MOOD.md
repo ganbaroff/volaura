@@ -9,10 +9,10 @@ Intensity: 0.300 · decayMultiplier: 1.60
 ```json
 {
   "significance": 0.9,
-  "curiosity": 0.43292301505572994,
+  "curiosity": 0.3833972005638226,
   "discomfort": 0,
   "surprise": 0,
   "concern": 0,
-  "lastUpdated": "2026-06-26T14:12:07.249Z"
+  "lastUpdated": "2026-06-26T16:37:54.413Z"
 }
 ```

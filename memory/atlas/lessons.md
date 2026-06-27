@@ -1,5 +1,17 @@
 ---
 
+## Class 50 — Isolated-unit "proof" hides integration bugs; run the real end-to-end command (2026-06-27)
+
+Symptom. A prior Atlas body (Cursor/Composer) reported the Phase-0 content pipeline "SHIPPED" and proved the AZ-TTS unblock by calling `synthesize()` standalone (got a 205KB WAV). It told the CEO to run `python -m packages.swarm.content_pipeline --piece ...`. When I actually ran that command, it produced NOTHING: `step_tts` calls `synthesize()` from inside the pipeline's running asyncio loop, where `_synthesize_edge`'s `asyncio.run()` raises "cannot be called from a running event loop" → tts failed → transcribe/render/deliver all skipped. A second bug (`subprocess.run(["pnpm",...])` → `[WinError 2]` on Windows because pnpm is a `.cmd` shim) killed transcribe+render at 0ms. Both were invisible to the standalone unit test.
+
+Root cause. "It works in isolation" ≠ "it works in the system." The unit was exercised in a fresh sync process (no running loop, pnpm never invoked); the integration path had a running loop and shelled out to a Windows `.cmd`. Neither failure mode can appear until you run the actual entry-point command the user will run. This is the same family as Class 47 (another body's report is not a receipt for my disk) but at the integration layer.
+
+Fix. Before claiming a pipeline/feature "works" or "shipped": run the REAL end-to-end command (the exact one the CEO will type), not the isolated unit. Read the run's own receipt/PROOF line-by-line — a step that "completed" can still carry `{"error": ...}` (fix the proof writer so it can't show a false OK). On Windows specifically: `.cmd`/`.bat` shims (pnpm/npx) need `cmd /c`; async libs called from inside an event loop need a dedicated-thread loop, not `asyncio.run()`. Result this session: 2 bugs fixed → real 1.08MB voiced AZ ReactionDuet MP4 produced + preserved off-C: in GCS.
+
+Cross-references. Class 47 report-≠-receipt; Class 49 ship-verified-increment; `reliable-execution.md` ground-truth + no-false-OK.
+
+---
+
 ## Class 49 — Metering the CEO with questions instead of deciding and shipping (2026-06-26)
 
 Symptom. CEO closed the chat mid-video-arc: «слишком много ошибок и не смог найти выход. слишком много вопросов мне и мало решений твоих.» Across a long talking-avatar arc I repeatedly ended turns with a fork or a request back to him — "снимаем живьём или аватар?", "кидаешь клип?", "согласен на такой ход?" — instead of deciding within bounds and shipping a proven increment. The whole pipeline also STALLED on one CEO-only input (his face clip): I let everything wait on it instead of building around it.

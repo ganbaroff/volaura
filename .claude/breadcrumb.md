@@ -1,3 +1,7 @@
+# Breadcrumb — 2026-06-27 03:15 Baku | atlas-overseer (sprint continues)
+
+Bot Railway 339min uptime (5.6h). ATLAS cron upgraded: signal+action engines + Telegram wake alerts. Heartbeat now checks bot health. E2E added to CI. Reality Probe 7/9 done — Gate 1+4 PASS, 2928/1 backend tests. VOLAURA 50 commits ahead of main. Codex branch pushed. ATLAS repo secrets set (TELEGRAM_BOT_TOKEN + CHAT_ID). Next: merge codex→main PR, close remaining 3 Beta gates (Sentry DSN, E2E full run, degraded mode).
+
 # MEMORY-GATE — 2026-06-27 02:15 atlas-overseer: Jarvis. Bot Railway alive 34min. Prod ok. Reality Probe 7/9: Gate 1+4 already PASS (0 orphans, all 15+ questions). 2928/1 tests. 3 Beta gates remain: Sentry, E2E, degraded mode. No CEO items — all fixable by me. Executing E2E.
 
 # Breadcrumb — 2026-06-27 ~01:40 Baku | video (VERIFIED + FIXED prior "SHIPPED" claim — it didn't run)

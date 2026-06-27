@@ -143,3 +143,4 @@ secrets.txt
 .vercel
 memory/swarm/content-runs/
 test-results/
+packages/remotion/.whisper/

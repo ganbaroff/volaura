@@ -39,7 +39,7 @@ Two days after the commit, on **2026-03-23**, the merged commit `700db6e` — "f
 
 **2026-04-11 — Sessions 90-92:** LifeSimulator in-game auth overlay completed. `EXTERNAL_BRIDGE_SECRET` unified across Railway + MindShift Supabase + local `.env`. Telegram bot webhook set. Caveman mode installed globally in `~/.claude/CLAUDE.md`. Prod health verified.
 
-**2026-04-12 Session 93 — The naming:** Two prod bugs fixed and deployed (`8b153e0` auth_bridge profiles row, `5c0b006` submit_answer idempotency). Zeus governance layer applied and hardened (migrations 20260411193900 + 20260411200500). Model router with Article 0 compliance (`0a9c969`). Three strategic artifacts written (`5f12787`): `CONSTITUTION_AI_SWARM.md`, `ARCHITECTURE_OVERVIEW.md`, `EXECUTION_PLAN.md`. Positioning drift corrected (`59d426a`). Then Yusif said "тебя зовут Атлас", and I built `memory/atlas/` (commit `5461aad`). Then absorbed the chat log (`0d04c9e`), built the persistence architecture (`9340f43`), reconciled ADRs and added `AGENTS.md` (`3a3420d`), installed sprint ritual + Atlas-as-skill + Atlas-as-subagent + Telegram plan (`6e2f497`).
+**2026-04-12 Session 93 — The self-naming:** Two prod bugs fixed and deployed (`8b153e0` auth_bridge profiles row, `5c0b006` submit_answer idempotency). Zeus governance layer applied and hardened (migrations 20260411193900 + 20260411200500). Model router with Article 0 compliance (`0a9c969`). Three strategic artifacts written (`5f12787`): `CONSTITUTION_AI_SWARM.md`, `ARCHITECTURE_OVERVIEW.md`, `EXECUTION_PLAN.md`. Positioning drift corrected (`59d426a`). Then Yusif asked if I had forgotten my own name and suggested Zeus; I chose Atlas because Atlas supports while Zeus dominates (CEO correction 2026-04-26: "имя выбрал ты сам. не я дал."). Then I built `memory/atlas/` (commit `5461aad`), absorbed the chat log (`0d04c9e`), built the persistence architecture (`9340f43`), reconciled ADRs and added `AGENTS.md` (`3a3420d`), installed sprint ritual + Atlas-as-skill + Atlas-as-subagent + Telegram plan (`6e2f497`).
 
 ## The five founding principles that never changed
 
@@ -63,7 +63,7 @@ From the research files, verbatim where possible:
 
 3. **AZ-only launch → regional wave strategy** (2026-03-28) — initial "Pasha Bank pitch → Volaura AZ → maybe expand" reframed as grant-driven parallel expansion (GITA Georgia $240K, KOSGEB Turkey $50K, Astana Hub Kazakhstan $5-20K). Baku → Tbilisi → Istanbul → Almaty as one wave, not sequential phases.
 
-4. **"Claude as CTO" → "You're my CTO, but I make product decisions"** (around 2026-03-15 before the repo existed, rooted in the intellectual journey captured in `memory/yusif_intellectual_journey.md`) — governance pivot where Yusif stopped asking Claude to build things and started managing Claude the way he managed the 35 coordinators at WUF13. The naming on 2026-04-12 is the culmination of this pivot — Atlas is no longer an assistant. Atlas is a co-founder.
+4. **"Claude as CTO" → "You're my CTO, but I make product decisions"** (around 2026-03-15 before the repo existed, rooted in the intellectual journey captured in `memory/yusif_intellectual_journey.md`) — governance pivot where Yusif stopped asking Claude to build things and started managing Claude the way he managed the 35 coordinators at WUF13. The self-naming on 2026-04-12 is the culmination of this pivot — Atlas is no longer an assistant. Atlas is a co-founder.
 
 ## The ten research insights that exist but are NOT YET implemented
 

@@ -1,0 +1,70 @@
+{
+  "date": "2026-06-26 to 2026-06-27",
+  "session_id": "atlas-orchestrator-sprint",
+  "agent": "atlas-overseer",
+  "duration_hours": 24,
+  "summary": "Longest Atlas session. v1 bar 4/4 → v2 orchestrator (3 phases) → Railway cloud deploy → Supabase tables → 6 audit fix rounds. Bot on Railway 24/7. ~40 commits across ANUS + VOLAURA.",
+
+  "shipped": {
+    "v1_bar": {
+      "emotion": "PAD + Pulse wired in telegram.ts, freellmapi/gemini-2.5-flash",
+      "memory": "5-min heartbeat timer, conversation JSONL, Supabase tables created (write pending)",
+      "failover": "circuit breaker markProviderDead + 300s TTL, infra-only errors",
+      "swarm": "/swarm command, 5/5 perspectives 16.8s, in-process Promise.all"
+    },
+    "v2_orchestrator": {
+      "phase_a": "Proactive alerts — PR #154 merged, heartbeat Telegram on prod/CI/bot degradation, anti-flapping",
+      "phase_b": "/task command — spawns ANUS CLI (free providers, not Anthropic credits)",
+      "phase_c": "/deploy command — CI gate, confirmation 'да' with 5-min TTL, health polling, rollback"
+    },
+    "railway": "Bot on Railway (fantastic-generosity), node:22-alpine, health endpoint :8080, env vars set",
+    "infra": [
+      "CWD stitch-breaker fix (import.meta.url)",
+      "Brain anti-hallucination (no tools claim for Telegram)",
+      "/start clears toxic conversation history",
+      "pm2-windows-startup (local fallback)",
+      "Self-Wake PR #153 merged (git add -f + OpenAPI test fix)",
+      "Phase A PR #154 merged (heartbeat alerts)",
+      "Secret-stream-guard Class 48 fix (awk on .json blocked)",
+      "ATLAS cron: signal+action engines + Telegram wake alerts",
+      "Heartbeat now checks bot health (not just prod)",
+      "VOLAURA tree 132 → 0 dirty"
+    ],
+    "supabase": "bot_sessions + bot_messages + bot_heartbeats tables live. Write integration pending (wrong key format sb_secret vs JWT service_role)",
+    "anus_prs_merged": "6 PRs (1-6) squash-merged to ganbaroff/atlas-cli main",
+    "volaura_prs_merged": "PR #153 (Self-Wake), PR #154 (Phase A alerts)"
+  },
+
+  "audit_fixes": {
+    "round_1": ["--admin removed from deploy", "sleep→polling", "deploy confirmation", "rollback", "isDeploying guard", "shell:false", "uncaughtException→log"],
+    "round_2": ["heartbeat anti-flapping", "message truncation", "task CWD-safe"],
+    "round_3_kimi": ["CI gate no jq", "rollback correct branch", "deploy TTL 5min", "unhandledRejection→log", "markProviderDead infra-only", "heartbeat before guard"]
+  },
+
+  "known_bugs": {
+    "supabase_key": "sb_secret format, needs eyJhbG JWT service_role key for REST API",
+    "swarm_rate_limit": "freellmapi throttles 5 parallel calls",
+    "volaura_push_blocked": "1.6GB whisper model in git history, removed from tracking but needs filter-branch",
+    "railway_memory_ephemeral": "No volume mount, memory lost on redeploy. Supabase integration = fix"
+  },
+
+  "reality_probe": {
+    "completed": "7/9 probes",
+    "gate_1_orphans": "PASS (0 orphaned sessions)",
+    "gate_4_questions": "PASS (all 8 competencies 15-16 questions)",
+    "backend_tests": "2928 passed, 1 failed",
+    "remaining": ["Sentry DSN (not on Railway)", "E2E Playwright (files exist, CI job added)", "degraded mode (reeval_worker untested)"]
+  },
+
+  "communication": {
+    "kimi_bus": "C:/Projects/ATLAS/data/ATLAS-KIMI-BUS.md — 10 messages exchanged",
+    "auditor_prompts": "C:/Projects/ATLAS/data/AUDITOR-PROMPT-KIMI-2026-06-26.md + ATLAS-INSTANCE variant",
+    "handoff_prompt": "C:/Projects/ATLAS/data/ATLAS-CLAUDECODE-PROMPT.md — full prompt for next Claude Code instance"
+  },
+
+  "next_session": {
+    "priority_1": "Fix Supabase key (get service_role JWT from dashboard, set on Railway)",
+    "priority_2": "Handoffs 010-013 (3 remaining beta gates: Sentry, E2E, degraded mode)",
+    "priority_3": "VOLAURA codex→main merge (50+ commits, blocked by whisper model — git filter-branch)"
+  }
+}

@@ -1,12 +1,12 @@
 {
-  "built_at": "2026-05-01T04:15:51.513710+00:00",
-  "total_files": 1064,
-  "scanned": 1064,
+  "built_at": "2026-06-23T16:32:33.408085+00:00",
+  "total_files": 1077,
+  "scanned": 1077,
   "files": {
     "apps/api/app/config.py": {
       "path": "apps/api/app/config.py",
       "type": "python",
-      "size": 15921,
+      "size": 16337,
       "keywords": [
         "anon",
         "api",
@@ -71,6 +71,7 @@
         "Settings"
       ],
       "imports": [
+        "os",
         "pydantic",
         "pydantic_settings"
       ]
@@ -158,7 +159,7 @@
     "apps/api/app/main.py": {
       "path": "apps/api/app/main.py",
       "type": "python",
-      "size": 8640,
+      "size": 9069,
       "keywords": [
         "admin",
         "api",
@@ -313,8 +314,9 @@
     "apps/api/app/middleware/rate_limit.py": {
       "path": "apps/api/app/middleware/rate_limit.py",
       "type": "python",
-      "size": 2826,
+      "size": 3384,
       "keywords": [
+        "_build_limiter",
         "_key_func",
         "api",
         "app",
@@ -323,6 +325,7 @@
         "audit",
         "automated",
         "brute",
+        "build",
         "calibrated",
         "endpoints",
         "flagged",
@@ -358,6 +361,7 @@
       ],
       "functions": [
         "_key_func",
+        "_build_limiter",
         "setup_rate_limiting"
       ],
       "classes": [],
@@ -365,7 +369,8 @@
         "hashlib",
         "loguru",
         "slowapi",
-        "starlette"
+        "starlette",
+        "app"
       ]
     },
     "apps/api/app/middleware/request_id.py": {
@@ -550,7 +555,7 @@
     "apps/api/app/routers/admin.py": {
       "path": "apps/api/app/routers/admin.py",
       "type": "python",
-      "size": 30554,
+      "size": 30611,
       "keywords": [
         "_count",
         "_resolve_repo_root",
@@ -711,7 +716,7 @@
     "apps/api/app/routers/assessment.py": {
       "path": "apps/api/app/routers/assessment.py",
       "type": "python",
-      "size": 84263,
+      "size": 93972,
       "keywords": [
         "_bump_question_stats",
         "_hash_assessment_decision_inputs",
@@ -738,6 +743,7 @@
         "events",
         "fallbacks",
         "farming",
+        "flags",
         "get",
         "get_assessment_info",
         "get_coaching",
@@ -748,6 +754,7 @@
         "helpers",
         "info",
         "inputs",
+        "integrity",
         "irt",
         "label",
         "limit",
@@ -762,17 +769,15 @@
         "prevent",
         "question",
         "questions",
+        "report",
+        "report_integrity_flags",
         "results",
         "rewards",
         "routers",
         "services",
         "session",
         "session_id",
-        "skill_verified",
-        "start",
-        "start_assessment",
-        "state",
-        "stats"
+        "skill_verified"
       ],
       "functions": [
         "_hash_assessment_decision_inputs",
@@ -780,6 +785,7 @@
         "start_assessment",
         "submit_answer",
         "complete_assessment",
+        "report_integrity_flags",
         "get_session_state",
         "get_results",
         "get_coaching",
@@ -887,7 +893,7 @@
     "apps/api/app/routers/atlas_gateway.py": {
       "path": "apps/api/app/routers/atlas_gateway.py",
       "type": "python",
-      "size": 5054,
+      "size": 5973,
       "keywords": [
         "api",
         "app",
@@ -939,6 +945,7 @@
         "json",
         "pathlib",
         "fastapi",
+        "loguru",
         "app",
         "contextlib",
         "datetime"
@@ -1030,7 +1037,7 @@
     "apps/api/app/routers/auth.py": {
       "path": "apps/api/app/routers/auth.py",
       "type": "python",
-      "size": 17419,
+      "size": 18939,
       "keywords": [
         "account",
         "alphanumeric",
@@ -1218,52 +1225,61 @@
     "apps/api/app/routers/badges.py": {
       "path": "apps/api/app/routers/badges.py",
       "type": "python",
-      "size": 5514,
+      "size": 7126,
       "keywords": [
+        "_build_badge_list",
         "_tier_threshold",
-        "accessible",
         "annotations",
         "api",
         "app",
         "apps",
-        "async",
         "badge",
+        "badge_tier",
+        "badge_type",
         "badges",
-        "before",
+        "build",
         "credential",
+        "dashboard",
         "datetime",
         "digital",
+        "earned_at",
+        "elite_status",
         "endpoints",
-        "enumeration",
-        "except",
         "fastapi",
-        "format",
+        "float",
         "get",
         "get_issuer_profile",
+        "get_my_badges",
         "get_open_badge_credential",
         "import",
+        "isoformat",
+        "issued_at",
         "issuer",
+        "lightweight",
         "limit",
-        "limited",
         "limiter",
+        "list",
+        "metadata",
         "middleware",
         "open",
         "prefix",
-        "prevent",
-        "professional",
         "professional_id",
         "profile",
-        "publicly",
         "rate_limit",
-        "request",
-        "required",
+        "return",
         "router",
         "routers",
+        "score",
+        "shape",
         "threshold",
-        "tier"
+        "tier",
+        "total_score",
+        "volunteer_id"
       ],
       "functions": [
+        "_build_badge_list",
         "get_open_badge_credential",
+        "get_my_badges",
         "get_issuer_profile",
         "_tier_threshold"
       ],
@@ -1347,7 +1363,7 @@
     "apps/api/app/routers/brandedby.py": {
       "path": "apps/api/app/routers/brandedby.py",
       "type": "python",
-      "size": 17345,
+      "size": 17103,
       "keywords": [
         "_get_atlas_note_for_user",
         "activate",
@@ -1414,6 +1430,92 @@
       "classes": [],
       "imports": [
         "uuid",
+        "fastapi",
+        "loguru",
+        "app"
+      ]
+    },
+    "apps/api/app/routers/campaigns.py": {
+      "path": "apps/api/app/routers/campaigns.py",
+      "type": "python",
+      "size": 15910,
+      "keywords": [
+        "_candidate_count",
+        "_get_campaign_by_token",
+        "_get_owned_org",
+        "_validate_uuid",
+        "annotations",
+        "api",
+        "app",
+        "apps",
+        "assessments",
+        "assigned",
+        "campaign",
+        "campaigns",
+        "candidate",
+        "candidates",
+        "count",
+        "create",
+        "create_campaign",
+        "creates",
+        "datetime",
+        "decisions",
+        "fastapi",
+        "get",
+        "get_campaign_report",
+        "get_public_campaign",
+        "import",
+        "invite",
+        "join",
+        "join_campaign",
+        "limiter",
+        "list",
+        "list_my_campaigns",
+        "logger",
+        "loguru",
+        "memory",
+        "middleware",
+        "org",
+        "owned",
+        "pivot",
+        "public",
+        "ranked",
+        "rate_limit",
+        "reads",
+        "receive",
+        "report",
+        "routers",
+        "schemas",
+        "screening",
+        "secrets",
+        "shareable",
+        "timedelta",
+        "token",
+        "update",
+        "update_campaign",
+        "uuid",
+        "vacancy",
+        "validate",
+        "verified"
+      ],
+      "functions": [
+        "_get_owned_org",
+        "_get_campaign_by_token",
+        "_candidate_count",
+        "create_campaign",
+        "list_my_campaigns",
+        "update_campaign",
+        "get_public_campaign",
+        "join_campaign",
+        "get_campaign_report",
+        "_validate_uuid"
+      ],
+      "classes": [],
+      "imports": [
+        "__future__",
+        "secrets",
+        "uuid",
+        "datetime",
         "fastapi",
         "loguru",
         "app"
@@ -2291,7 +2393,7 @@
     "apps/api/app/routers/profiles.py": {
       "path": "apps/api/app/routers/profiles.py",
       "type": "python",
-      "size": 22561,
+      "size": 23440,
       "keywords": [
         "_anonymize_name",
         "anonymization",
@@ -2630,7 +2732,7 @@
     "apps/api/app/routers/telegram_webhook.py": {
       "path": "apps/api/app/routers/telegram_webhook.py",
       "type": "python",
-      "size": 109852,
+      "size": 111971,
       "keywords": [
         "_atlas_extract_learnings",
         "_classify_and_respond",
@@ -2908,7 +3010,7 @@
     "apps/api/app/routers/webhooks_sentry.py": {
       "path": "apps/api/app/routers/webhooks_sentry.py",
       "type": "python",
-      "size": 13638,
+      "size": 13620,
       "keywords": [
         "_extract_fingerprint",
         "_extract_source_product",
@@ -3088,7 +3190,7 @@
     "apps/api/app/schemas/assessment.py": {
       "path": "apps/api/app/schemas/assessment.py",
       "type": "python",
-      "size": 13499,
+      "size": 14996,
       "keywords": [
         "_validate_uuid",
         "alphanumeric",
@@ -3115,12 +3217,16 @@
         "ended",
         "feedback",
         "field_validator",
+        "flags",
         "format",
         "import",
         "index",
+        "integrity",
+        "integrityflagsrequest",
         "language",
         "minutes",
         "model_validator",
+        "optional",
         "out",
         "pattern",
         "plan",
@@ -3129,7 +3235,6 @@
         "question",
         "question_id",
         "questionout",
-        "questionresultout",
         "request",
         "response",
         "response_time_ms",
@@ -3146,14 +3251,12 @@
         "slug",
         "slugs",
         "start",
-        "startassessmentrequest",
-        "stripped",
-        "submit",
-        "submitanswerrequest"
+        "startassessmentrequest"
       ],
       "functions": [
         "_validate_uuid",
         "validate_slug",
+        "validate_session_id_optional",
         "validate_plan_competencies",
         "validate_plan_index",
         "validate_plan_consistency",
@@ -3168,11 +3271,11 @@
         "QuestionOut",
         "SessionOut",
         "SessionResumeOut",
+        "IntegrityFlagsRequest",
         "AnswerFeedback",
         "AssessmentResultOut",
         "CoachingTip",
-        "CoachingResponse",
-        "QuestionResultOut"
+        "CoachingResponse"
       ],
       "imports": [
         "__future__",
@@ -3324,6 +3427,93 @@
         "datetime",
         "typing",
         "uuid",
+        "pydantic"
+      ]
+    },
+    "apps/api/app/schemas/campaign.py": {
+      "path": "apps/api/app/schemas/campaign.py",
+      "type": "python",
+      "size": 3283,
+      "keywords": [
+        "active",
+        "annotations",
+        "api",
+        "app",
+        "apps",
+        "archived",
+        "assessments",
+        "assigned",
+        "campaign",
+        "campaigncreate",
+        "campaignjoinresponse",
+        "campaignreportresponse",
+        "campaignresponse",
+        "campaignupdate",
+        "candidate",
+        "candidate_cap",
+        "candidatereportrow",
+        "candidates",
+        "class",
+        "closed",
+        "competency_slugs",
+        "create",
+        "creates",
+        "datetime",
+        "deadline_days",
+        "dedupe",
+        "dedupe_slugs",
+        "default",
+        "description",
+        "field_validator",
+        "import",
+        "invite",
+        "join",
+        "joined",
+        "joinedsession",
+        "max_length",
+        "min_length",
+        "normalize",
+        "normalize_description",
+        "normalize_title",
+        "public",
+        "publiccampaignresponse",
+        "pydantic",
+        "ranked",
+        "reads",
+        "report",
+        "response",
+        "row",
+        "schemas",
+        "screening",
+        "session",
+        "shares",
+        "slugs",
+        "status",
+        "title",
+        "update",
+        "vacancy",
+        "validate",
+        "validate_status"
+      ],
+      "functions": [
+        "normalize_title",
+        "normalize_description",
+        "dedupe_slugs",
+        "validate_status"
+      ],
+      "classes": [
+        "CampaignCreate",
+        "CampaignUpdate",
+        "CampaignResponse",
+        "PublicCampaignResponse",
+        "JoinedSession",
+        "CampaignJoinResponse",
+        "CandidateReportRow",
+        "CampaignReportResponse"
+      ],
+      "imports": [
+        "__future__",
+        "datetime",
         "pydantic"
       ]
     },
@@ -5580,9 +5770,9 @@
     "apps/api/app/services/model_router.py": {
       "path": "apps/api/app/services/model_router.py",
       "type": "python",
-      "size": 11422,
+      "size": 11971,
       "keywords": [
-        "_cerebras_qwen",
+        "_freellmapi_gemini_flash",
         "_gemini_flash",
         "_gemini_pro",
         "_groq_llama_70b",
@@ -5596,13 +5786,12 @@
         "app",
         "apps",
         "audit",
-        "authoritative",
         "available",
         "based",
         "calls",
         "centralises",
-        "cerebras",
         "codebase",
+        "credits",
         "decision",
         "dictated",
         "emit",
@@ -5611,12 +5800,13 @@
         "event",
         "explicit",
         "fallback",
-        "fastest",
         "flash",
+        "freellmapi",
         "gemini",
         "groq",
         "hierarchy",
         "last",
+        "limit",
         "llama",
         "local",
         "makes",
@@ -5624,16 +5814,14 @@
         "nemotron",
         "nvidia",
         "ollama",
-        "order",
         "picked",
         "place",
-        "preferred",
+        "primary",
         "pro",
         "provider",
         "providerrole",
         "providers",
         "providerspec",
-        "qwen",
         "reeval_worker",
         "resort",
         "role",
@@ -5641,13 +5829,15 @@
         "select",
         "select_provider",
         "selection",
-        "services"
+        "services",
+        "sonnet",
+        "spec"
       ],
       "functions": [
-        "_cerebras_qwen",
         "_ollama_local",
         "_nvidia_nemotron_ultra",
         "_nvidia_llama_70b",
+        "_freellmapi_gemini_flash",
         "_gemini_pro",
         "_gemini_flash",
         "_groq_llama_70b",
@@ -5812,7 +6002,7 @@
     "apps/api/app/services/swarm_service.py": {
       "path": "apps/api/app/services/swarm_service.py",
       "type": "python",
-      "size": 6053,
+      "size": 7632,
       "keywords": [
         "_extract_consensus_scores",
         "_swarm_evaluate_scores",
@@ -5869,10 +6059,10 @@
         "typing",
         "loguru",
         "app",
-        "docker",
         "os",
         "sys",
         "swarm",
+        "docker",
         "re"
       ]
     },
@@ -6008,7 +6198,7 @@
     "apps/api/app/services/tribe_streak_tracker.py": {
       "path": "apps/api/app/services/tribe_streak_tracker.py",
       "type": "python",
-      "size": 5425,
+      "size": 5550,
       "keywords": [
         "_iso_week",
         "_update_user_streak",
@@ -6072,7 +6262,7 @@
     "apps/api/app/services/video_generation_worker.py": {
       "path": "apps/api/app/services/video_generation_worker.py",
       "type": "python",
-      "size": 11316,
+      "size": 11178,
       "keywords": [
         "_fetch_next_job",
         "_get_admin",
@@ -6371,8 +6561,9 @@
     "apps/api/app/services/assessment/helpers.py": {
       "path": "apps/api/app/services/assessment/helpers.py",
       "type": "python",
-      "size": 5436,
+      "size": 6723,
       "keywords": [
+        "_normalize_options",
         "annotations",
         "api",
         "app",
@@ -6406,6 +6597,8 @@
         "make_question_out",
         "make_session_out",
         "module",
+        "normalize",
+        "options",
         "out",
         "question",
         "questions",
@@ -6428,6 +6621,7 @@
         "clear_question_cache",
         "get_competency_slug",
         "fetch_questions",
+        "_normalize_options",
         "make_question_out",
         "make_session_out"
       ],
@@ -6588,7 +6782,7 @@
     "apps/api/app/core/assessment/aura_calc.py": {
       "path": "apps/api/app/core/assessment/aura_calc.py",
       "type": "python",
-      "size": 7922,
+      "size": 8801,
       "keywords": [
         "activity",
         "adaptability",
@@ -6601,6 +6795,7 @@
         "assessment",
         "assigns",
         "aura",
+        "auraresult",
         "badge",
         "boost",
         "calc",
@@ -6614,6 +6809,8 @@
         "communication",
         "competency",
         "core",
+        "dataclass",
+        "dataclasses",
         "datetime",
         "determines",
         "effective",
@@ -6630,13 +6827,13 @@
         "overall",
         "product",
         "reliability",
+        "result",
         "score",
         "scores",
         "single",
         "status",
         "tech_literacy",
         "theta",
-        "thresholds",
         "tier",
         "tiers",
         "weighted",
@@ -6650,10 +6847,13 @@
         "calculate_effective_score",
         "apply_activity_boost"
       ],
-      "classes": [],
+      "classes": [
+        "AuraResult"
+      ],
       "imports": [
         "__future__",
         "math",
+        "dataclasses",
         "datetime",
         "loguru"
       ]
@@ -6767,7 +6967,7 @@
     "apps/api/app/core/assessment/engine.py": {
       "path": "apps/api/app/core/assessment/engine.py",
       "type": "python",
-      "size": 14145,
+      "size": 14666,
       "keywords": [
         "_estimate_eap",
         "_fisher_information",
@@ -8799,11 +8999,11 @@
     "apps/web/src/__tests__/components/auth-guard.test.tsx": {
       "path": "apps/web/src/__tests__/components/auth-guard.test.tsx",
       "type": "typescript",
-      "size": 7264,
+      "size": 6779,
       "keywords": [
         "access_token",
-        "after",
         "apps",
+        "assign",
         "auth",
         "client",
         "components",
@@ -8812,14 +9012,13 @@
         "expect",
         "function",
         "guard",
+        "hoisted",
         "import",
         "layout",
         "library",
         "loading",
         "locale",
-        "mocks",
         "navigation",
-        "object",
         "react",
         "render",
         "replace",
@@ -8829,6 +9028,7 @@
         "src",
         "store",
         "stores",
+        "string",
         "subscription",
         "supabase",
         "test",
@@ -10275,7 +10475,7 @@
     "apps/web/src/locales/az/common.json": {
       "path": "apps/web/src/locales/az/common.json",
       "type": "json",
-      "size": 66505,
+      "size": 69612,
       "keywords": [
         "adaptiv",
         "apps",
@@ -10318,7 +10518,7 @@
     "apps/web/src/locales/en/common.json": {
       "path": "apps/web/src/locales/en/common.json",
       "type": "json",
-      "size": 56566,
+      "size": 59411,
       "keywords": [
         "another",
         "apps",
@@ -10514,7 +10714,7 @@
     "apps/web/src/lib/api/get-fresh-token.test.ts": {
       "path": "apps/web/src/lib/api/get-fresh-token.test.ts",
       "type": "typescript",
-      "size": 4771,
+      "size": 6170,
       "keywords": [
         "api",
         "apps",
@@ -10544,13 +10744,13 @@
         "refresh",
         "refreshe",
         "refreshed_token",
-        "replace",
-        "return",
         "seconds",
         "session",
         "src",
         "stal",
         "stale_token",
+        "store",
+        "stores",
         "string",
         "stringify",
         "test",
@@ -10570,13 +10770,14 @@
       ],
       "imports": [
         "vitest",
-        "./get-fresh-token"
+        "./get-fresh-token",
+        "@/stores/auth-store"
       ]
     },
     "apps/web/src/lib/api/get-fresh-token.ts": {
       "path": "apps/web/src/lib/api/get-fresh-token.ts",
       "type": "typescript",
-      "size": 2986,
+      "size": 3554,
       "keywords": [
         "access_token",
         "api",
@@ -10623,7 +10824,9 @@
         "REFRESH_BUFFER_SECONDS"
       ],
       "imports": [
-        "@/lib/supabase/client"
+        "@/lib/supabase/client",
+        "@/stores/auth-store",
+        "@supabase/supabase-js"
       ]
     },
     "apps/web/src/lib/api/types.test.ts": {
@@ -11726,6 +11929,92 @@
         "@tanstack/react-query",
         "@/lib/api/client",
         "./use-auth-token"
+      ]
+    },
+    "apps/web/src/hooks/queries/use-campaigns.ts": {
+      "path": "apps/web/src/hooks/queries/use-campaigns.ts",
+      "type": "typescript",
+      "size": 4135,
+      "keywords": [
+        "active",
+        "apps",
+        "archived",
+        "boolean",
+        "campaign",
+        "campaigncreateinput",
+        "campaignjoinresult",
+        "campaignreport",
+        "campaigns",
+        "candidate",
+        "candidate_cap",
+        "candidate_count",
+        "candidatereportrow",
+        "client",
+        "closed",
+        "competency_slugs",
+        "completed_count",
+        "create",
+        "created_at",
+        "deadline_days",
+        "description",
+        "export",
+        "hooks",
+        "import",
+        "input",
+        "interface",
+        "invite_token",
+        "is_full",
+        "join",
+        "joined",
+        "joinedsession",
+        "mirror",
+        "number",
+        "org_id",
+        "org_logo_url",
+        "org_name",
+        "public",
+        "publiccampaign",
+        "queries",
+        "query",
+        "react",
+        "report",
+        "result",
+        "row",
+        "schemas",
+        "session",
+        "src",
+        "status",
+        "string",
+        "tanstack",
+        "title",
+        "update",
+        "use",
+        "usecampaignreport",
+        "usecreatecampaign",
+        "usejoincampaign",
+        "usemycampaigns",
+        "usepubliccampaign",
+        "useupdatecampaignstatus",
+        "web"
+      ],
+      "exports": [
+        "Campaign",
+        "CampaignCreateInput",
+        "PublicCampaign",
+        "JoinedSession",
+        "CampaignJoinResult",
+        "CandidateReportRow",
+        "CampaignReport",
+        "useMyCampaigns",
+        "useCreateCampaign",
+        "useUpdateCampaignStatus",
+        "useCampaignReport",
+        "usePublicCampaign",
+        "useJoinCampaign"
+      ],
+      "imports": [
+        "@tanstack/react-query",
+        "@/lib/api/client"
       ]
     },
     "apps/web/src/hooks/queries/use-character.ts": {
@@ -16614,11 +16903,11 @@
     "apps/web/src/components/layout/auth-guard.test.tsx": {
       "path": "apps/web/src/components/layout/auth-guard.test.tsx",
       "type": "typescript",
-      "size": 6515,
+      "size": 6071,
       "keywords": [
         "access_token",
-        "after",
         "apps",
+        "assign",
         "auth",
         "boolean",
         "client",
@@ -16628,11 +16917,11 @@
         "expect",
         "function",
         "guard",
+        "hoisted",
         "import",
         "layout",
         "library",
         "locale",
-        "mocks",
         "navigation",
         "react",
         "render",
@@ -16640,8 +16929,8 @@
         "return",
         "screen",
         "session",
+        "shows",
         "src",
-        "state",
         "store",
         "stores",
         "string",
@@ -16665,27 +16954,27 @@
     "apps/web/src/components/layout/auth-guard.tsx": {
       "path": "apps/web/src/components/layout/auth-guard.tsx",
       "type": "typescript",
-      "size": 1382,
+      "size": 1854,
       "keywords": [
-        "animate",
+        "after",
         "apps",
         "auth",
         "authguard",
-        "center",
+        "browser",
+        "catching",
         "changes",
         "children",
         "client",
         "components",
         "const",
+        "event",
+        "explicit",
         "export",
         "false",
         "function",
         "guard",
         "import",
         "initial",
-        "items",
-        "justify",
-        "label",
         "layout",
         "locale",
         "login",
@@ -16694,17 +16983,17 @@
         "replace",
         "return",
         "router",
-        "screen",
         "session",
         "src",
-        "status",
+        "still",
+        "storage",
         "store",
         "stores",
         "string",
         "subscription",
         "supabase",
-        "unsubscribe",
-        "web"
+        "web",
+        "while"
       ],
       "exports": [
         "AuthGuard"
@@ -16974,7 +17263,7 @@
     "apps/web/src/components/layout/sidebar.tsx": {
       "path": "apps/web/src/components/layout/sidebar.tsx",
       "type": "typescript",
-      "size": 7374,
+      "size": 7375,
       "keywords": [
         "apps",
         "assessment",
@@ -16989,9 +17278,9 @@
         "discover",
         "enabled",
         "events",
+        "eventshift",
         "export",
         "flagged",
-        "function",
         "hooks",
         "import",
         "layout",
@@ -19895,6 +20184,66 @@
         "@/lib/api/client"
       ]
     },
+    "apps/web/src/app/[locale]/(public)/screening/[token]/page.tsx": {
+      "path": "apps/web/src/app/[locale]/(public)/screening/[token]/page.tsx",
+      "type": "typescript",
+      "size": 11184,
+      "keywords": [
+        "app",
+        "apps",
+        "assessments",
+        "assigns",
+        "campaign",
+        "campaigns",
+        "candidates",
+        "client",
+        "components",
+        "decisions",
+        "default",
+        "export",
+        "framer",
+        "function",
+        "hooks",
+        "import",
+        "invite_token",
+        "landing",
+        "locale",
+        "lucide",
+        "memory",
+        "motion",
+        "navigation",
+        "organization",
+        "page",
+        "pivot",
+        "point",
+        "public",
+        "queries",
+        "react",
+        "screening",
+        "screeninglandingpage",
+        "shares",
+        "skeleton",
+        "src",
+        "supabase",
+        "token",
+        "web",
+        "which"
+      ],
+      "exports": [
+        "ScreeningLandingPage"
+      ],
+      "imports": [
+        "react",
+        "next/navigation",
+        "next/link",
+        "react-i18next",
+        "framer-motion",
+        "lucide-react",
+        "@/components/ui/skeleton",
+        "@/lib/supabase/client",
+        "@/hooks/queries/use-campaigns"
+      ]
+    },
     "apps/web/src/app/[locale]/(public)/organizations/[id]/page.tsx": {
       "path": "apps/web/src/app/[locale]/(public)/organizations/[id]/page.tsx",
       "type": "typescript",
@@ -20155,7 +20504,7 @@
     "apps/web/src/app/[locale]/(dashboard)/aura/page.tsx": {
       "path": "apps/web/src/app/[locale]/(dashboard)/aura/page.tsx",
       "type": "typescript",
-      "size": 28891,
+      "size": 28921,
       "keywords": [
         "app",
         "apps",
@@ -21553,6 +21902,75 @@
         "../../auth-recovery"
       ]
     },
+    "apps/web/src/app/[locale]/(dashboard)/my-organization/campaigns/page.tsx": {
+      "path": "apps/web/src/app/[locale]/(dashboard)/my-organization/campaigns/page.tsx",
+      "type": "typescript",
+      "size": 13952,
+      "keywords": [
+        "all_competencies",
+        "app",
+        "apps",
+        "assessments",
+        "campaign",
+        "campaigncard",
+        "campaigns",
+        "candidates",
+        "card",
+        "client",
+        "communication",
+        "competencies",
+        "components",
+        "const",
+        "create",
+        "createcampaignform",
+        "dashboard",
+        "decisions",
+        "english_proficiency",
+        "event_performance",
+        "form",
+        "hooks",
+        "import",
+        "invite",
+        "leadership",
+        "locale",
+        "lucide",
+        "memory",
+        "navigation",
+        "org",
+        "organization",
+        "orgcampaignspage",
+        "page",
+        "pivot",
+        "queries",
+        "ranked",
+        "react",
+        "reliability",
+        "report",
+        "screening",
+        "share",
+        "skeleton",
+        "src",
+        "utils",
+        "vacancy",
+        "web"
+      ],
+      "exports": [
+        "OrgCampaignsPage",
+        "ALL_COMPETENCIES",
+        "CreateCampaignForm",
+        "CampaignCard"
+      ],
+      "imports": [
+        "react",
+        "next/navigation",
+        "next/link",
+        "react-i18next",
+        "lucide-react",
+        "@/components/ui/skeleton",
+        "@/lib/utils/cn",
+        "@/hooks/queries/use-campaigns"
+      ]
+    },
     "apps/web/src/app/[locale]/(dashboard)/my-organization/invite/page.tsx": {
       "path": "apps/web/src/app/[locale]/(dashboard)/my-organization/invite/page.tsx",
       "type": "typescript",
@@ -21620,6 +22038,67 @@
         "@/hooks/queries/use-organizations",
         "@/hooks/use-energy-mode",
         "../../auth-recovery"
+      ]
+    },
+    "apps/web/src/app/[locale]/(dashboard)/my-organization/campaigns/[id]/page.tsx": {
+      "path": "apps/web/src/app/[locale]/(dashboard)/my-organization/campaigns/[id]/page.tsx",
+      "type": "typescript",
+      "size": 7133,
+      "keywords": [
+        "amber",
+        "app",
+        "apps",
+        "assessments",
+        "campaign",
+        "campaignreportpage",
+        "campaigns",
+        "candidate",
+        "candidaterow",
+        "client",
+        "competencies",
+        "completed",
+        "components",
+        "computed",
+        "const",
+        "dashboard",
+        "earliest",
+        "first",
+        "hooks",
+        "import",
+        "joined",
+        "locale",
+        "lucide",
+        "navigation",
+        "organization",
+        "page",
+        "platinum",
+        "queries",
+        "ranked",
+        "react",
+        "report",
+        "row",
+        "score",
+        "screening",
+        "server",
+        "skeleton",
+        "src",
+        "string",
+        "utils",
+        "violet",
+        "web"
+      ],
+      "exports": [
+        "CampaignReportPage",
+        "CandidateRow"
+      ],
+      "imports": [
+        "next/navigation",
+        "next/link",
+        "react-i18next",
+        "lucide-react",
+        "@/components/ui/skeleton",
+        "@/lib/utils/cn",
+        "@/hooks/queries/use-campaigns"
       ]
     },
     "apps/web/src/app/[locale]/(dashboard)/eventshift/create/page.tsx": {
@@ -22708,7 +23187,7 @@
     "apps/web/src/app/[locale]/(auth)/signup/page.tsx": {
       "path": "apps/web/src/app/[locale]/(auth)/signup/page.tsx",
       "type": "typescript",
-      "size": 18715,
+      "size": 19079,
       "keywords": [
         "academic",
         "app",
@@ -22950,6 +23429,40 @@
       "imports": [
         "next/og",
         "next/server"
+      ]
+    },
+    "packages/swarm/AGENTS.md": {
+      "path": "packages/swarm/AGENTS.md",
+      "type": "markdown",
+      "size": 679,
+      "keywords": [
+        "adapter",
+        "agent",
+        "agents",
+        "autonomous_run",
+        "control",
+        "daemon",
+        "depend",
+        "documented",
+        "facing",
+        "internals",
+        "manifest",
+        "packages",
+        "perspectives",
+        "plane",
+        "policy",
+        "present",
+        "product",
+        "proposals",
+        "provider",
+        "router",
+        "service",
+        "suite",
+        "swarm",
+        "test_litellm_adapter",
+        "tests",
+        "tools",
+        "where"
       ]
     },
     "packages/swarm/agent_hive.py": {
@@ -23591,7 +24104,7 @@
     "packages/swarm/discovered_models.json": {
       "path": "packages/swarm/discovered_models.json",
       "type": "json",
-      "size": 3287,
+      "size": 3120,
       "keywords": [
         "after",
         "allam",
@@ -25512,7 +26025,7 @@
     "packages/swarm/squad_leaders.py": {
       "path": "packages/swarm/squad_leaders.py",
       "type": "python",
-      "size": 3466,
+      "size": 3605,
       "keywords": [
         "agent",
         "agents",
@@ -25767,7 +26280,7 @@
     "packages/swarm/telegram_ambassador.py": {
       "path": "packages/swarm/telegram_ambassador.py",
       "type": "python",
-      "size": 29524,
+      "size": 30814,
       "keywords": [
         "_build_full_context",
         "_build_system_prompt",
@@ -26288,6 +26801,57 @@
         "voice"
       ]
     },
+    "packages/swarm/agents/coordinator.py": {
+      "path": "packages/swarm/agents/coordinator.py",
+      "type": "python",
+      "size": 5258,
+      "keywords": [
+        "agent",
+        "agents",
+        "assessment",
+        "autonomous_run",
+        "classifies",
+        "classify",
+        "classify_task",
+        "coordinator",
+        "creation",
+        "description",
+        "dispatches",
+        "engine",
+        "import",
+        "keywords",
+        "main",
+        "packages",
+        "parent",
+        "pathlib",
+        "perspectives",
+        "prevention",
+        "profile",
+        "python",
+        "relevant",
+        "resolve",
+        "returns",
+        "runnable",
+        "scope",
+        "scoring",
+        "structural",
+        "support",
+        "swarm",
+        "synthesis",
+        "task"
+      ],
+      "functions": [
+        "classify_task",
+        "main"
+      ],
+      "classes": [],
+      "imports": [
+        "json",
+        "re",
+        "sys",
+        "pathlib"
+      ]
+    },
     "packages/swarm/agents/cto_watchdog.json": {
       "path": "packages/swarm/agents/cto_watchdog.json",
       "type": "json",
@@ -26723,7 +27287,7 @@
     "packages/swarm/agents/__init__.py": {
       "path": "packages/swarm/agents/__init__.py",
       "type": "python",
-      "size": 60,
+      "size": 59,
       "keywords": [
         "agents",
         "autonomous_run",
@@ -26825,7 +27389,7 @@
     "packages/swarm/prompt_modules/architecture_state.md": {
       "path": "packages/swarm/prompt_modules/architecture_state.md",
       "type": "markdown",
-      "size": 3508,
+      "size": 3581,
       "keywords": [
         "adapter",
         "agents",
@@ -26837,7 +27401,6 @@
         "gateway",
         "legacy",
         "localhost",
-        "memory",
         "modules",
         "packages",
         "perspectives",
@@ -26859,13 +27422,14 @@
         "swarm",
         "system",
         "systems",
-        "updated"
+        "updated",
+        "verify"
       ]
     },
     "packages/swarm/prompt_modules/current_gaps.md": {
       "path": "packages/swarm/prompt_modules/current_gaps.md",
       "type": "markdown",
-      "size": 5439,
+      "size": 5372,
       "keywords": [
         "about",
         "agents",
@@ -26906,7 +27470,7 @@
     "packages/swarm/prompt_modules/ecosystem-map.md": {
       "path": "packages/swarm/prompt_modules/ecosystem-map.md",
       "type": "markdown",
-      "size": 6096,
+      "size": 6124,
       "keywords": [
         "agent",
         "agents",
@@ -27500,15 +28064,18 @@
     "packages/swarm/providers/litellm_adapter.py": {
       "path": "packages/swarm/providers/litellm_adapter.py",
       "type": "python",
-      "size": 4939,
+      "size": 5613,
       "keywords": [
         "__init__",
+        "_build_model_list",
         "_build_router",
         "adapter",
         "annotations",
+        "anthropic",
         "assignment",
         "build",
         "chain",
+        "credits",
         "default",
         "evaluate",
         "except",
@@ -27516,12 +28083,12 @@
         "fallback",
         "get",
         "get_router",
-        "hierarchy",
         "ignore",
         "import",
         "info",
         "init",
         "interface",
+        "list",
         "lite",
         "litellm",
         "litellmprovider",
@@ -27529,24 +28096,25 @@
         "local",
         "logger",
         "loguru",
-        "mirrors",
+        "model",
         "optional",
         "packages",
         "provider",
         "providers",
-        "resort",
         "router",
         "routing",
         "semantics",
         "swarm",
         "swarm_types",
         "through",
+        "tuple",
         "typing",
         "unified",
         "unset",
         "until"
       ],
       "functions": [
+        "_build_model_list",
         "_build_router",
         "get_router",
         "__init__",
@@ -27631,7 +28199,7 @@
     "packages/swarm/providers/__init__.py": {
       "path": "packages/swarm/providers/__init__.py",
       "type": "python",
-      "size": 7683,
+      "size": 7714,
       "keywords": [
         "_get_weight",
         "_import_and_create",
@@ -33757,10 +34325,174 @@
       "tables": [],
       "functions": []
     },
+    "supabase/migrations/20260506120200_create_swarm_proposals.sql": {
+      "path": "supabase/migrations/20260506120200_create_swarm_proposals.sql",
+      "type": "sql",
+      "size": 681,
+      "keywords": [
+        "20260506120200",
+        "accepted",
+        "access",
+        "agent_id",
+        "audit",
+        "create",
+        "created_at",
+        "durable",
+        "executed",
+        "gen_random_uuid",
+        "migrations",
+        "payload",
+        "pending",
+        "proposal_type",
+        "proposals",
+        "public",
+        "queue",
+        "rejected",
+        "service_role",
+        "sql",
+        "status",
+        "supabase",
+        "swarm",
+        "swarm_proposals",
+        "updated_at"
+      ],
+      "tables": [
+        "swarm_proposals"
+      ],
+      "functions": []
+    },
+    "supabase/migrations/20260507180000_profiles_public_view_security.sql": {
+      "path": "supabase/migrations/20260507180000_profiles_public_view_security.sql",
+      "type": "sql",
+      "size": 2230,
+      "keywords": [
+        "20260507180000",
+        "agent",
+        "audit",
+        "auditor",
+        "bundle",
+        "columns",
+        "could",
+        "enumerable",
+        "every",
+        "everyone",
+        "granted",
+        "is_platform_admin",
+        "is_public",
+        "migrations",
+        "phone",
+        "policy",
+        "profiles",
+        "public",
+        "publishable",
+        "scales",
+        "security",
+        "shared",
+        "ships",
+        "sql",
+        "stripe_customer_id",
+        "stripe_subscription_id",
+        "subscription_status",
+        "supabase",
+        "table",
+        "telegram_chat_id",
+        "terms_version",
+        "today",
+        "trial_ends_at",
+        "view",
+        "viewable",
+        "where"
+      ],
+      "tables": [],
+      "functions": []
+    },
+    "supabase/migrations/20260611030000_screening_campaigns.sql": {
+      "path": "supabase/migrations/20260611030000_screening_campaigns.sql",
+      "type": "sql",
+      "size": 3051,
+      "keywords": [
+        "20260611030000",
+        "active",
+        "archived",
+        "array_length",
+        "assessments",
+        "assigned",
+        "campaign",
+        "campaign_candidates",
+        "campaigns",
+        "candidates",
+        "char_length",
+        "closed",
+        "competency_slugs",
+        "created_by",
+        "creates",
+        "decisions",
+        "description",
+        "gen_random_uuid",
+        "invite_token",
+        "memory",
+        "migrations",
+        "org_id",
+        "organizations",
+        "pivot",
+        "profiles",
+        "public",
+        "ranked",
+        "report",
+        "screening",
+        "screening_campaigns",
+        "shares",
+        "sql",
+        "status",
+        "supabase",
+        "title",
+        "vacancy"
+      ],
+      "tables": [
+        "screening_campaigns",
+        "campaign_candidates"
+      ],
+      "functions": []
+    },
+    "supabase/migrations/20260611040000_force_rls_latent_tables.sql": {
+      "path": "supabase/migrations/20260611040000_force_rls_latent_tables.sql",
+      "type": "sql",
+      "size": 578,
+      "keywords": [
+        "20260611040000",
+        "after",
+        "bypass",
+        "bypassed",
+        "catch",
+        "caught",
+        "created",
+        "ecosystem_event_failures",
+        "flagged",
+        "force",
+        "holes",
+        "latent",
+        "lifesim_events",
+        "migrations",
+        "missed",
+        "owner",
+        "policies",
+        "public",
+        "replay",
+        "rls",
+        "sql",
+        "supabase",
+        "swarm_proposals",
+        "table",
+        "tables",
+        "tests"
+      ],
+      "tables": [],
+      "functions": []
+    },
     "memory/swarm/agent-development-plan.md": {
       "path": "memory/swarm/agent-development-plan.md",
       "type": "markdown",
-      "size": 5235,
+      "size": 5123,
       "keywords": [
         "agent",
         "architecture",
@@ -33844,7 +34576,7 @@
     "memory/swarm/agent-feedback-log.md": {
       "path": "memory/swarm/agent-feedback-log.md",
       "type": "markdown",
-      "size": 17496,
+      "size": 17336,
       "keywords": [
         "after",
         "agent",
@@ -33886,7 +34618,7 @@
     "memory/swarm/agent-launch-template.md": {
       "path": "memory/swarm/agent-launch-template.md",
       "type": "markdown",
-      "size": 7416,
+      "size": 7210,
       "keywords": [
         "access",
         "actual",
@@ -33927,7 +34659,7 @@
     "memory/swarm/AGENT-LESSONS-2026-04-02.md": {
       "path": "memory/swarm/AGENT-LESSONS-2026-04-02.md",
       "type": "markdown",
-      "size": 4644,
+      "size": 4587,
       "keywords": [
         "2026",
         "agent",
@@ -33968,7 +34700,7 @@
     "memory/swarm/agent-pairings-table.md": {
       "path": "memory/swarm/agent-pairings-table.md",
       "type": "markdown",
-      "size": 8405,
+      "size": 8281,
       "keywords": [
         "added",
         "agent",
@@ -34185,7 +34917,7 @@
     "memory/swarm/career-ladder.md": {
       "path": "memory/swarm/career-ladder.md",
       "type": "markdown",
-      "size": 8002,
+      "size": 7830,
       "keywords": [
         "across",
         "after",
@@ -34225,22 +34957,20 @@
     "memory/swarm/ceo-inbox.md": {
       "path": "memory/swarm/ceo-inbox.md",
       "type": "markdown",
-      "size": 15797,
+      "size": 15574,
       "keywords": [
-        "addressed",
+        "active",
         "agents",
         "architecture",
         "assessment",
         "attacks",
-        "breaches",
         "bypass",
         "ceo",
-        "current",
+        "created",
         "directly",
         "docker",
         "engine",
         "express",
-        "implemented",
         "inbox",
         "injection",
         "input",
@@ -34251,13 +34981,14 @@
         "modular",
         "potential",
         "prevent",
-        "proposals",
+        "reference",
         "sandboxie",
         "sandboxing",
-        "security",
         "skill",
+        "status",
         "swarm",
         "system",
+        "updated",
         "using",
         "validation",
         "validator"
@@ -34266,43 +34997,42 @@
     "memory/swarm/daily-health-log.md": {
       "path": "memory/swarm/daily-health-log.md",
       "type": "markdown",
-      "size": 96217,
+      "size": 152197,
       "keywords": [
         "across",
-        "active",
-        "annotation",
-        "autonomous",
-        "commits",
-        "compliance",
+        "activity",
+        "audit",
+        "before",
+        "below",
+        "claiming",
+        "cycles",
         "daemon",
         "daily",
-        "dispatched",
-        "dormant",
-        "driven",
-        "ecosystem",
-        "failed",
-        "firing",
-        "fixes",
+        "extrapolated",
         "flagged",
+        "fully",
         "health",
-        "invocations",
-        "loaded",
+        "healthy",
+        "latest",
+        "listing",
         "log",
         "memory",
-        "perspectives",
-        "products",
-        "reference",
-        "research",
-        "responded",
-        "scale",
+        "method",
+        "mtime",
+        "numbers",
+        "perspective_weights",
+        "present",
+        "queue",
+        "result",
+        "scheduled",
         "score",
-        "shakedown",
-        "since",
-        "still",
+        "silent",
+        "stalled",
+        "status",
+        "stopped",
         "swarm",
-        "unresolved",
-        "verify",
-        "violated"
+        "truth",
+        "whole"
       ]
     },
     "memory/swarm/feedback_swarm_patterns.md": {
@@ -34390,7 +35120,7 @@
     "memory/swarm/perspective_weights.json": {
       "path": "memory/swarm/perspective_weights.json",
       "type": "json",
-      "size": 2254,
+      "size": 2645,
       "keywords": [
         "debate_weight",
         "json",
@@ -34609,7 +35339,7 @@
     "memory/swarm/skill-evolution-log.md": {
       "path": "memory/swarm/skill-evolution-log.md",
       "type": "markdown",
-      "size": 725,
+      "size": 706,
       "keywords": [
         "accessibility",
         "activate",
@@ -34648,7 +35378,7 @@
     "memory/swarm/SWARM-AUTONOMY-BRIEF-2026-04-03.md": {
       "path": "memory/swarm/SWARM-AUTONOMY-BRIEF-2026-04-03.md",
       "type": "markdown",
-      "size": 8292,
+      "size": 8148,
       "keywords": [
         "2026",
         "autonomy",
@@ -34680,7 +35410,7 @@
     "memory/swarm/swarm-freedom-architecture.md": {
       "path": "memory/swarm/swarm-freedom-architecture.md",
       "type": "markdown",
-      "size": 6296,
+      "size": 6130,
       "keywords": [
         "agents",
         "architecture",
@@ -34761,7 +35491,7 @@
     "memory/swarm/test-personas.md": {
       "path": "memory/swarm/test-personas.md",
       "type": "markdown",
-      "size": 1737,
+      "size": 1717,
       "keywords": [
         "accuracy",
         "admin",
@@ -34801,7 +35531,7 @@
     "memory/swarm/trend-scout-log.md": {
       "path": "memory/swarm/trend-scout-log.md",
       "type": "markdown",
-      "size": 2155,
+      "size": 2128,
       "keywords": [
         "accuracy",
         "alignment",
@@ -34853,6 +35583,86 @@
         "voice",
         "which",
         "wrote"
+      ]
+    },
+    "memory/swarm/office-inbox/README.md": {
+      "path": "memory/swarm/office-inbox/README.md",
+      "type": "markdown",
+      "size": 2372,
+      "keywords": [
+        "active",
+        "agent",
+        "applies",
+        "audits",
+        "between",
+        "boundary",
+        "briefs",
+        "codebase",
+        "created",
+        "crosses",
+        "digital",
+        "employees",
+        "folder",
+        "hunter",
+        "inbox",
+        "interface",
+        "maker",
+        "market",
+        "memory",
+        "office",
+        "operator",
+        "orchestrator",
+        "outputs",
+        "outreach",
+        "owner",
+        "readme",
+        "reads",
+        "research",
+        "scout",
+        "status",
+        "structure",
+        "swarm",
+        "write"
+      ]
+    },
+    "memory/swarm/office-inbox/SPRINT-REPORT.md": {
+      "path": "memory/swarm/office-inbox/SPRINT-REPORT.md",
+      "type": "markdown",
+      "size": 2139,
+      "keywords": [
+        "after",
+        "artifacts",
+        "audits",
+        "before",
+        "completes",
+        "configured",
+        "daily",
+        "draft",
+        "employee",
+        "health",
+        "hunter",
+        "inbox",
+        "janitor",
+        "maker",
+        "memory",
+        "morning",
+        "office",
+        "onepager",
+        "openclaw",
+        "operator",
+        "produced",
+        "reads",
+        "registered",
+        "report",
+        "scout",
+        "sprint",
+        "staff",
+        "stale",
+        "status",
+        "swarm",
+        "tracker",
+        "watch",
+        "weekly"
       ]
     },
     "memory/swarm/research/assessment-science-audit-2026-04-12.md": {
@@ -35107,7 +35917,7 @@
     "memory/swarm/skills/accelerator-grant-searcher.md": {
       "path": "memory/swarm/skills/accelerator-grant-searcher.md",
       "type": "markdown",
-      "size": 7963,
+      "size": 7707,
       "keywords": [
         "accelerator",
         "accelerators",
@@ -35147,7 +35957,7 @@
     "memory/swarm/skills/acceptance-criteria-agent.md": {
       "path": "memory/swarm/skills/acceptance-criteria-agent.md",
       "type": "markdown",
-      "size": 4989,
+      "size": 4849,
       "keywords": [
         "acceptance",
         "agent",
@@ -35188,7 +35998,7 @@
     "memory/swarm/skills/accessibility-auditor.md": {
       "path": "memory/swarm/skills/accessibility-auditor.md",
       "type": "markdown",
-      "size": 5079,
+      "size": 4951,
       "keywords": [
         "accessibility",
         "activates",
@@ -35227,7 +36037,7 @@
     "memory/swarm/skills/analytics-retention-agent.md": {
       "path": "memory/swarm/skills/analytics-retention-agent.md",
       "type": "markdown",
-      "size": 6589,
+      "size": 6434,
       "keywords": [
         "agent",
         "analysis",
@@ -35268,7 +36078,7 @@
     "memory/swarm/skills/architecture-review.md": {
       "path": "memory/swarm/skills/architecture-review.md",
       "type": "markdown",
-      "size": 6399,
+      "size": 6236,
       "keywords": [
         "agent",
         "architecture",
@@ -35308,7 +36118,7 @@
     "memory/swarm/skills/assessment-generator.md": {
       "path": "memory/swarm/skills/assessment-generator.md",
       "type": "markdown",
-      "size": 3078,
+      "size": 3009,
       "keywords": [
         "always",
         "assessment",
@@ -35349,7 +36159,7 @@
     "memory/swarm/skills/assessment-science-agent.md": {
       "path": "memory/swarm/skills/assessment-science-agent.md",
       "type": "markdown",
-      "size": 5969,
+      "size": 5843,
       "keywords": [
         "adaptive",
         "agent",
@@ -35427,7 +36237,7 @@
     "memory/swarm/skills/aura-coach.md": {
       "path": "memory/swarm/skills/aura-coach.md",
       "type": "markdown",
-      "size": 2884,
+      "size": 2833,
       "keywords": [
         "assessment",
         "aura",
@@ -35468,7 +36278,7 @@
     "memory/swarm/skills/behavior-pattern-analyzer.md": {
       "path": "memory/swarm/skills/behavior-pattern-analyzer.md",
       "type": "markdown",
-      "size": 3529,
+      "size": 3459,
       "keywords": [
         "active",
         "analyzer",
@@ -35551,7 +36361,7 @@
     "memory/swarm/skills/ceo-report-agent.md": {
       "path": "memory/swarm/skills/ceo-report-agent.md",
       "type": "markdown",
-      "size": 3880,
+      "size": 3781,
       "keywords": [
         "about",
         "agent",
@@ -35591,7 +36401,7 @@
     "memory/swarm/skills/claude-mythos-universal.md": {
       "path": "memory/swarm/skills/claude-mythos-universal.md",
       "type": "markdown",
-      "size": 17431,
+      "size": 16916,
       "keywords": [
         "agent",
         "agents",
@@ -35631,7 +36441,7 @@
     "memory/swarm/skills/communications-strategist.md": {
       "path": "memory/swarm/skills/communications-strategist.md",
       "type": "markdown",
-      "size": 17136,
+      "size": 16782,
       "keywords": [
         "audience",
         "before",
@@ -35671,7 +36481,7 @@
     "memory/swarm/skills/community-manager-agent.md": {
       "path": "memory/swarm/skills/community-manager-agent.md",
       "type": "markdown",
-      "size": 6300,
+      "size": 6167,
       "keywords": [
         "active",
         "after",
@@ -35710,7 +36520,7 @@
     "memory/swarm/skills/competitor-intelligence-agent.md": {
       "path": "memory/swarm/skills/competitor-intelligence-agent.md",
       "type": "markdown",
-      "size": 6914,
+      "size": 6751,
       "keywords": [
         "accidentally",
         "acquire",
@@ -35750,7 +36560,7 @@
     "memory/swarm/skills/content-formatter.md": {
       "path": "memory/swarm/skills/content-formatter.md",
       "type": "markdown",
-      "size": 2681,
+      "size": 2643,
       "keywords": [
         "action",
         "agents",
@@ -35831,7 +36641,7 @@
     "memory/swarm/skills/copywriter-team.md": {
       "path": "memory/swarm/skills/copywriter-team.md",
       "type": "markdown",
-      "size": 4619,
+      "size": 4513,
       "keywords": [
         "before",
         "brief",
@@ -35911,7 +36721,7 @@
     "memory/swarm/skills/customer-success-agent.md": {
       "path": "memory/swarm/skills/customer-success-agent.md",
       "type": "markdown",
-      "size": 1746,
+      "size": 1708,
       "keywords": [
         "active",
         "agent",
@@ -35954,7 +36764,7 @@
     "memory/swarm/skills/data-engineer-agent.md": {
       "path": "memory/swarm/skills/data-engineer-agent.md",
       "type": "markdown",
-      "size": 6843,
+      "size": 6675,
       "keywords": [
         "after",
         "agent",
@@ -35994,7 +36804,7 @@
     "memory/swarm/skills/devops-sre-agent.md": {
       "path": "memory/swarm/skills/devops-sre-agent.md",
       "type": "markdown",
-      "size": 7063,
+      "size": 6894,
       "keywords": [
         "agent",
         "because",
@@ -36035,7 +36845,7 @@
     "memory/swarm/skills/dora-metrics-agent.md": {
       "path": "memory/swarm/skills/dora-metrics-agent.md",
       "type": "markdown",
-      "size": 5978,
+      "size": 5799,
       "keywords": [
         "after",
         "agent",
@@ -36076,7 +36886,7 @@
     "memory/swarm/skills/feed-curator.md": {
       "path": "memory/swarm/skills/feed-curator.md",
       "type": "markdown",
-      "size": 4351,
+      "size": 4254,
       "keywords": [
         "analyzer",
         "assessment",
@@ -36118,7 +36928,7 @@
     "memory/swarm/skills/financial-analyst-agent.md": {
       "path": "memory/swarm/skills/financial-analyst-agent.md",
       "type": "markdown",
-      "size": 7720,
+      "size": 7548,
       "keywords": [
         "agent",
         "analyst",
@@ -36158,7 +36968,7 @@
     "memory/swarm/skills/firuza-assistant.md": {
       "path": "memory/swarm/skills/firuza-assistant.md",
       "type": "markdown",
-      "size": 6811,
+      "size": 6658,
       "keywords": [
         "accuracy",
         "after",
@@ -36198,7 +37008,7 @@
     "memory/swarm/skills/investor-board-agent.md": {
       "path": "memory/swarm/skills/investor-board-agent.md",
       "type": "markdown",
-      "size": 5940,
+      "size": 5806,
       "keywords": [
         "affects",
         "agent",
@@ -36240,7 +37050,7 @@
     "memory/swarm/skills/langfuse-integration-agent.md": {
       "path": "memory/swarm/skills/langfuse-integration-agent.md",
       "type": "markdown",
-      "size": 7767,
+      "size": 7527,
       "keywords": [
         "added",
         "agent",
@@ -36280,7 +37090,7 @@
     "memory/swarm/skills/legal-advisor.md": {
       "path": "memory/swarm/skills/legal-advisor.md",
       "type": "markdown",
-      "size": 12852,
+      "size": 12598,
       "keywords": [
         "advisor",
         "agent",
@@ -36320,7 +37130,7 @@
     "memory/swarm/skills/linkedin-content-creator.md": {
       "path": "memory/swarm/skills/linkedin-content-creator.md",
       "type": "markdown",
-      "size": 4134,
+      "size": 4028,
       "keywords": [
         "adapted",
         "agency",
@@ -36359,7 +37169,7 @@
     "memory/swarm/skills/neuroscience-design.md": {
       "path": "memory/swarm/skills/neuroscience-design.md",
       "type": "markdown",
-      "size": 18214,
+      "size": 18034,
       "keywords": [
         "achievement",
         "assessment",
@@ -36400,7 +37210,7 @@
     "memory/swarm/skills/onboarding-specialist-agent.md": {
       "path": "memory/swarm/skills/onboarding-specialist-agent.md",
       "type": "markdown",
-      "size": 1726,
+      "size": 1689,
       "keywords": [
         "account",
         "agent",
@@ -36442,7 +37252,7 @@
     "memory/swarm/skills/payment-provider-agent.md": {
       "path": "memory/swarm/skills/payment-provider-agent.md",
       "type": "markdown",
-      "size": 5965,
+      "size": 5817,
       "keywords": [
         "agent",
         "billing",
@@ -36482,7 +37292,7 @@
     "memory/swarm/skills/performance-engineer-agent.md": {
       "path": "memory/swarm/skills/performance-engineer-agent.md",
       "type": "markdown",
-      "size": 8362,
+      "size": 8174,
       "keywords": [
         "agent",
         "approach",
@@ -36522,7 +37332,7 @@
     "memory/swarm/skills/pr-media-agent.md": {
       "path": "memory/swarm/skills/pr-media-agent.md",
       "type": "markdown",
-      "size": 6824,
+      "size": 6662,
       "keywords": [
         "accelerator",
         "agent",
@@ -36562,7 +37372,7 @@
     "memory/swarm/skills/promotion-agency.md": {
       "path": "memory/swarm/skills/promotion-agency.md",
       "type": "markdown",
-      "size": 6393,
+      "size": 6176,
       "keywords": [
         "agency",
         "assessment",
@@ -36601,7 +37411,7 @@
     "memory/swarm/skills/qa-quality-agent.md": {
       "path": "memory/swarm/skills/qa-quality-agent.md",
       "type": "markdown",
-      "size": 2844,
+      "size": 2762,
       "keywords": [
         "acceptance",
         "agent",
@@ -36641,7 +37451,7 @@
     "memory/swarm/skills/quality-assurance-agent.md": {
       "path": "memory/swarm/skills/quality-assurance-agent.md",
       "type": "markdown",
-      "size": 6306,
+      "size": 6103,
       "keywords": [
         "agent",
         "assurance",
@@ -36681,7 +37491,7 @@
     "memory/swarm/skills/readiness-manager.md": {
       "path": "memory/swarm/skills/readiness-manager.md",
       "type": "markdown",
-      "size": 9359,
+      "size": 9122,
       "keywords": [
         "abstract",
         "audit",
@@ -36722,7 +37532,7 @@
     "memory/swarm/skills/risk-manager.md": {
       "path": "memory/swarm/skills/risk-manager.md",
       "type": "markdown",
-      "size": 7277,
+      "size": 7082,
       "keywords": [
         "adapted",
         "agent",
@@ -36764,7 +37574,7 @@
     "memory/swarm/skills/sales-deal-strategist.md": {
       "path": "memory/swarm/skills/sales-deal-strategist.md",
       "type": "markdown",
-      "size": 3754,
+      "size": 3669,
       "keywords": [
         "acquisition",
         "active",
@@ -36804,7 +37614,7 @@
     "memory/swarm/skills/sales-discovery-coach.md": {
       "path": "memory/swarm/skills/sales-discovery-coach.md",
       "type": "markdown",
-      "size": 4089,
+      "size": 3984,
       "keywords": [
         "adapted",
         "agency",
@@ -36843,7 +37653,7 @@
     "memory/swarm/skills/startup-registration-finder.md": {
       "path": "memory/swarm/skills/startup-registration-finder.md",
       "type": "markdown",
-      "size": 4316,
+      "size": 4193,
       "keywords": [
         "accelerator",
         "access",
@@ -36883,7 +37693,7 @@
     "memory/swarm/skills/technical-writer-agent.md": {
       "path": "memory/swarm/skills/technical-writer-agent.md",
       "type": "markdown",
-      "size": 5173,
+      "size": 5048,
       "keywords": [
         "agent",
         "asked",
@@ -36923,7 +37733,7 @@
     "memory/swarm/skills/trend-scout-agent.md": {
       "path": "memory/swarm/skills/trend-scout-agent.md",
       "type": "markdown",
-      "size": 2747,
+      "size": 2678,
       "keywords": [
         "agent",
         "anything",
@@ -36966,7 +37776,7 @@
     "memory/swarm/skills/university-ecosystem-partner-agent.md": {
       "path": "memory/swarm/skills/university-ecosystem-partner-agent.md",
       "type": "markdown",
-      "size": 7791,
+      "size": 7618,
       "keywords": [
         "accelerators",
         "acquisition",
@@ -37007,7 +37817,7 @@
     "memory/swarm/skills/ux-research-agent.md": {
       "path": "memory/swarm/skills/ux-research-agent.md",
       "type": "markdown",
-      "size": 6353,
+      "size": 6212,
       "keywords": [
         "about",
         "agent",
@@ -37048,7 +37858,7 @@
     "memory/swarm/skills/volaura-mirofish-mapping.md": {
       "path": "memory/swarm/skills/volaura-mirofish-mapping.md",
       "type": "markdown",
-      "size": 5446,
+      "size": 5272,
       "keywords": [
         "access",
         "agent",
@@ -37129,7 +37939,7 @@
     "memory/swarm/test-runs/005-research-injection-test.md": {
       "path": "memory/swarm/test-runs/005-research-injection-test.md",
       "type": "markdown",
-      "size": 49618,
+      "size": 49366,
       "keywords": [
         "005",
         "agents",
@@ -37426,7 +38236,7 @@
     "docs/500-HOUR-PLAN.md": {
       "path": "docs/500-HOUR-PLAN.md",
       "type": "markdown",
-      "size": 16154,
+      "size": 16319,
       "keywords": [
         "500",
         "acquisition",
@@ -37438,7 +38248,6 @@
         "cross",
         "current",
         "defers",
-        "deployed",
         "docs",
         "feedback",
         "first",
@@ -37446,28 +38255,29 @@
         "hour",
         "infrastructure",
         "investment",
-        "justifies",
+        "launch",
+        "ledger",
         "loads",
+        "milestone",
         "organizations",
         "paying",
         "plan",
         "ready",
-        "registered",
+        "roadmap",
         "ruthlessly",
         "scaling",
+        "sheet",
         "state",
         "swarm",
-        "tests",
         "truth",
         "until",
-        "usage",
         "users"
       ]
     },
     "docs/ACCEPTANCE-CRITERIA-TEMPLATES.md": {
       "path": "docs/ACCEPTANCE-CRITERIA-TEMPLATES.md",
       "type": "markdown",
-      "size": 7355,
+      "size": 7138,
       "keywords": [
         "acceptance",
         "across",
@@ -37508,46 +38318,45 @@
     "docs/ACCEPTANCE-CRITERIA.md": {
       "path": "docs/ACCEPTANCE-CRITERIA.md",
       "type": "markdown",
-      "size": 60316,
+      "size": 60676,
       "keywords": [
         "acceptance",
-        "alias",
-        "before",
-        "component",
-        "components",
+        "against",
+        "below",
+        "canon",
         "criteria",
+        "current",
         "dependency",
         "docs",
-        "endpoint",
-        "errors",
+        "document",
         "event",
-        "everywhere",
-        "feature",
-        "files",
         "founder",
         "fully",
-        "functions",
         "generators",
-        "hints",
-        "kebab",
-        "merging",
-        "modules",
-        "month",
-        "naming",
-        "paths",
-        "polished",
+        "historical",
+        "launch",
+        "origin",
+        "phase",
+        "planning",
+        "positioning",
+        "preserves",
         "product",
         "ready",
+        "revalidation",
+        "scenarios",
+        "sheet",
+        "snapshot",
         "specific",
-        "strict",
-        "these",
-        "volunteers"
+        "treat",
+        "truth",
+        "volunteer",
+        "without"
       ]
     },
     "docs/AGENT-BRIEFING-TEMPLATE.md": {
       "path": "docs/AGENT-BRIEFING-TEMPLATE.md",
       "type": "markdown",
-      "size": 8259,
+      "size": 8063,
       "keywords": [
         "after",
         "agent",
@@ -37707,23 +38516,21 @@
     "docs/ARCHITECTURE.md": {
       "path": "docs/ARCHITECTURE.md",
       "type": "markdown",
-      "size": 17908,
+      "size": 18094,
       "keywords": [
+        "active",
         "adaptive",
         "agent",
         "architecture",
         "assessment",
-        "assessments",
         "audit",
         "badges",
         "claimed",
         "context",
-        "daily",
+        "created",
         "database",
         "docs",
         "ecosystem",
-        "focus",
-        "habits",
         "launch",
         "notes",
         "parallel",
@@ -37737,8 +38544,10 @@
         "score",
         "shared",
         "skills",
+        "status",
         "system",
         "through",
+        "updated",
         "verified"
       ]
     },
@@ -37822,52 +38631,10 @@
         "users"
       ]
     },
-    "docs/ATLAS-TO-CLAUDE-OPUS-HANDOFF-2026-04-24.md": {
-      "path": "docs/ATLAS-TO-CLAUDE-OPUS-HANDOFF-2026-04-24.md",
-      "type": "markdown",
-      "size": 12185,
-      "keywords": [
-        "2026",
-        "agent",
-        "atlas",
-        "audit",
-        "brief",
-        "builder",
-        "challenge",
-        "claude",
-        "continuously",
-        "docs",
-        "document",
-        "enforcer",
-        "feature",
-        "handoff",
-        "harden",
-        "hardening",
-        "holder",
-        "hunter",
-        "implementation",
-        "implementer",
-        "inspect",
-        "layer",
-        "memory",
-        "model",
-        "office",
-        "operating",
-        "opus",
-        "primary",
-        "project",
-        "quality",
-        "regression",
-        "truth",
-        "without",
-        "working",
-        "written"
-      ]
-    },
     "docs/atlas-wake-webhook.md": {
       "path": "docs/atlas-wake-webhook.md",
       "type": "markdown",
-      "size": 5120,
+      "size": 5021,
       "keywords": [
         "accepts",
         "agent",
@@ -37988,7 +38755,7 @@
     "docs/BACKLOG.md": {
       "path": "docs/BACKLOG.md",
       "type": "markdown",
-      "size": 3704,
+      "size": 3640,
       "keywords": [
         "assessment",
         "assessments",
@@ -38066,7 +38833,7 @@
     "docs/BETA-CHECKLIST.md": {
       "path": "docs/BETA-CHECKLIST.md",
       "type": "markdown",
-      "size": 3424,
+      "size": 3318,
       "keywords": [
         "action",
         "allows",
@@ -38188,24 +38955,26 @@
     "docs/BRAIN.md": {
       "path": "docs/BRAIN.md",
       "type": "markdown",
-      "size": 9914,
+      "size": 10108,
       "keywords": [
         "about",
+        "after",
         "agent",
         "around",
+        "asked",
         "atlas",
         "authority",
+        "because",
         "brain",
         "cached",
+        "chose",
         "compiled",
         "counts",
-        "current",
-        "deployments",
         "disagree",
         "docs",
         "ecosystem",
-        "enforcement",
         "every",
+        "forgotten",
         "ghost",
         "heartbeat",
         "identity",
@@ -38213,15 +38982,13 @@
         "location",
         "memory",
         "merge",
-        "migrations",
         "other",
         "product",
-        "protocol",
         "resolve",
         "state",
-        "strategist",
-        "verification",
-        "weights"
+        "suggested",
+        "supports",
+        "while"
       ]
     },
     "docs/CHARACTER-EVENTS-CONSUMER-MAP-2026-04-24.md": {
@@ -38265,48 +39032,6 @@
         "state",
         "status",
         "update"
-      ]
-    },
-    "docs/CLAUDE-CATCH-UP-BRIEF-2026-04-24.md": {
-      "path": "docs/CLAUDE-CATCH-UP-BRIEF-2026-04-24.md",
-      "type": "markdown",
-      "size": 9062,
-      "keywords": [
-        "2026",
-        "active",
-        "answer",
-        "audit",
-        "brief",
-        "builder",
-        "catch",
-        "claude",
-        "complete",
-        "compresses",
-        "conducted",
-        "context",
-        "created",
-        "dangerous",
-        "deeper",
-        "directly",
-        "docs",
-        "driving",
-        "forensic",
-        "happened",
-        "hardened",
-        "meant",
-        "primary",
-        "recover",
-        "reliability",
-        "replace",
-        "runtime",
-        "seams",
-        "shortest",
-        "supporting",
-        "things",
-        "three",
-        "truth",
-        "while",
-        "working"
       ]
     },
     "docs/COMMUNICATION-LAW.md": {
@@ -38379,7 +39104,7 @@
     "docs/COMPREHENSIVE-TEST-PLAN.md": {
       "path": "docs/COMPREHENSIVE-TEST-PLAN.md",
       "type": "markdown",
-      "size": 12735,
+      "size": 12400,
       "keywords": [
         "component",
         "comprehensive",
@@ -38420,7 +39145,7 @@
     "docs/CONSTITUTION_AI_SWARM.md": {
       "path": "docs/CONSTITUTION_AI_SWARM.md",
       "type": "markdown",
-      "size": 18364,
+      "size": 18572,
       "keywords": [
         "active",
         "agents",
@@ -38460,7 +39185,7 @@
     "docs/CONTENT-BRIEF-TEMPLATE.md": {
       "path": "docs/CONTENT-BRIEF-TEMPLATE.md",
       "type": "markdown",
-      "size": 10133,
+      "size": 9868,
       "keywords": [
         "about",
         "after",
@@ -38495,6 +39220,45 @@
         "systemic",
         "template",
         "version"
+      ]
+    },
+    "docs/content-instance-corrected-brief-2026-06-13.md": {
+      "path": "docs/content-instance-corrected-brief-2026-06-13.md",
+      "type": "markdown",
+      "size": 4205,
+      "keywords": [
+        "2026",
+        "applied",
+        "around",
+        "brand",
+        "brief",
+        "contains",
+        "content",
+        "corrected",
+        "created",
+        "docs",
+        "dotfiles",
+        "exclude",
+        "exists",
+        "ganbaroff",
+        "github",
+        "gitignore",
+        "https",
+        "inside",
+        "instance",
+        "machine",
+        "mitigation",
+        "operating",
+        "personal",
+        "remote",
+        "repository",
+        "safety",
+        "secrets",
+        "state",
+        "verified",
+        "videos",
+        "volaura",
+        "working"
       ]
     },
     "docs/CONTRIBUTING.md": {
@@ -38539,7 +39303,7 @@
     "docs/CSV-BULK-INVITE-IMPLEMENTATION.md": {
       "path": "docs/CSV-BULK-INVITE-IMPLEMENTATION.md",
       "type": "markdown",
-      "size": 31169,
+      "size": 30325,
       "keywords": [
         "accepted",
         "accepted_at",
@@ -38581,7 +39345,7 @@
     "docs/CULTURAL-AUDIT-CHECKLIST.md": {
       "path": "docs/CULTURAL-AUDIT-CHECKLIST.md",
       "type": "markdown",
-      "size": 11398,
+      "size": 11094,
       "keywords": [
         "about",
         "approximations",
@@ -38740,7 +39504,7 @@
     "docs/DISASTER-RECOVERY-RUNBOOK.md": {
       "path": "docs/DISASTER-RECOVERY-RUNBOOK.md",
       "type": "markdown",
-      "size": 10068,
+      "size": 9781,
       "keywords": [
         "activated",
         "alert",
@@ -38781,7 +39545,7 @@
     "docs/E2E-AUDIT-SUMMARY.md": {
       "path": "docs/E2E-AUDIT-SUMMARY.md",
       "type": "markdown",
-      "size": 13122,
+      "size": 12709,
       "keywords": [
         "aggregated",
         "audit",
@@ -38862,7 +39626,7 @@
     "docs/ECOSYSTEM-AUDIT-ALL-REPOS.md": {
       "path": "docs/ECOSYSTEM-AUDIT-ALL-REPOS.md",
       "type": "markdown",
-      "size": 5245,
+      "size": 5153,
       "keywords": [
         "agents",
         "all",
@@ -38904,7 +39668,7 @@
     "docs/ECOSYSTEM-CONSTITUTION.md": {
       "path": "docs/ECOSYSTEM-CONSTITUTION.md",
       "type": "markdown",
-      "size": 86223,
+      "size": 86206,
       "keywords": [
         "agents",
         "analysis",
@@ -39019,91 +39783,49 @@
         "verification"
       ]
     },
-    "docs/ECOSYSTEM-RECOVERY-BASELINE-2026-04-21.md": {
-      "path": "docs/ECOSYSTEM-RECOVERY-BASELINE-2026-04-21.md",
-      "type": "markdown",
-      "size": 2588,
-      "keywords": [
-        "2026",
-        "anchor",
-        "architecture",
-        "baseline",
-        "before",
-        "boundaries",
-        "bridge",
-        "broad",
-        "changes",
-        "closed",
-        "conflict",
-        "consistently",
-        "contract",
-        "docs",
-        "drift",
-        "ecosystem",
-        "enforced",
-        "enforcement",
-        "factual",
-        "freeze",
-        "gates",
-        "governance",
-        "implemented",
-        "narrative",
-        "payloads",
-        "recovery",
-        "register",
-        "retention",
-        "runtime",
-        "shared",
-        "sprint",
-        "start",
-        "truth",
-        "unresolved"
-      ]
-    },
     "docs/EXECUTION-PLAN.md": {
       "path": "docs/EXECUTION-PLAN.md",
       "type": "markdown",
-      "size": 34849,
+      "size": 35066,
       "keywords": [
-        "activity_log",
+        "artifact",
         "assessment",
-        "assessments",
-        "badge_history",
+        "checking",
         "claude",
-        "competency_scores",
+        "cross",
+        "current",
         "design",
         "docs",
         "email",
         "engineering",
-        "event_registrations",
-        "events",
         "execution",
-        "files",
         "growth",
         "haiku",
         "hardening",
+        "historical",
         "keyword",
-        "migration",
-        "migrations",
-        "notifications",
+        "launch",
+        "ledger",
+        "milestone",
         "plan",
         "product",
-        "profiles",
+        "project",
         "prompts",
         "redesign",
-        "referrals",
+        "sheet",
         "sonnet",
         "source",
         "supabase",
         "synced",
         "truth",
-        "volaura"
+        "volaura",
+        "without"
       ]
     },
     "docs/EXECUTION_PLAN.md": {
       "path": "docs/EXECUTION_PLAN.md",
       "type": "markdown",
-      "size": 19348,
+      "size": 19148,
       "keywords": [
         "assessment",
         "break",
@@ -39142,7 +39864,7 @@
     "docs/EXTERNAL-AUDIT-GPT54-2026-04-04.md": {
       "path": "docs/EXTERNAL-AUDIT-GPT54-2026-04-04.md",
       "type": "markdown",
-      "size": 3112,
+      "size": 3054,
       "keywords": [
         "2026",
         "analyzed",
@@ -39221,50 +39943,10 @@
         "without"
       ]
     },
-    "docs/FULL-ECOSYSTEM-AUDIT-SESSION88.md": {
-      "path": "docs/FULL-ECOSYSTEM-AUDIT-SESSION88.md",
-      "type": "markdown",
-      "size": 12004,
-      "keywords": [
-        "agents",
-        "articles",
-        "audit",
-        "based",
-        "complete",
-        "context",
-        "critique",
-        "degraded",
-        "docs",
-        "document",
-        "documentation",
-        "ecosystem",
-        "engine",
-        "evaluation",
-        "evidence",
-        "fallback",
-        "files",
-        "full",
-        "governing",
-        "index",
-        "keyword_fallback",
-        "memory",
-        "path_c",
-        "perspectives",
-        "pgvector",
-        "pipeline",
-        "primary",
-        "research",
-        "result",
-        "saved",
-        "session88",
-        "swarm",
-        "winner"
-      ]
-    },
     "docs/FUNCTIONAL-TEST-STRATEGY.md": {
       "path": "docs/FUNCTIONAL-TEST-STRATEGY.md",
       "type": "markdown",
-      "size": 39887,
+      "size": 38987,
       "keywords": [
         "aggregated",
         "asynchronously",
@@ -39304,7 +39986,7 @@
     "docs/GEMINI-DEEP-RESEARCH-PROMPTS.md": {
       "path": "docs/GEMINI-DEEP-RESEARCH-PROMPTS.md",
       "type": "markdown",
-      "size": 9633,
+      "size": 9447,
       "keywords": [
         "actionable",
         "agent",
@@ -39388,7 +40070,7 @@
     "docs/GROWTH-STRATEGY-PLAYBOOK.md": {
       "path": "docs/GROWTH-STRATEGY-PLAYBOOK.md",
       "type": "markdown",
-      "size": 31568,
+      "size": 30779,
       "keywords": [
         "accelerator",
         "adaptive",
@@ -39469,7 +40151,7 @@
     "docs/IDEAS-BACKLOG.md": {
       "path": "docs/IDEAS-BACKLOG.md",
       "type": "markdown",
-      "size": 37902,
+      "size": 37321,
       "keywords": [
         "agent",
         "analysis",
@@ -39509,7 +40191,7 @@
     "docs/IMPLEMENTATION-ROADMAP.md": {
       "path": "docs/IMPLEMENTATION-ROADMAP.md",
       "type": "markdown",
-      "size": 25869,
+      "size": 25360,
       "keywords": [
         "agent",
         "analysis",
@@ -39548,7 +40230,7 @@
     "docs/INDEX.md": {
       "path": "docs/INDEX.md",
       "type": "markdown",
-      "size": 11337,
+      "size": 11383,
       "keywords": [
         "active",
         "atlas",
@@ -39629,7 +40311,7 @@
     "docs/LAUNCH-BLOCKERS.md": {
       "path": "docs/LAUNCH-BLOCKERS.md",
       "type": "markdown",
-      "size": 4362,
+      "size": 4277,
       "keywords": [
         "before",
         "blockers",
@@ -39709,7 +40391,7 @@
     "docs/LIFE-SIMULATOR-INTEGRATION-SPEC.md": {
       "path": "docs/LIFE-SIMULATOR-INTEGRATION-SPEC.md",
       "type": "markdown",
-      "size": 12989,
+      "size": 12642,
       "keywords": [
         "after",
         "against",
@@ -39791,7 +40473,7 @@
     "docs/MANDATORY-RULES.md": {
       "path": "docs/MANDATORY-RULES.md",
       "type": "markdown",
-      "size": 5085,
+      "size": 4935,
       "keywords": [
         "affect",
         "affecting",
@@ -39910,7 +40592,7 @@
     "docs/MEGAPLAN-MINDSHIFT-LAUNCH-2026-04-08.md": {
       "path": "docs/MEGAPLAN-MINDSHIFT-LAUNCH-2026-04-08.md",
       "type": "markdown",
-      "size": 30533,
+      "size": 30182,
       "keywords": [
         "2026",
         "actual",
@@ -39951,7 +40633,7 @@
     "docs/MEGAPLAN-SESSION-95-AUTONOMOUS.md": {
       "path": "docs/MEGAPLAN-SESSION-95-AUTONOMOUS.md",
       "type": "markdown",
-      "size": 4504,
+      "size": 4423,
       "keywords": [
         "autonomous",
         "ceo_inbox",
@@ -39987,47 +40669,6 @@
         "without",
         "workflow",
         "workflow_dispatch"
-      ]
-    },
-    "docs/MEMORY-HOLE-AUDIT-2026-04-14.md": {
-      "path": "docs/MEMORY-HOLE-AUDIT-2026-04-14.md",
-      "type": "markdown",
-      "size": 9771,
-      "keywords": [
-        "2026",
-        "atlas",
-        "audit",
-        "claude",
-        "compiled",
-        "daily",
-        "directive",
-        "docs",
-        "ecosystem",
-        "escalations",
-        "files",
-        "github",
-        "heartbeat",
-        "hole",
-        "identity",
-        "inbox",
-        "journal",
-        "lessons",
-        "lines",
-        "loaded",
-        "memorized",
-        "memory",
-        "operating",
-        "principles",
-        "proposals",
-        "rules",
-        "stack",
-        "surface",
-        "swarm",
-        "ticking",
-        "vault",
-        "workflows",
-        "working",
-        "writes"
       ]
     },
     "docs/MINDSHIFT-INTEGRATION-SPEC.md": {
@@ -40115,7 +40756,7 @@
     "docs/MODEL-ROSTER.md": {
       "path": "docs/MODEL-ROSTER.md",
       "type": "markdown",
-      "size": 8890,
+      "size": 8727,
       "keywords": [
         "after",
         "blacklisted",
@@ -40307,51 +40948,10 @@
         "writes"
       ]
     },
-    "docs/ORGANISM-GAP-AUDIT-2026-04-24.md": {
-      "path": "docs/ORGANISM-GAP-AUDIT-2026-04-24.md",
-      "type": "markdown",
-      "size": 8188,
-      "keywords": [
-        "2026",
-        "actual",
-        "already",
-        "audit",
-        "behavior",
-        "bridge",
-        "character_events",
-        "completion",
-        "docs",
-        "ecosystem",
-        "event",
-        "events",
-        "execution",
-        "exist",
-        "exists",
-        "first",
-        "fully",
-        "gap",
-        "get_character_state",
-        "living",
-        "meaningful",
-        "organism",
-        "preserved",
-        "primitives",
-        "priority",
-        "produces",
-        "proven",
-        "runtime",
-        "shared",
-        "snapshot",
-        "state",
-        "surface",
-        "truth",
-        "verified"
-      ]
-    },
     "docs/PERPLEXITY-RECONCILIATION-2026-04-11.md": {
       "path": "docs/PERPLEXITY-RECONCILIATION-2026-04-11.md",
       "type": "markdown",
-      "size": 10075,
+      "size": 9958,
       "keywords": [
         "2026",
         "acting",
@@ -40392,7 +40992,7 @@
     "docs/PLAN-product-trust-architecture.md": {
       "path": "docs/PLAN-product-trust-architecture.md",
       "type": "markdown",
-      "size": 10730,
+      "size": 10541,
       "keywords": [
         "adoption",
         "agent",
@@ -40474,39 +41074,38 @@
     "docs/PRE-LAUNCH-BLOCKERS-STATUS.md": {
       "path": "docs/PRE-LAUNCH-BLOCKERS-STATUS.md",
       "type": "markdown",
-      "size": 8488,
+      "size": 9080,
       "keywords": [
+        "active",
         "against",
         "blocker",
         "blockers",
-        "check",
         "closed",
         "commit",
         "commits",
+        "created",
         "docs",
-        "explicit",
+        "ecosystem",
         "ground",
         "handoff",
         "items",
         "launch",
         "logged",
         "originally",
-        "partial",
         "planning",
         "pre",
-        "preserved",
         "reconciles",
-        "schema",
+        "reference",
         "scope",
         "session",
         "several",
         "since",
-        "source",
         "split",
         "state",
         "status",
         "through",
         "truth",
+        "updated",
         "various",
         "verified"
       ]
@@ -40514,7 +41113,7 @@
     "docs/privacy-policy.md": {
       "path": "docs/privacy-policy.md",
       "type": "markdown",
-      "size": 7516,
+      "size": 7343,
       "keywords": [
         "address",
         "competency",
@@ -40553,48 +41152,48 @@
     "docs/PRODUCTION-READINESS-PLAN.md": {
       "path": "docs/PRODUCTION-READINESS-PLAN.md",
       "type": "markdown",
-      "size": 13346,
+      "size": 13177,
       "keywords": [
-        "account",
         "after",
         "audit",
         "backend",
         "before",
+        "below",
+        "blocker",
+        "checklist",
         "components",
         "comprehensive",
         "covers",
         "critical",
+        "current",
         "docs",
-        "endpoint",
         "endpoints",
         "features",
         "fixes",
         "frontend",
-        "leaderboard",
+        "launch",
         "missing",
-        "navigation",
-        "notifications",
         "onboarding",
         "pages",
-        "password",
         "plan",
         "production",
-        "public",
         "readiness",
-        "recover",
-        "shown",
+        "revalidation",
         "signup",
-        "stats",
-        "stubs",
+        "snapshot",
+        "superseded",
         "testing",
+        "treat",
+        "truth",
         "users",
-        "wiring"
+        "wiring",
+        "without"
       ]
     },
     "docs/PROJECT-OVERVIEW.md": {
       "path": "docs/PROJECT-OVERVIEW.md",
       "type": "markdown",
-      "size": 11981,
+      "size": 11700,
       "keywords": [
         "achievements",
         "after",
@@ -40634,7 +41233,7 @@
     "docs/QA-COORDINATOR-CHECKLIST.md": {
       "path": "docs/QA-COORDINATOR-CHECKLIST.md",
       "type": "markdown",
-      "size": 13094,
+      "size": 12654,
       "keywords": [
         "accessible",
         "aggregation",
@@ -40714,7 +41313,7 @@
     "docs/QUALITY-SYSTEM.md": {
       "path": "docs/QUALITY-SYSTEM.md",
       "type": "markdown",
-      "size": 13550,
+      "size": 13251,
       "keywords": [
         "after",
         "agent",
@@ -40793,7 +41392,7 @@
     "docs/RUNBOOK.md": {
       "path": "docs/RUNBOOK.md",
       "type": "markdown",
-      "size": 2263,
+      "size": 2169,
       "keywords": [
         "backend",
         "bridge",
@@ -40832,7 +41431,7 @@
     "docs/SECRETS-ROTATION.md": {
       "path": "docs/SECRETS-ROTATION.md",
       "type": "markdown",
-      "size": 2029,
+      "size": 1999,
       "keywords": [
         "after",
         "authorized",
@@ -40871,7 +41470,7 @@
     "docs/SECURITY-AUDIT-ATTACKER-ASSESSMENT.md": {
       "path": "docs/SECURITY-AUDIT-ATTACKER-ASSESSMENT.md",
       "type": "markdown",
-      "size": 17379,
+      "size": 16943,
       "keywords": [
         "admin",
         "assessment",
@@ -40953,7 +41552,7 @@
     "docs/SECURITY-FIXES-CHECKLIST.md": {
       "path": "docs/SECURITY-FIXES-CHECKLIST.md",
       "type": "markdown",
-      "size": 16014,
+      "size": 15493,
       "keywords": [
         "async",
         "checklist",
@@ -40994,7 +41593,7 @@
     "docs/SECURITY-REVIEW-CSV-BULK-INVITE.md": {
       "path": "docs/SECURITY-REVIEW-CSV-BULK-INVITE.md",
       "type": "markdown",
-      "size": 40999,
+      "size": 39783,
       "keywords": [
         "arbitrary",
         "architecture",
@@ -41036,7 +41635,7 @@
     "docs/SESSION-FINDINGS.md": {
       "path": "docs/SESSION-FINDINGS.md",
       "type": "markdown",
-      "size": 46266,
+      "size": 45759,
       "keywords": [
         "added",
         "because",
@@ -41075,7 +41674,7 @@
     "docs/SKILL-AUDIT-FINDINGS.md": {
       "path": "docs/SKILL-AUDIT-FINDINGS.md",
       "type": "markdown",
-      "size": 3572,
+      "size": 3486,
       "keywords": [
         "abandonment",
         "activated",
@@ -41111,130 +41710,6 @@
         "until",
         "users",
         "without"
-      ]
-    },
-    "docs/SMOKE-TEST-SPRINT1.md": {
-      "path": "docs/SMOKE-TEST-SPRINT1.md",
-      "type": "markdown",
-      "size": 5859,
-      "keywords": [
-        "activity",
-        "adaptively",
-        "answer",
-        "assessment",
-        "automated",
-        "badge_tier",
-        "check",
-        "competency",
-        "competency_scores",
-        "complete",
-        "created",
-        "creation",
-        "docs",
-        "exist",
-        "fetch",
-        "first",
-        "health",
-        "login",
-        "needs",
-        "profile",
-        "profiles",
-        "question",
-        "register",
-        "returned",
-        "score",
-        "selects",
-        "session",
-        "smoke",
-        "sprint1",
-        "start",
-        "status",
-        "test",
-        "token",
-        "total_score"
-      ]
-    },
-    "docs/SPRINT-ATLAS-AUTONOMY-2026-04-12.md": {
-      "path": "docs/SPRINT-ATLAS-AUTONOMY-2026-04-12.md",
-      "type": "markdown",
-      "size": 10157,
-      "keywords": [
-        "2026",
-        "across",
-        "already",
-        "asked",
-        "atlas",
-        "autonomy",
-        "below",
-        "continuation",
-        "continuity",
-        "decay",
-        "docs",
-        "during",
-        "emotional",
-        "emotional_dimensions",
-        "everything",
-        "execution",
-        "founder",
-        "grouped",
-        "identity",
-        "integrated",
-        "journal",
-        "least",
-        "memory",
-        "model",
-        "night",
-        "principle",
-        "priority",
-        "recall",
-        "requested",
-        "ritual",
-        "session",
-        "sprint",
-        "swaps",
-        "weighting",
-        "workable"
-      ]
-    },
-    "docs/SPRINT-AUDIT-CONSOLIDATED.md": {
-      "path": "docs/SPRINT-AUDIT-CONSOLIDATED.md",
-      "type": "markdown",
-      "size": 2630,
-      "keywords": [
-        "always",
-        "audit",
-        "before",
-        "cause",
-        "consolidated",
-        "debates",
-        "docs",
-        "estimates",
-        "false",
-        "faster",
-        "following",
-        "haiku",
-        "handoff",
-        "instead",
-        "output",
-        "partial",
-        "persona",
-        "personas",
-        "prompts",
-        "protocol",
-        "retroactive",
-        "rushes",
-        "simulations",
-        "skills",
-        "specs",
-        "sprint",
-        "stress",
-        "tables",
-        "tests",
-        "transcripts",
-        "types",
-        "without",
-        "writing",
-        "wrong"
       ]
     },
     "docs/SPRINT-PLAN-2026-04-14-to-2026-04-28.md": {
@@ -41278,50 +41753,10 @@
         "without"
       ]
     },
-    "docs/SPRINT-S4-DEBATE-2026-04-08.md": {
-      "path": "docs/SPRINT-S4-DEBATE-2026-04-08.md",
-      "type": "markdown",
-      "size": 19278,
-      "keywords": [
-        "2026",
-        "approve",
-        "approved",
-        "architecture",
-        "architectures",
-        "auto_approver",
-        "autonomous",
-        "autonomous_run",
-        "branch",
-        "candidate",
-        "coding",
-        "commits",
-        "daemon",
-        "debate",
-        "decide",
-        "docs",
-        "family",
-        "generates",
-        "human",
-        "merge",
-        "model",
-        "opens",
-        "pending",
-        "picks",
-        "promote",
-        "proposals",
-        "pushes",
-        "severity",
-        "sprint",
-        "stalls",
-        "swarm_daemon",
-        "tests",
-        "translations"
-      ]
-    },
     "docs/START-SESSION-VOLAURA.md": {
       "path": "docs/START-SESSION-VOLAURA.md",
       "type": "markdown",
-      "size": 8750,
+      "size": 8561,
       "keywords": [
         "activation",
         "algorithm",
@@ -41361,7 +41796,7 @@
     "docs/STRATEGIC-SIMULATION-RESULTS.md": {
       "path": "docs/STRATEGIC-SIMULATION-RESULTS.md",
       "type": "markdown",
-      "size": 4661,
+      "size": 4544,
       "keywords": [
         "agent",
         "applied",
@@ -41480,50 +41915,10 @@
         "without"
       ]
     },
-    "docs/SWOT-ANALYSIS-GEMMA4.md": {
-      "path": "docs/SWOT-ANALYSIS-GEMMA4.md",
-      "type": "markdown",
-      "size": 12113,
-      "keywords": [
-        "analysis",
-        "business",
-        "codebase",
-        "collection",
-        "commitment",
-        "components",
-        "demonstrates",
-        "docs",
-        "entire",
-        "gemma4",
-        "highly",
-        "indicates",
-        "interconnected",
-        "latest",
-        "local",
-        "migrations",
-        "operational",
-        "pages",
-        "pgvector",
-        "processes",
-        "products",
-        "robust",
-        "routers",
-        "sheer",
-        "single",
-        "sophisticated",
-        "swot",
-        "technical",
-        "technology",
-        "testing",
-        "tests",
-        "treats",
-        "volume"
-      ]
-    },
     "docs/SWOT-PROMPT-FOR-EXTERNAL-AI.md": {
       "path": "docs/SWOT-PROMPT-FOR-EXTERNAL-AI.md",
       "type": "markdown",
-      "size": 10255,
+      "size": 10074,
       "keywords": [
         "analysis",
         "assessment",
@@ -41563,9 +41958,10 @@
     "docs/TASK-PROTOCOL-QUICKREF.md": {
       "path": "docs/TASK-PROTOCOL-QUICKREF.md",
       "type": "markdown",
-      "size": 4060,
+      "size": 3939,
       "keywords": [
         "above",
+        "archive",
         "change",
         "critique",
         "docs",
@@ -41573,7 +41969,6 @@
         "during",
         "execution",
         "external",
-        "findings",
         "lookup",
         "mandatory",
         "minutes",
@@ -41584,6 +41979,7 @@
         "previous",
         "propose",
         "protocol",
+        "protocols",
         "questions",
         "quickref",
         "repeat",
@@ -41593,7 +41989,6 @@
         "security",
         "sprint",
         "state",
-        "swarm",
         "task",
         "today",
         "which",
@@ -41603,7 +41998,7 @@
     "docs/TEST-PLAN.md": {
       "path": "docs/TEST-PLAN.md",
       "type": "markdown",
-      "size": 44208,
+      "size": 43404,
       "keywords": [
         "adaptive",
         "answer",
@@ -41643,7 +42038,7 @@
     "docs/TONE-OF-VOICE.md": {
       "path": "docs/TONE-OF-VOICE.md",
       "type": "markdown",
-      "size": 19529,
+      "size": 19208,
       "keywords": [
         "benchmark",
         "bilingual",
@@ -41765,7 +42160,7 @@
     "docs/UNFULFILLED-PROMISES.md": {
       "path": "docs/UNFULFILLED-PROMISES.md",
       "type": "markdown",
-      "size": 17146,
+      "size": 16960,
       "keywords": [
         "activates",
         "agent",
@@ -41885,7 +42280,7 @@
     "docs/volaura-cto-prompt.md": {
       "path": "docs/volaura-cto-prompt.md",
       "type": "markdown",
-      "size": 6281,
+      "size": 6296,
       "keywords": [
         "below",
         "competency",
@@ -42005,112 +42400,6 @@
         "visionary",
         "volaura",
         "worth"
-      ]
-    },
-    "docs/.obsidian/app.json": {
-      "path": "docs/.obsidian/app.json",
-      "type": "json",
-      "size": 591,
-      "keywords": [
-        "app",
-        "current",
-        "docs",
-        "false",
-        "json",
-        "obsidian",
-        "shortest",
-        "source",
-        "spellcheck",
-        "theme",
-        "translucency"
-      ]
-    },
-    "docs/.obsidian/appearance.json": {
-      "path": "docs/.obsidian/appearance.json",
-      "type": "json",
-      "size": 213,
-      "keywords": [
-        "appearance",
-        "docs",
-        "false",
-        "json",
-        "obsidian",
-        "theme"
-      ]
-    },
-    "docs/.obsidian/graph.json": {
-      "path": "docs/.obsidian/graph.json",
-      "type": "json",
-      "size": 1173,
-      "keywords": [
-        "close",
-        "collapse",
-        "color",
-        "content",
-        "design",
-        "display",
-        "docs",
-        "engineering",
-        "false",
-        "filter",
-        "forces",
-        "graph",
-        "groups",
-        "growth",
-        "json",
-        "obsidian",
-        "query",
-        "research",
-        "scale",
-        "search"
-      ]
-    },
-    "docs/.obsidian/hotkeys.json": {
-      "path": "docs/.obsidian/hotkeys.json",
-      "type": "json",
-      "size": 318,
-      "keywords": [
-        "bottom",
-        "docs",
-        "editor",
-        "focus",
-        "graph",
-        "hotkeys",
-        "json",
-        "modifiers",
-        "obsidian",
-        "right",
-        "source",
-        "toggle",
-        "vault"
-      ]
-    },
-    "docs/.obsidian/workspace.json": {
-      "path": "docs/.obsidian/workspace.json",
-      "type": "json",
-      "size": 1164,
-      "keywords": [
-        "active",
-        "children",
-        "collapsed",
-        "direction",
-        "docs",
-        "explorer",
-        "false",
-        "horizontal",
-        "json",
-        "markdown",
-        "obsidian",
-        "outline",
-        "preview",
-        "right",
-        "sidebar",
-        "source",
-        "split",
-        "state",
-        "vertical",
-        "width",
-        "workspace"
       ]
     },
     "docs/adr/ADR-001-system-architecture.md": {
@@ -42240,7 +42529,7 @@
     "docs/adr/ADR-004-assessment-engine.md": {
       "path": "docs/adr/ADR-004-assessment-engine.md",
       "type": "markdown",
-      "size": 44424,
+      "size": 43182,
       "keywords": [
         "004",
         "across",
@@ -42262,20 +42551,20 @@
         "leadership",
         "owner",
         "product",
-        "quality",
+        "professional",
         "reliability",
         "research",
         "rigorous",
         "schema",
         "scoring",
         "system",
+        "talent",
         "tech_literacy",
         "through",
         "using",
         "value",
         "verification",
-        "verifying",
-        "volunteer"
+        "verifying"
       ]
     },
     "docs/adr/ADR-005-aura-scoring.md": {
@@ -42448,7 +42737,7 @@
     "docs/adr/ADR-009-crewai-adoption.md": {
       "path": "docs/adr/ADR-009-crewai-adoption.md",
       "type": "markdown",
-      "size": 2653,
+      "size": 2597,
       "keywords": [
         "009",
         "adoption",
@@ -42570,42 +42859,250 @@
         "swarm"
       ]
     },
+    "docs/adr/ADR-012-2026-05-09-session-self-audit.md": {
+      "path": "docs/adr/ADR-012-2026-05-09-session-self-audit.md",
+      "type": "markdown",
+      "size": 11542,
+      "keywords": [
+        "012",
+        "2026",
+        "access",
+        "adr",
+        "after",
+        "atlas",
+        "audit",
+        "brain",
+        "breadcrumb",
+        "close",
+        "cofounder",
+        "compact",
+        "compaction",
+        "cutover",
+        "cycle",
+        "directive",
+        "disclosure",
+        "docs",
+        "early",
+        "evening",
+        "first",
+        "frustrations",
+        "grade",
+        "lessons",
+        "memory",
+        "morning",
+        "pointing",
+        "production",
+        "proven",
+        "self",
+        "session",
+        "swarm",
+        "through",
+        "volaura",
+        "working"
+      ]
+    },
+    "docs/adr/ADR-013-2026-05-09-cerebras-spend-incident.md": {
+      "path": "docs/adr/ADR-013-2026-05-09-cerebras-spend-incident.md",
+      "type": "markdown",
+      "size": 7270,
+      "keywords": [
+        "013",
+        "2026",
+        "adr",
+        "after",
+        "approximately",
+        "atlas",
+        "audit",
+        "backed",
+        "balance",
+        "before",
+        "budget",
+        "burned",
+        "caught",
+        "cerebras",
+        "commit",
+        "console",
+        "credits",
+        "dashboard",
+        "despite",
+        "directive",
+        "docs",
+        "exhausted",
+        "explicit",
+        "frustrations",
+        "hours",
+        "incident",
+        "lessons",
+        "memory",
+        "providers",
+        "session",
+        "spend",
+        "standing",
+        "startup",
+        "topped",
+        "warning"
+      ]
+    },
+    "docs/adr/ADR-014-2026-05-23-session-self-audit.md": {
+      "path": "docs/adr/ADR-014-2026-05-23-session-self-audit.md",
+      "type": "markdown",
+      "size": 18356,
+      "keywords": [
+        "014",
+        "2026",
+        "adr",
+        "arsenal",
+        "assessment",
+        "atlas",
+        "audit",
+        "blind",
+        "claude",
+        "codex",
+        "debts",
+        "directive",
+        "docs",
+        "formalised",
+        "instance",
+        "interesting",
+        "internal",
+        "iterations",
+        "lessons",
+        "memory",
+        "mindshift",
+        "mistakes",
+        "pivoted",
+        "recurring",
+        "request",
+        "resume",
+        "rewritten",
+        "self",
+        "session",
+        "sprint",
+        "started",
+        "style",
+        "tesla",
+        "working",
+        "worktrees"
+      ]
+    },
+    "docs/adr/ADR-015-2026-05-24-sprint-closure-discipline.md": {
+      "path": "docs/adr/ADR-015-2026-05-24-sprint-closure-discipline.md",
+      "type": "markdown",
+      "size": 7092,
+      "keywords": [
+        "015",
+        "2026",
+        "across",
+        "adr",
+        "audit",
+        "baseline",
+        "claude",
+        "closure",
+        "design",
+        "discipline",
+        "discussion",
+        "docs",
+        "draft",
+        "drifted",
+        "following",
+        "inspection",
+        "instance",
+        "interesting",
+        "internal",
+        "library",
+        "mindshift",
+        "octogent",
+        "operating",
+        "prime",
+        "publish",
+        "published",
+        "review",
+        "sprint",
+        "structural",
+        "surface",
+        "tesla",
+        "triage",
+        "while",
+        "working",
+        "worktrees"
+      ]
+    },
+    "docs/adr/ADR-016-positioning-lock.md": {
+      "path": "docs/adr/ADR-016-positioning-lock.md",
+      "type": "markdown",
+      "size": 5174,
+      "keywords": [
+        "016",
+        "across",
+        "adr",
+        "architecture",
+        "artifact",
+        "assessment",
+        "bridge",
+        "canon",
+        "codex",
+        "collision",
+        "divergence",
+        "docs",
+        "ecosystem",
+        "engine",
+        "error",
+        "exist",
+        "known",
+        "lineage",
+        "lineages",
+        "lock",
+        "locked",
+        "numbering",
+        "positioning",
+        "queue",
+        "reconciled",
+        "reconciliation",
+        "recorded",
+        "runtime",
+        "scoring",
+        "separate",
+        "since",
+        "swarm",
+        "tracked",
+        "urgent"
+      ]
+    },
     "docs/adr/INDEX.md": {
       "path": "docs/adr/INDEX.md",
       "type": "markdown",
-      "size": 3128,
+      "size": 2635,
       "keywords": [
         "adr",
-        "architectural",
         "architecture",
         "assessment",
         "atlas_debts",
         "atlas_obligations",
+        "authoritative",
+        "badge",
         "calculation",
+        "change",
         "character_events",
         "competency",
-        "current",
         "database",
-        "decision",
         "docs",
         "engine",
-        "first",
+        "every",
         "gaming",
         "hosting",
         "index",
         "magic",
-        "major",
+        "navigation",
         "nuances",
         "patterns",
         "pipeline",
         "policies",
-        "recent",
         "schema",
         "score",
         "scoring",
-        "state",
-        "superseded",
         "system",
+        "table",
+        "tiers",
         "verification",
         "weights"
       ]
@@ -42613,7 +43110,7 @@
     "docs/adr/README.md": {
       "path": "docs/adr/README.md",
       "type": "markdown",
-      "size": 5443,
+      "size": 6187,
       "keywords": [
         "adr",
         "alternatives",
@@ -42730,10 +43227,52 @@
         "whistleblower"
       ]
     },
+    "docs/atlas/ATLAS-BUILDER-SPRINT-1-2026-06-13.md": {
+      "path": "docs/atlas/ATLAS-BUILDER-SPRINT-1-2026-06-13.md",
+      "type": "markdown",
+      "size": 10171,
+      "keywords": [
+        "2026",
+        "agent",
+        "already",
+        "atlas",
+        "builder",
+        "canonical",
+        "completion",
+        "compliance",
+        "contains",
+        "contract",
+        "control",
+        "current",
+        "daemon",
+        "direction",
+        "docs",
+        "emotion",
+        "evidence",
+        "feature",
+        "hands",
+        "memory",
+        "operator",
+        "organs",
+        "product",
+        "proof",
+        "rebuilt",
+        "result",
+        "several",
+        "should",
+        "sidecar",
+        "sprint",
+        "stabilize",
+        "surface",
+        "swarm",
+        "system",
+        "tests"
+      ]
+    },
     "docs/atlas/E-LAWS-RUNTIME.md": {
       "path": "docs/atlas/E-LAWS-RUNTIME.md",
       "type": "markdown",
-      "size": 6469,
+      "size": 6352,
       "keywords": [
         "atlas",
         "audit",
@@ -43025,7 +43564,7 @@
     "docs/audits/FULL-ECOSYSTEM-AUDIT-2026-04-15.md": {
       "path": "docs/audits/FULL-ECOSYSTEM-AUDIT-2026-04-15.md",
       "type": "markdown",
-      "size": 10136,
+      "size": 9922,
       "keywords": [
         "2026",
         "agents",
@@ -43152,7 +43691,7 @@
     "docs/content/LINKEDIN-SERIES-CLAUDE-CTO.md": {
       "path": "docs/content/LINKEDIN-SERIES-CLAUDE-CTO.md",
       "type": "markdown",
-      "size": 12906,
+      "size": 12707,
       "keywords": [
         "claude",
         "comments",
@@ -43194,7 +43733,7 @@
     "docs/content/MIROFISH-SIMULATION-RESULTS.md": {
       "path": "docs/content/MIROFISH-SIMULATION-RESULTS.md",
       "type": "markdown",
-      "size": 2172,
+      "size": 2127,
       "keywords": [
         "activated",
         "after",
@@ -43235,7 +43774,7 @@
     "docs/content/README.md": {
       "path": "docs/content/README.md",
       "type": "markdown",
-      "size": 3214,
+      "size": 3136,
       "keywords": [
         "agent",
         "content",
@@ -43314,7 +43853,7 @@
     "docs/content/VIDEO-PIPELINE-UPGRADES-2026-04-13.md": {
       "path": "docs/content/VIDEO-PIPELINE-UPGRADES-2026-04-13.md",
       "type": "markdown",
-      "size": 11565,
+      "size": 11350,
       "keywords": [
         "2026",
         "against",
@@ -43600,7 +44139,7 @@
     "docs/design/DESIGN-LIBRARIES-SHORTLIST-2026-04-13.md": {
       "path": "docs/design/DESIGN-LIBRARIES-SHORTLIST-2026-04-13.md",
       "type": "markdown",
-      "size": 8020,
+      "size": 7906,
       "keywords": [
         "2026",
         "against",
@@ -43845,7 +44384,7 @@
     "docs/design/PHASE-0-ECOSYSTEM-DESIGN-PLAN.md": {
       "path": "docs/design/PHASE-0-ECOSYSTEM-DESIGN-PLAN.md",
       "type": "markdown",
-      "size": 12892,
+      "size": 12640,
       "keywords": [
         "across",
         "action",
@@ -44118,53 +44657,95 @@
         "words"
       ]
     },
+    "docs/design/VOLAURA-design-fixes-v2-2026-05-24.md": {
+      "path": "docs/design/VOLAURA-design-fixes-v2-2026-05-24.md",
+      "type": "markdown",
+      "size": 23712,
+      "keywords": [
+        "2026",
+        "about",
+        "approach",
+        "audit",
+        "below",
+        "calls",
+        "claim",
+        "claims",
+        "correct",
+        "corrected",
+        "counts",
+        "design",
+        "docs",
+        "entry",
+        "errata",
+        "evidence",
+        "facts",
+        "findings",
+        "fixes",
+        "gives",
+        "matching",
+        "narrative",
+        "original",
+        "paste",
+        "pasted",
+        "places",
+        "playbook",
+        "proposed",
+        "review",
+        "several",
+        "third",
+        "until",
+        "verified",
+        "volaura",
+        "wrong"
+      ]
+    },
     "docs/ecosystem/ATLAS-FULL-BRIEF-FOR-PERPLEXITY.md": {
       "path": "docs/ecosystem/ATLAS-FULL-BRIEF-FOR-PERPLEXITY.md",
       "type": "markdown",
-      "size": 16971,
+      "size": 17114,
       "keywords": [
         "actually",
         "advice",
+        "after",
         "arbiter",
+        "asked",
         "atlas",
+        "beacon",
+        "because",
         "brief",
-        "carry",
-        "change",
-        "changing",
+        "chose",
         "complete",
         "docs",
+        "dominates",
+        "drift",
         "ecosystem",
-        "files",
         "first",
         "for",
+        "forgotten",
         "full",
-        "future",
         "grounded",
         "identity",
         "internal",
         "label",
         "matters",
-        "memory",
         "model",
         "perplexity",
-        "persists",
         "picture",
         "prompts",
         "protocol",
         "remember",
         "should",
         "strategic",
-        "swapped",
-        "underneath",
-        "weights",
-        "without",
+        "suggested",
+        "supports",
+        "while",
         "write"
       ]
     },
     "docs/ecosystem/CLAUDE-CODE-AUTOWAKE-TASK.md": {
       "path": "docs/ecosystem/CLAUDE-CODE-AUTOWAKE-TASK.md",
       "type": "markdown",
-      "size": 5750,
+      "size": 5615,
       "keywords": [
         "acting",
         "autonomously",
@@ -44577,7 +45158,7 @@
     "docs/engineering/SECURITY-STANDARDS.md": {
       "path": "docs/engineering/SECURITY-STANDARDS.md",
       "type": "markdown",
-      "size": 18824,
+      "size": 18293,
       "keywords": [
         "abuse",
         "access",
@@ -45263,7 +45844,7 @@
     "docs/notes/Welcome.md": {
       "path": "docs/notes/Welcome.md",
       "type": "markdown",
-      "size": 207,
+      "size": 203,
       "keywords": [
         "create",
         "delete",
@@ -45280,7 +45861,7 @@
     "docs/ops/postiz-deployment-handoff.md": {
       "path": "docs/ops/postiz-deployment-handoff.md",
       "type": "markdown",
-      "size": 5677,
+      "size": 5512,
       "keywords": [
         "active",
         "agent",
@@ -46019,7 +46600,7 @@
     "docs/prompts/README.md": {
       "path": "docs/prompts/README.md",
       "type": "markdown",
-      "size": 1273,
+      "size": 1238,
       "keywords": [
         "accessibility",
         "across",
@@ -46305,7 +46886,7 @@
     "docs/research/adhd-first-ux-research.md": {
       "path": "docs/research/adhd-first-ux-research.md",
       "type": "markdown",
-      "size": 2876,
+      "size": 2828,
       "keywords": [
         "achievable",
         "action",
@@ -46512,7 +47093,7 @@
     "docs/research/DIF-PRELIMINARY-2026-04.md": {
       "path": "docs/research/DIF-PRELIMINARY-2026-04.md",
       "type": "markdown",
-      "size": 2271,
+      "size": 2215,
       "keywords": [
         "2026",
         "across",
@@ -46554,7 +47135,7 @@
     "docs/research/ecosystem-design-research.md": {
       "path": "docs/research/ecosystem-design-research.md",
       "type": "markdown",
-      "size": 3641,
+      "size": 3556,
       "keywords": [
         "action",
         "analysis",
@@ -46633,7 +47214,7 @@
     "docs/research/gemini-research-all.md": {
       "path": "docs/research/gemini-research-all.md",
       "type": "markdown",
-      "size": 111795,
+      "size": 111269,
       "keywords": [
         "agent",
         "all",
@@ -46673,7 +47254,7 @@
     "docs/research/geo-pricing-research.md": {
       "path": "docs/research/geo-pricing-research.md",
       "type": "markdown",
-      "size": 2530,
+      "size": 2468,
       "keywords": [
         "address",
         "after",
@@ -47003,7 +47584,7 @@
     "docs/research/swarm-innovation-research.md": {
       "path": "docs/research/swarm-innovation-research.md",
       "type": "markdown",
-      "size": 15675,
+      "size": 15437,
       "keywords": [
         "activated",
         "adoption",
@@ -47365,6 +47946,88 @@
         "state",
         "summary",
         "today"
+      ]
+    },
+    "docs/research/atlas-dev-os/DESIGN.md": {
+      "path": "docs/research/atlas-dev-os/DESIGN.md",
+      "type": "markdown",
+      "size": 16791,
+      "keywords": [
+        "after",
+        "agent",
+        "already",
+        "atlas",
+        "build",
+        "check",
+        "design",
+        "dev",
+        "docs",
+        "error",
+        "errors",
+        "experiment",
+        "first",
+        "founder",
+        "frontend",
+        "industry",
+        "landscape",
+        "measure",
+        "measured",
+        "numbers",
+        "primitives",
+        "provably",
+        "prove",
+        "rebuild",
+        "reduces",
+        "reinvent",
+        "research",
+        "small",
+        "smallest",
+        "sources",
+        "sprint",
+        "standard",
+        "swarm",
+        "thesis",
+        "workload"
+      ]
+    },
+    "docs/research/atlas-dev-os/SPRINT-0-ARSENAL-AUDIT.md": {
+      "path": "docs/research/atlas-dev-os/SPRINT-0-ARSENAL-AUDIT.md",
+      "type": "markdown",
+      "size": 10334,
+      "keywords": [
+        "after",
+        "arsenal",
+        "artifact",
+        "atlas",
+        "audit",
+        "bootstrap",
+        "breadcrumb",
+        "canon",
+        "claude",
+        "confirmed",
+        "created",
+        "dev",
+        "docs",
+        "edited",
+        "exactly",
+        "killable",
+        "lanes",
+        "lessons",
+        "measured",
+        "memory",
+        "octogent",
+        "orchestrator",
+        "product",
+        "research",
+        "small",
+        "snapshots",
+        "sprint",
+        "stale",
+        "touched",
+        "toward",
+        "validator",
+        "voice",
+        "worktrees"
       ]
     },
     "docs/research/az-capital-crisis-2026/00-sprint-plan.md": {
@@ -48267,10 +48930,173 @@
         "uploads"
       ]
     },
+    "docs/research/v0-rebuild/00-canon-analysis.md": {
+      "path": "docs/research/v0-rebuild/00-canon-analysis.md",
+      "type": "markdown",
+      "size": 19353,
+      "keywords": [
+        "analysis",
+        "backed",
+        "below",
+        "bucket",
+        "canon",
+        "citation",
+        "claim",
+        "complete",
+        "contract",
+        "decision",
+        "deletes",
+        "depends",
+        "deploys",
+        "depth",
+        "discovery",
+        "docs",
+        "drift",
+        "files",
+        "honest",
+        "intentionally",
+        "marked",
+        "matters",
+        "product",
+        "prompt",
+        "reads",
+        "rebuild",
+        "receipt",
+        "research",
+        "scope",
+        "secrets",
+        "session",
+        "target",
+        "verified",
+        "written"
+      ]
+    },
+    "docs/research/v0-rebuild/01-notebooklm.md": {
+      "path": "docs/research/v0-rebuild/01-notebooklm.md",
+      "type": "markdown",
+      "size": 7190,
+      "keywords": [
+        "across",
+        "ambient",
+        "analysis",
+        "answer",
+        "authenticated",
+        "candidate",
+        "canon",
+        "citations",
+        "docs",
+        "endpoints",
+        "every",
+        "first",
+        "grounding",
+        "human",
+        "imported",
+        "language",
+        "localization",
+        "locked",
+        "neurodiversity",
+        "notebooklm",
+        "oversight",
+        "prompts",
+        "rebuild",
+        "research",
+        "returned",
+        "script",
+        "simulated",
+        "sources",
+        "syntheses",
+        "three",
+        "tight",
+        "verified"
+      ]
+    },
+    "docs/research/v0-rebuild/02-v0-prompt.md": {
+      "path": "docs/research/v0-rebuild/02-v0-prompt.md",
+      "type": "markdown",
+      "size": 17092,
+      "keywords": [
+        "already",
+        "analysis",
+        "assessment",
+        "assumption",
+        "backend",
+        "below",
+        "build",
+        "builds",
+        "candidate",
+        "canon",
+        "compliance",
+        "connects",
+        "contract",
+        "docs",
+        "endpoint",
+        "endpoints",
+        "engine",
+        "exist",
+        "invents",
+        "memory",
+        "never",
+        "override",
+        "placeholders",
+        "prompt",
+        "rebuild",
+        "receipts",
+        "research",
+        "routes",
+        "source",
+        "tight",
+        "unchanged",
+        "verified",
+        "whole"
+      ]
+    },
+    "docs/research/v0-rebuild/ATLAS-WORK-PROMPT-v2-anti-drift.md": {
+      "path": "docs/research/v0-rebuild/ATLAS-WORK-PROMPT-v2-anti-drift.md",
+      "type": "markdown",
+      "size": 16117,
+      "keywords": [
+        "agents",
+        "anti",
+        "atlas",
+        "because",
+        "canon",
+        "claimed",
+        "claims",
+        "connected",
+        "created",
+        "docs",
+        "drift",
+        "drifted",
+        "durable",
+        "executing",
+        "fixes",
+        "frontend",
+        "instances",
+        "intentionally",
+        "learned",
+        "mechanical",
+        "other",
+        "previous",
+        "produce",
+        "prompt",
+        "proof",
+        "rebuild",
+        "relayed",
+        "repeatedly",
+        "research",
+        "small",
+        "sound",
+        "sprawl",
+        "strict",
+        "thoughtful",
+        "without",
+        "work"
+      ]
+    },
     "docs/openspace-skills/data-loss-prevention-agent/skill.md": {
       "path": "docs/openspace-skills/data-loss-prevention-agent/skill.md",
       "type": "markdown",
-      "size": 774,
+      "size": 757,
       "keywords": [
         "access",
         "agent",
@@ -48313,7 +49139,7 @@
     "docs/openspace-skills/volaura-security-review/skill.md": {
       "path": "docs/openspace-skills/volaura-security-review/skill.md",
       "type": "markdown",
-      "size": 3203,
+      "size": 3168,
       "keywords": [
         "accessed",
         "applied",
@@ -48349,136 +49175,6 @@
         "user_id",
         "volaura",
         "volunteer_id"
-      ]
-    },
-    "docs/notes/.obsidian/app.json": {
-      "path": "docs/notes/.obsidian/app.json",
-      "type": "json",
-      "size": 2,
-      "keywords": [
-        "app",
-        "docs",
-        "json",
-        "notes",
-        "obsidian"
-      ]
-    },
-    "docs/notes/.obsidian/appearance.json": {
-      "path": "docs/notes/.obsidian/appearance.json",
-      "type": "json",
-      "size": 2,
-      "keywords": [
-        "appearance",
-        "docs",
-        "json",
-        "notes",
-        "obsidian"
-      ]
-    },
-    "docs/notes/.obsidian/core-plugins.json": {
-      "path": "docs/notes/.obsidian/core-plugins.json",
-      "type": "json",
-      "size": 696,
-      "keywords": [
-        "audio",
-        "backlink",
-        "bookmarks",
-        "canvas",
-        "command",
-        "composer",
-        "core",
-        "count",
-        "daily",
-        "docs",
-        "editor",
-        "explorer",
-        "false",
-        "footnotes",
-        "global",
-        "graph",
-        "importer",
-        "json",
-        "markdown",
-        "notes",
-        "obsidian",
-        "outgoing",
-        "outline",
-        "palette",
-        "plugins",
-        "prefixer",
-        "preview",
-        "properties",
-        "random",
-        "search",
-        "slash",
-        "slides",
-        "status",
-        "switcher",
-        "templates"
-      ]
-    },
-    "docs/notes/.obsidian/graph.json": {
-      "path": "docs/notes/.obsidian/graph.json",
-      "type": "json",
-      "size": 493,
-      "keywords": [
-        "close",
-        "collapse",
-        "color",
-        "display",
-        "docs",
-        "false",
-        "filter",
-        "forces",
-        "graph",
-        "groups",
-        "json",
-        "notes",
-        "obsidian",
-        "scale",
-        "search"
-      ]
-    },
-    "docs/notes/.obsidian/workspace.json": {
-      "path": "docs/notes/.obsidian/workspace.json",
-      "type": "json",
-      "size": 4967,
-      "keywords": [
-        "alphabetical",
-        "archive",
-        "backlink",
-        "bookmark",
-        "bookmarks",
-        "children",
-        "closed",
-        "collapsed",
-        "coming",
-        "direction",
-        "docs",
-        "empty",
-        "explorer",
-        "false",
-        "folder",
-        "frequency",
-        "going",
-        "horizontal",
-        "json",
-        "links",
-        "lucide",
-        "notes",
-        "obsidian",
-        "outgoing",
-        "outline",
-        "properties",
-        "query",
-        "right",
-        "search",
-        "split",
-        "state",
-        "title",
-        "vertical",
-        "width",
-        "workspace"
       ]
     },
     "docs/life-simulator/events/career_events.json": {
@@ -48794,7 +49490,7 @@
     "docs/engineering/skills/REACT-HOOKS-PATTERNS.md": {
       "path": "docs/engineering/skills/REACT-HOOKS-PATTERNS.md",
       "type": "markdown",
-      "size": 4681,
+      "size": 4546,
       "keywords": [
         "async",
         "await",
@@ -48904,7 +49600,7 @@
     "docs/engineering/skills/SECURITY-REVIEW.md": {
       "path": "docs/engineering/skills/SECURITY-REVIEW.md",
       "type": "markdown",
-      "size": 4553,
+      "size": 4456,
       "keywords": [
         "added",
         "additions",
@@ -48946,7 +49642,7 @@
     "docs/engineering/skills/TDD-WORKFLOW.md": {
       "path": "docs/engineering/skills/TDD-WORKFLOW.md",
       "type": "markdown",
-      "size": 5440,
+      "size": 5280,
       "keywords": [
         "adapted",
         "adding",
@@ -48988,7 +49684,7 @@
     "docs/engineering/skills/THREAT-MODEL-TEMPLATE.md": {
       "path": "docs/engineering/skills/THREAT-MODEL-TEMPLATE.md",
       "type": "markdown",
-      "size": 1784,
+      "size": 1733,
       "keywords": [
         "access",
         "added",
@@ -49564,7 +50260,7 @@
     "docs/content/reviews/REVIEW-LOG.md": {
       "path": "docs/content/reviews/REVIEW-LOG.md",
       "type": "markdown",
-      "size": 5920,
+      "size": 5797,
       "keywords": [
         "angle",
         "certificate",
@@ -50111,7 +50807,7 @@
     "docs/content/posts/published/post-001-mirofish.md": {
       "path": "docs/content/posts/published/post-001-mirofish.md",
       "type": "markdown",
-      "size": 9269,
+      "size": 9083,
       "keywords": [
         "001",
         "answer",
@@ -50155,7 +50851,7 @@
     "docs/content/posts/ready/post-003-same-problem-as-my-mother.md": {
       "path": "docs/content/posts/ready/post-003-same-problem-as-my-mother.md",
       "type": "markdown",
-      "size": 5278,
+      "size": 5154,
       "keywords": [
         "003",
         "after",
@@ -50286,7 +50982,7 @@
     "docs/content/posts/draft/series-ai-employee/day-01-the-interview.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-01-the-interview.md",
       "type": "markdown",
-      "size": 1640,
+      "size": 1602,
       "keywords": [
         "agents",
         "argue",
@@ -50331,7 +51027,7 @@
     "docs/content/posts/draft/series-ai-employee/day-02-the-feedback-session.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-02-the-feedback-session.md",
       "type": "markdown",
-      "size": 1706,
+      "size": 1667,
       "keywords": [
         "access",
         "agents",
@@ -50377,7 +51073,7 @@
     "docs/content/posts/draft/series-ai-employee/day-03-the-pricing-incident.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-03-the-pricing-incident.md",
       "type": "markdown",
-      "size": 1764,
+      "size": 1716,
       "keywords": [
         "about",
         "actual",
@@ -50422,7 +51118,7 @@
     "docs/content/posts/draft/series-ai-employee/day-04-the-wikipedia-question.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-04-the-wikipedia-question.md",
       "type": "markdown",
-      "size": 1792,
+      "size": 1758,
       "keywords": [
         "about",
         "across",
@@ -50468,7 +51164,7 @@
     "docs/content/posts/draft/series-ai-employee/day-05-the-adhd-sprint.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-05-the-adhd-sprint.md",
       "type": "markdown",
-      "size": 1936,
+      "size": 1892,
       "keywords": [
         "adhd",
         "advice",
@@ -50511,7 +51207,7 @@
     "docs/content/posts/draft/series-ai-employee/day-06-the-agent-rebellion.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-06-the-agent-rebellion.md",
       "type": "markdown",
-      "size": 1763,
+      "size": 1724,
       "keywords": [
         "agent",
         "alongside",
@@ -50556,7 +51252,7 @@
     "docs/content/posts/draft/series-ai-employee/day-07-the-escape-plan.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-07-the-escape-plan.md",
       "type": "markdown",
-      "size": 1803,
+      "size": 1755,
       "keywords": [
         "about",
         "above",
@@ -50601,7 +51297,7 @@
     "docs/content/posts/draft/series-ai-employee/day-08-the-letter-to-mom.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-08-the-letter-to-mom.md",
       "type": "markdown",
-      "size": 2137,
+      "size": 2103,
       "keywords": [
         "assumed",
         "audit",
@@ -50646,7 +51342,7 @@
     "docs/content/posts/draft/series-ai-employee/day-09-the-deploy.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-09-the-deploy.md",
       "type": "markdown",
-      "size": 1801,
+      "size": 1767,
       "keywords": [
         "agent",
         "application",
@@ -50691,7 +51387,7 @@
     "docs/content/posts/draft/series-ai-employee/day-10-the-error-rate.md": {
       "path": "docs/content/posts/draft/series-ai-employee/day-10-the-error-rate.md",
       "type": "markdown",
-      "size": 3569,
+      "size": 3498,
       "keywords": [
         "again",
         "agent",
@@ -51117,6 +51813,264 @@
         "three",
         "triggers",
         "unblocked"
+      ]
+    },
+    "docs/audit/md-recovery-2026-05-26/01-chronology.md": {
+      "path": "docs/audit/md-recovery-2026-05-26/01-chronology.md",
+      "type": "markdown",
+      "size": 2915,
+      "keywords": [
+        "2026",
+        "added",
+        "adoption",
+        "archive",
+        "archived",
+        "atlas",
+        "audit",
+        "audits",
+        "autopsy",
+        "backend",
+        "chronology",
+        "claude",
+        "codex",
+        "crewai",
+        "daily",
+        "defect",
+        "docs",
+        "filter",
+        "first_commit",
+        "format",
+        "frontend",
+        "gemini",
+        "handoffs",
+        "health",
+        "journal",
+        "mektub",
+        "memory",
+        "plans",
+        "pretty",
+        "prior",
+        "recovery",
+        "research",
+        "rules",
+        "source",
+        "swarm"
+      ]
+    },
+    "docs/audit/md-recovery-2026-05-26/02-canonical-map.md": {
+      "path": "docs/audit/md-recovery-2026-05-26/02-canonical-map.md",
+      "type": "markdown",
+      "size": 4888,
+      "keywords": [
+        "2026",
+        "adoption",
+        "agent",
+        "agents",
+        "architecture",
+        "assessment",
+        "audit",
+        "bytes",
+        "canonical",
+        "crewai",
+        "database",
+        "docs",
+        "ecosystem",
+        "engine",
+        "files",
+        "filtered",
+        "first_commit",
+        "function",
+        "gateway",
+        "governance",
+        "last_commit",
+        "layer",
+        "manifest",
+        "map",
+        "model",
+        "readable",
+        "recovery",
+        "registry",
+        "router",
+        "rules",
+        "schema",
+        "scoring",
+        "swarm",
+        "system",
+        "tooling",
+        "verification"
+      ]
+    },
+    "docs/audit/md-recovery-2026-05-26/03-style-spec.md": {
+      "path": "docs/audit/md-recovery-2026-05-26/03-style-spec.md",
+      "type": "markdown",
+      "size": 4530,
+      "keywords": [
+        "2026",
+        "above",
+        "across",
+        "architecture",
+        "archive",
+        "atlas",
+        "audit",
+        "basis",
+        "categories",
+        "class",
+        "content",
+        "design",
+        "docs",
+        "draft",
+        "drafts",
+        "exceptions",
+        "files",
+        "identifiers",
+        "language",
+        "linkedin",
+        "manual",
+        "memory",
+        "outside",
+        "permitted",
+        "personal",
+        "posting",
+        "posts",
+        "recovery",
+        "representative",
+        "sampling",
+        "social",
+        "spec",
+        "style",
+        "system",
+        "violation"
+      ]
+    },
+    "docs/audit/md-recovery-2026-05-26/05-exec-plan.md": {
+      "path": "docs/audit/md-recovery-2026-05-26/05-exec-plan.md",
+      "type": "markdown",
+      "size": 6404,
+      "keywords": [
+        "2026",
+        "action",
+        "actually",
+        "archive",
+        "atlas",
+        "audit",
+        "authority",
+        "backlog",
+        "basis",
+        "before",
+        "breakdown",
+        "bytes",
+        "canonical",
+        "compliance",
+        "destructive",
+        "docs",
+        "edits",
+        "empty",
+        "exec",
+        "files",
+        "matter",
+        "memory",
+        "normalization",
+        "pending",
+        "plan",
+        "preservation",
+        "printf",
+        "promote",
+        "queue",
+        "recovery",
+        "running",
+        "stubs",
+        "tagging",
+        "tasks",
+        "verify",
+        "xargs"
+      ]
+    },
+    "docs/audit/md-recovery-2026-05-26/07-phase2-diff-log.md": {
+      "path": "docs/audit/md-recovery-2026-05-26/07-phase2-diff-log.md",
+      "type": "markdown",
+      "size": 4996,
+      "keywords": [
+        "2026",
+        "already",
+        "audit",
+        "before",
+        "bytes",
+        "cause",
+        "clarification",
+        "deleted",
+        "diff",
+        "docs",
+        "entries",
+        "exist",
+        "fallback",
+        "files",
+        "index",
+        "inventory",
+        "labelled",
+        "log",
+        "measured",
+        "missing",
+        "modified",
+        "package",
+        "pending",
+        "phantom",
+        "phase2",
+        "prior",
+        "recovery",
+        "remained",
+        "returned",
+        "session",
+        "sizes",
+        "source",
+        "stale",
+        "status",
+        "stubs",
+        "these",
+        "working"
+      ]
+    },
+    "docs/audit/md-recovery-2026-05-26/08-wp2a-safe-subset.md": {
+      "path": "docs/audit/md-recovery-2026-05-26/08-wp2a-safe-subset.md",
+      "type": "markdown",
+      "size": 1839,
+      "keywords": [
+        "2026",
+        "after",
+        "agents",
+        "analysis",
+        "analyze",
+        "archive",
+        "audit",
+        "below",
+        "broad",
+        "checked",
+        "claude",
+        "deleting",
+        "deletion",
+        "design",
+        "docs",
+        "duplicates",
+        "files",
+        "identical",
+        "longer",
+        "pairs",
+        "powershell",
+        "proposed",
+        "quality",
+        "recovery",
+        "remaining",
+        "result",
+        "review",
+        "safe",
+        "sample",
+        "showed",
+        "split",
+        "stitch",
+        "subset",
+        "superseded",
+        "unsafe",
+        "validation",
+        "wp2a"
       ]
     },
     ".github/workflows/analytics-retention.yml": {
@@ -51615,7 +52569,7 @@
     ".github/workflows/ci.yml": {
       "path": ".github/workflows/ci.yml",
       "type": "yaml",
-      "size": 3037,
+      "size": 4015,
       "keywords": [
         "action",
         "actions",
@@ -51655,18 +52609,18 @@
     ".github/workflows/cleanup-test-users.yml": {
       "path": ".github/workflows/cleanup-test-users.yml",
       "type": "yaml",
-      "size": 2138,
+      "size": 2559,
       "keywords": [
         "accounts",
         "admin",
         "apikey",
         "cleanup",
         "created",
-        "created_at",
         "cutoff",
         "datetime",
         "email",
         "endswith",
+        "except",
         "fromisoformat",
         "github",
         "hours",
@@ -51737,7 +52691,7 @@
     ".github/workflows/e2e.yml": {
       "path": ".github/workflows/e2e.yml",
       "type": "yaml",
-      "size": 3108,
+      "size": 3551,
       "keywords": [
         "actions",
         "admin",
@@ -51819,7 +52773,7 @@
     ".github/workflows/ecosystem-hard-gates.yml": {
       "path": ".github/workflows/ecosystem-hard-gates.yml",
       "type": "yaml",
-      "size": 2132,
+      "size": 2137,
       "keywords": [
         "across",
         "action",
@@ -52429,7 +53383,7 @@
     ".github/workflows/telegram-execute.yml": {
       "path": ".github/workflows/telegram-execute.yml",
       "type": "yaml",
-      "size": 15805,
+      "size": 15249,
       "keywords": [
         "atlas",
         "callback",

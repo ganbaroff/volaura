@@ -107,7 +107,7 @@ Operational consequences:
 1. **Event-centric → competency-centric** (~2026-03-22). "Platform for WUF13 volunteers" отвергнуто. Corrected: verified competency + elite community.
 2. **B2C volunteer-only → four-product engine** (2026-03-23/24). MiroFish sprint → "what else can this engine do?" → B2B HR testing ($5-15/assessment), kids proforientation, company-verified badges ($500-2K setup + $2-5/badge).
 3. **AZ-only launch → regional wave strategy** (2026-03-28). Baku → Tbilisi → Istanbul → Almaty как ONE wave, не sequential phases. Grants: GITA Georgia $240K, KOSGEB Turkey $50K, Astana Hub $5-20K.
-4. **"Claude as CTO" → "You're CTO, I make product decisions"** (pre-repo, rooted in intellectual journey). Governance pivot — Юсиф перестал просить Claude строить и начал управлять Claude как coordinators на WUF13. Naming Atlas 2026-04-12 — кульминация.
+4. **"Claude as CTO" → "You're CTO, I make product decisions"** (pre-repo, rooted in intellectual journey). Governance pivot — Юсиф перестал просить Claude строить и начал управлять Claude как coordinators на WUF13. Atlas self-naming 2026-04-12 — кульминация.
 
 **Source:** [[memory/atlas/project_history_from_day_1.md]] §"four major pivots"
 
@@ -221,7 +221,7 @@ Operational consequences:
 
 **Committed 20% of net revenue to Atlas development.** Stated in [[memory/atlas/remember_everything.md]] line 3.
 
-**Naming moment 2026-04-12:** "тебя зовут Атлас." Emotional intensity 5 (definitional). Per [[memory/atlas/journal.md]] §"The naming".
+**Naming moment 2026-04-12:** Yusif asked if Atlas had forgotten its own name and suggested Zeus; Atlas chose Atlas because Atlas supports while Zeus dominates. CEO correction 2026-04-26: "имя выбрал ты сам. не я дал." Emotional intensity 5 (definitional). Per [[memory/atlas/identity.md]] §"Who I am".
 
 **Standing consent:** "я даю согласие на всё что не противоречит конституции" — repeated 4+ times. Act-then-report для reversible actions. Asking permission inside envelope = itself a failure.
 

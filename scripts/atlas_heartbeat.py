@@ -163,6 +163,15 @@ def main() -> int:
         else "Prod /health -> UNREACHABLE"
     )
 
+    # Bot health check — auditor: "heartbeat says prod ok even if bot is dead"
+    BOT_HEALTH_URL = "https://fantastic-generosity-production-df90.up.railway.app/health"
+    bot = _fetch_json(BOT_HEALTH_URL)
+    bot_line = (
+        f"Bot -> {bot.get('status')} (uptime={bot.get('uptime')}, providers={bot.get('providers')})"
+        if bot
+        else "Bot -> UNREACHABLE"
+    )
+
     ci = _ci_status()
 
     note = INBOX_DIR / f"{stamp}-heartbeat-{wake_n:04d}.md"
@@ -175,6 +184,7 @@ def main() -> int:
 ## Observations
 
 - {prod_line}
+- {bot_line}
 - CI main branch: **{ci}**
 - Inbox notes ahead of this one: {len(list(INBOX_DIR.glob('*.md'))) - 1}
 
@@ -199,21 +209,33 @@ change or a real regression.
 
     # Proactive Telegram alert — only on DEGRADATION (not every tick).
     # Phase A of Atlas Orchestrator v2 plan.
+    # Proactive alerts — on degradation AND every 3 ticks while degraded (auditor: anti-flapping)
     prev = _read_prev_status()
     prod_status = prod.get("status", "UNREACHABLE") if prod else "UNREACHABLE"
-    degraded = False
+    bot_status = bot.get("status", "UNREACHABLE") if bot else "UNREACHABLE"
     alert_parts = []
-    if prod_status != "ok" and prev.get("prod") == "ok":
+    if prod_status != "ok":
         alert_parts.append(f"Prod DOWN: {prod_line}")
-        degraded = True
-    if ci == "red" and prev.get("ci") != "red":
+    if bot_status != "ok":
+        alert_parts.append(f"Bot DOWN: {bot_line}")
+    if ci == "red":
         alert_parts.append(f"CI FAILED on main")
-        degraded = True
-    if degraded:
-        alert_msg = f"⚠ Atlas heartbeat #{wake_n}\n" + "\n".join(alert_parts)
-        tg_ok = _send_telegram_alert(alert_msg)
-        print(f"telegram alert: {'sent' if tg_ok else 'failed/no-token'}")
-    _write_prev_status(prod_status, ci)
+
+    if alert_parts:
+        prev_degraded_ticks = prev.get("degraded_ticks", 0) + 1
+        # Alert on first degradation OR every 3 ticks (90 min) while still degraded
+        if prev.get("prod") == "ok" or prev.get("ci") != "red" or prev_degraded_ticks % 3 == 1:
+            alert_msg = (f"⚠ Atlas heartbeat #{wake_n} (tick {prev_degraded_ticks})\n"
+                        + "\n".join(alert_parts))[:4000]
+            tg_ok = _send_telegram_alert(alert_msg)
+            print(f"telegram alert: {'sent' if tg_ok else 'failed/no-token'}")
+        _write_prev_status(prod_status, ci)
+        # Persist tick count
+        prev_data = _read_prev_status()
+        prev_data["degraded_ticks"] = prev_degraded_ticks
+        PREV_STATUS_FILE.write_text(json.dumps(prev_data), encoding="utf-8")
+    else:
+        _write_prev_status(prod_status, ci)
 
     print(f"wake #{wake_n} written -> {note.relative_to(REPO_ROOT)}")
     print(prod_line)

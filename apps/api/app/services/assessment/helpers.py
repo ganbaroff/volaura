@@ -119,6 +119,8 @@ def _normalize_options(options: list | None) -> list[dict] | None:
     verbatim (a) broke clients expecting one shape and (b) LEAKED the per-option
     `score` — the answer key — to the candidate's browser (found 2026-06-13:
     22 of 99 MCQ rows). One choke point, one shape, nothing gradable leaves.
+    Ported to this branch from origin/main (PR #151) 2026-06-13 — the branch was
+    missing the security fix that is already live in prod.
     """
     if not options:
         return None

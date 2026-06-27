@@ -50,7 +50,7 @@ Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS i
 | 83(b) election mailed to IRS | DHL postmark Apr 20 (CEO) + Stripe Atlas auto-filed | IRS statutory max May 14 | Founder + Atlas + Stripe Atlas | ✅ COMPLETED — DOUBLE-FILED. CEO 230 AZN (DEBT-001) duplicate cost; "Proof of filing" available in Stripe Atlas dashboard 2026-04-26 |
 | Tax ID (EIN) received | Apr 29 – May 13 (original) → May 6-20 (Stripe Atlas dashboard 2026-04-26) | — | IRS via Stripe Atlas | ✅ **COMPLETED 2026-04-28** — `37-2231884` (14 days ahead of window) |
 | ITIN application (Form W-7) | Immediately after incorporation | — | Founder | P0 (needed for 83(b) + taxes) |
-| Mercury Bank application | **NOW — EIN received 2026-04-28** | — | Founder (CEO action: mercury.com/signup) | **UNBLOCKED** |
+| Mercury Bank application | **STUCK on KYC address proof (CEO direct 2026-06-11):** Mercury rejected utility bill — it carries the apartment OWNER's name, not Yusif's (rented flat, normal for Baku). Need address doc with HIS name: bank statement PDF from AZ bank app (fastest), ASAN qeydiyyat arayışı (residence registration cert), notarized lease, or postpaid mobile bill. Atlas drafting support reply + doc checklist. | — | Founder + Atlas | **BLOCKED — address doc mismatch** |
 | Stripe Atlas Perks review | **Apr 15-16** (available now per dashboard) | — | Atlas | **NEW — free credits potential (AWS, Notion, etc) — cash save** |
 | Tax deadline reminders setup | **Apr 15-16** (available now per dashboard) | — | Compliance agent | NEW — auto-reminders via Stripe Atlas |
 | State registration (DE founder lives abroad) | After Incorporation | Check if AZ triggers nexus | Compliance agent | REVIEW |

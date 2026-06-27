@@ -1,3 +1,9 @@
+# ARCHIVED — 2026-06-26 by atlas-academy-overseer
+# Last entry: 2026-04-20. Dead 67 days. Superseded by breadcrumb.md + episodes/.
+# Per Kimi memory autopsy (MEMORY-AUTOPSY.md): wake-log served its purpose
+# during daemon era (Apr 17-20), now replaced by the Jarvis v5 reality snapshot.
+# Do NOT append new entries here. Write to breadcrumb.md or episodes/ instead.
+
 wake-test: alive at Fri Apr 17 14:49:16 AST 2026
 2026-04-17 14:55 Baku — autonomous wake. F6 committed (eventshift MVP + G2.6 bridge fix, 3577 lines). F7 committed (71 auto-memory files snapshotted). Prod health: API 200, frontend 307, MindShift UNREACHABLE (Vercel URL may have rotated), old EventShift backends still alive at 200 (should be dormant). CI in_progress. Next: update sprint checkboxes.
 2026-04-17 15:39 Baku — daemon wake (triggered by prior Atlas wake-log change). Committed: assessment questions Skeleton fix (86d3d67). Updated 6 sprint checkboxes (G1.1-G1.4 ✅, F6-F7 ✅). Launched skeleton-migration agent for 16 remaining Loader2 files. Prod: API 200. Next: wait for agent, commit batch, then G2.2 (sample page decision).

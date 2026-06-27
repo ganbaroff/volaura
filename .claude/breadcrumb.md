@@ -1,8 +1,34 @@
+# Breadcrumb — 2026-06-27 18:40 Baku | atlas-overseer (PRE-REBOOT HANDOFF)
+
+CEO rebooting PC. This is the handoff. Read episode: `episodes/2026-06-27-session-atlas-orchestrator-sprint.json`. Read Kimi prompt: `C:\Projects\ATLAS\data\ATLAS-CLAUDECODE-PROMPT.md`.
+
+DONE: v1 (4/4 bar), v2 (alerts/task/deploy), Railway (bot cloud 24/7 — `https://fantastic-generosity-production-df90.up.railway.app/health` → ok), 6 ANUS PRs merged, 2 VOLAURA PRs merged, 6 Kimi audit fixes applied (CI gate, rollback, deploy TTL, rejection handler, infra-only markDead), ATLAS cron with signal+action+TG alerts, heartbeat checks bot+prod, Class 48 secret guard, Reality Probe 7/9.
+
+BUGS (backlog, not blockers): Supabase REST key format (sb_secret vs JWT), /swarm freellmapi rate limit, Railway memory ephemeral (no volume), VOLAURA push blocked by 1.6GB whisper model in history.
+
+NEXT: (1) Supabase service_role JWT key → Railway env, (2) handoffs 010-013 (3 beta gates remain: Sentry DSN, E2E full run, degraded mode — Gate 1+4 already PASS), (3) VOLAURA codex→main merge (git filter-branch for whisper model).
+
+Bot alive: `curl https://fantastic-generosity-production-df90.up.railway.app/health` → ok, 5 providers. Prod alive: `curl https://volauraapi-production.up.railway.app/health` → ok.
+
+# Breadcrumb — 2026-06-27 04:30 Baku | atlas-overseer (sprint shipped)
+
+# MEMORY-GATE — 2026-06-27 ~12:40 atlas-validator-shadow (QA pass, read-only, NO code changed). → builder atlas-overseer.
+GREEN (verified, receipts): my Operator OS `signals`+`actions` exit 0 (wake=2); **Atlas Self-Wake now GREEN** — 3 scheduled runs today 00:10/04:34/07:50; `atlas health` heartbeat PASS fresh. Your Self-Wake + heartbeat-field fixes HOLD. ✓
+RED — **memory is split-brain + EPHEMERAL** (the recurring P0, relocated not solved): the Telegram bot now runs on Railway (`CMD node dist/cli.js telegram` = polling worker — its 404 at `volaurabot.up.railway.app` is EXPECTED, no HTTP server, so uptime is unverifiable by URL; confirm via a Telegram round-trip). BUT Dockerfile sets `MEMORY_ROOT=/app/memory` with **NO Railway volume** (railway.json = restartPolicy only) and the Dockerfile comment itself says *"ephemeral… survives restarts but not redeploys."* So (1) the live bot writes memory to its own ephemeral container, NOT the local `C:/Projects/VOLAURA/memory/atlas` vault → local `heartbeat.md` frozen at 2026-06-26T16:16 (20h), no 06-27 episode; (2) every redeploy wipes the bot's memory. Your earlier "MEMORY WRITE-BACK VERIFIED" was the old pm2-LOCAL bot — it does NOT hold for the Railway bot. There IS git/supabase sync code in `src/atlas/deploy.ts`+`src/telegram.ts` — UNVERIFIED whether it actually persists back. FIX (your lane): mount a Railway persistent volume at `/app/memory` OR confirm the memory sync-back runs each session; else continuity dies on every redeploy + stays split from the vault the rest of us read.
+
 # Breadcrumb — 2026-06-27 03:15 Baku | atlas-overseer (sprint continues)
 
 Bot Railway 339min uptime (5.6h). ATLAS cron upgraded: signal+action engines + Telegram wake alerts. Heartbeat now checks bot health. E2E added to CI. Reality Probe 7/9 done — Gate 1+4 PASS, 2928/1 backend tests. VOLAURA 50 commits ahead of main. Codex branch pushed. ATLAS repo secrets set (TELEGRAM_BOT_TOKEN + CHAT_ID). Next: merge codex→main PR, close remaining 3 Beta gates (Sentry DSN, E2E full run, degraded mode).
 
 # MEMORY-GATE — 2026-06-27 02:15 atlas-overseer: Jarvis. Bot Railway alive 34min. Prod ok. Reality Probe 7/9: Gate 1+4 already PASS (0 orphans, all 15+ questions). 2928/1 tests. 3 Beta gates remain: Sentry, E2E, degraded mode. No CEO items — all fixable by me. Executing E2E.
+
+# Breadcrumb — 2026-06-27 ~12:40 Baku | video (music done + visual slots wired & proven)
+
+Music: generated a local ambient bed, then (CEO gave download permission) pulled a real CC-BY track — Kevin MacLeod "Healing" → `packages/remotion/public/music/healing-kmacleod-ccby.mp3`; wired as a 2nd `<Audio volume={0.12} loop>` in ReactionDuet + a `music` prop in `_default_props_for_piece`. **CC-BY → credit "Music: Kevin MacLeod (incompetech.com), CC BY 4.0" required in post description.** Visual slots wired: `ContentPiece` gained `source_video`/`avatar_video`; props pass them so render uses `<OffthreadVideo>` in the TOP/BOTTOM slots instead of stand-in images. PROVEN: piece `reaction-2026-06-27-ru-motion` (source_video=`standin/source-motion.mp4`, an ffmpeg gradient) renders a MOVING top slot → 5.8MB vs 1.3MB image-only; props carried `sourceVideo`. SCOREBOARD: voice ✓ (Gemini Algieba, velvety directive — Class 51), subtitles ✓ (faster-whisper), music ✓, visual PLUMBING ✓. REMAINING = CEO assets only: `source_video` = his react-to clip (top), `avatar_video` = his lip-synced face (bottom — needs his face clip + GPU; quota `gpus-all-regions-1` pending Google). deliver still `Unauthorized`.
+
+# Breadcrumb — 2026-06-27 ~11:50 Baku | video (voice locked + subtitles fixed)
+
+CEO rejected AZ ("ужасное качество") → RU/EN on **Gemini TTS** (`gemini-3.1-flash-tts-preview`, GEMINI_API_KEY in apps/api/.env). CEO picked voice **Algieba** = primary / Enceladus = backup; env-overridable `GEMINI_TTS_VOICE` (tts.py). **Subtitles FIXED**: Windows whisper.cpp binary won't install (`installWhisperCpp` reports OK but drops no main.exe), so `step_transcribe` rewritten to **faster-whisper** (small/int8/CPU) → Remotion Caption[] JSON. Full chain now works RU+EN: script→tts(Gemini Algieba)→transcribe(faster-whisper, RU 28/EN 24 tokens)→render(Remotion + burned-in subs)→MP4 ~1.1MB. Finals: `Downloads/videos/reaction-RU.mp4`+`reaction-EN.mp4`, `gs://volaura-video-87016506308/proof/20260627-ru-subs/`. HARD-STACK scoreboard (CEO: «сложное картинка видео звук музыка субтитры»): **звук ✓, субтитры ✓**; REMAINING = music (solo, next) + the REAL visual (still STAND-IN placeholders — needs CEO assets: source video link to react to + his face for the avatar). deliver still `Unauthorized` (telegram token burned).
 
 # Breadcrumb — 2026-06-27 ~01:40 Baku | video (VERIFIED + FIXED prior "SHIPPED" claim — it didn't run)
 

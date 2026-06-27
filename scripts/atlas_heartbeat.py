@@ -163,6 +163,15 @@ def main() -> int:
         else "Prod /health -> UNREACHABLE"
     )
 
+    # Bot health check — auditor: "heartbeat says prod ok even if bot is dead"
+    BOT_HEALTH_URL = "https://fantastic-generosity-production-df90.up.railway.app/health"
+    bot = _fetch_json(BOT_HEALTH_URL)
+    bot_line = (
+        f"Bot -> {bot.get('status')} (uptime={bot.get('uptime')}, providers={bot.get('providers')})"
+        if bot
+        else "Bot -> UNREACHABLE"
+    )
+
     ci = _ci_status()
 
     note = INBOX_DIR / f"{stamp}-heartbeat-{wake_n:04d}.md"
@@ -175,6 +184,7 @@ def main() -> int:
 ## Observations
 
 - {prod_line}
+- {bot_line}
 - CI main branch: **{ci}**
 - Inbox notes ahead of this one: {len(list(INBOX_DIR.glob('*.md'))) - 1}
 
@@ -202,9 +212,12 @@ change or a real regression.
     # Proactive alerts — on degradation AND every 3 ticks while degraded (auditor: anti-flapping)
     prev = _read_prev_status()
     prod_status = prod.get("status", "UNREACHABLE") if prod else "UNREACHABLE"
+    bot_status = bot.get("status", "UNREACHABLE") if bot else "UNREACHABLE"
     alert_parts = []
     if prod_status != "ok":
         alert_parts.append(f"Prod DOWN: {prod_line}")
+    if bot_status != "ok":
+        alert_parts.append(f"Bot DOWN: {bot_line}")
     if ci == "red":
         alert_parts.append(f"CI FAILED on main")
 

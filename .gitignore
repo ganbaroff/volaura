@@ -141,3 +141,5 @@ secrets.txt
 .cursor/keys.json
 
 .vercel
+memory/swarm/content-runs/
+test-results/

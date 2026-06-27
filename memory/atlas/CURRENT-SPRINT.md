@@ -1,6 +1,6 @@
-# Current Sprint — Atlas v1: Stitch Frankenstein
+# Current Sprint — Atlas Orchestrator: v1 DONE → v2 DONE → Supabase memory
 
-**Pivoted:** 2026-06-26 Baku (CEO directive: "у нас работа по АТЛАСУ!!! атлас агент рой. зашить франкенштейна.")
+**Started:** 2026-06-26 Baku | **Status:** v2 complete, Supabase integration deploying
 **Owner:** Atlas (all bodies)
 **Previous sprint:** Ideal Assessment Module (2026-06-13, PAUSED — not cancelled)
 

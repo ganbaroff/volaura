@@ -1,5 +1,53 @@
 ---
 
+## Class 54 — A CSS selector typo silently no-ops an entire responsive rule (2026-06-27)
+
+Symptom. Site-wide mobile horizontal scroll on all 26 Integronix pages (index 83px over at a 390px viewport). The header's mobile media query meant to hide the language switcher — `.head-tools .lang { display:none }` — but the real element class is `.lang-sw`. The selector matched nothing, so the lang switch + search icon + the full 121px rfq button all stayed in a 390px header next to the 136px logo and overflowed.
+
+Pathway. A non-matching CSS selector fails SILENTLY — no error, no warning, the rule simply does nothing. The author wrote the mobile rule and moved on; nobody render-checked at mobile width, so the no-op shipped and rode along on every page for weeks. Same family as Class 7 (false completion): "the CSS exists in the file" ≠ "the CSS applies to the element". Only a real mobile render (scrollWidth − clientWidth) exposes it.
+
+Fix. (1) Selector `.lang` → `.lang-sw`; added `.head-icon:not(.burger)` to hide search on mobile; tightened header gap+padding — kept the rfq money-CTA + burger; verified overflow=0 at 390 AND desktop unbroken at 1265 via preview DOM. (2) Verification gotcha worth remembering: editing a CSS file does NOT change the browser render until the STYLESHEET itself reloads — a page navigation re-serves the cached `<link>`. Prove the fix two ways: fetch the file fresh (disk-correct) AND swap the `<link href>` with a cache-bust to force re-apply, then re-measure. (3) Standing rule: any responsive-CSS claim needs a real render at the target width, never "the rule is in the file".
+
+Cross-references. Class 7 false-completion; Class 50 isolated-unit-≠-system; `reliable-execution.md` ground-truth.
+
+---
+
+## Class 53 — Read tool bypasses secret-stream-guard: the tool is not the command (2026-06-27)
+
+Symptom. CEO asked "что сделать чтобы ты больше не сливал мои ключи?" I answered by reading `settings.json` via Read tool to check the hook setup. Read dumped 3 API keys (GITHUB_PAT, SENTRY_AUTH_TOKEN, TAVILY_API_KEY) to transcript — while answering a question about preventing exactly this leak. Class 43 regression at maximum irony.
+
+Pathway. `secret-stream-guard.sh` only guarded Bash commands. The comment on line 41 said "Read tool is covered by the global Secret-byte rule" — but that "global rule" was a paragraph in lessons.md, not a structural guard. Behavioral rules don't fire at the moment of action. Hooks do. The pathway from Class 35→43→48→53 is the same: knowing the rule, violating it, discovering the gap was in enforcement scope.
+
+Fix (structural, two layers). (1) Extended `secret-stream-guard.sh` to intercept Read tool: if tool_name=Read and file_path matches SECRET_FILE_RE → BLOCK with exit 2. Same default-deny as Bash guard. (2) Migrated all secret values OUT of `settings.json` into Windows user environment variables via `setx`. settings.json env section now contains only non-secret config (CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC, token caps). Even if someone reads settings.json, there is nothing to leak. Defense in depth: hook blocks the read AND the file has no secrets.
+
+Cross-references: Class 35 (root), 43 (regression), 48 (format bypass). The entire class family shares one axis: the leak pathway was never "bad intent" — it was "good intent through an unguarded tool."
+
+---
+
+## Class 52 — Migration hygiene: moving runtime A→B requires decommissioning A (2026-06-27)
+
+Symptom. Bot moved from local pm2 to Railway. pm2-windows-startup package stayed installed, pm2 save list still had `atlas-telegram`. CEO rebooted PC → pm2 auto-resurrected the local bot → two instances polled Telegram `getUpdates` → Railway got 409 Conflict, crashed after 3 retries, went CRASHED status. Bot was dead for hours. Nobody detected it because: (a) Phase A alerts (PR #154) weren't deployed to prod yet, (b) CI Prod Health Check didn't check bot health at all, (c) Telegram alert in CI used a burned token (401 Unauthorized). Three monitoring gaps stacked on one migration gap.
+
+Pathway. Class 30 sibling (daemon orphaned from supervisor control). When a runtime moves from environment A to environment B, the default is to SET UP B and celebrate. The cleanup of A feels like optional housekeeping. But A doesn't know it's been replaced — it keeps doing its job on the next trigger (reboot, cron, login). The collision is guaranteed; only the timing is random.
+
+Fix (structural, three layers). (1) **Decommission checklist**: when moving any persistent process (bot, daemon, cron, scheduled task) to a new host, same-turn actions: stop old process, remove from auto-start, save empty state, verify old host won't restart it on any trigger (reboot, login, cron). Document in the destination's config that the old host is decommissioned. (2) **Monitor the new host**: add health check for the new endpoint to CI BEFORE celebrating the migration. A migration without monitoring is a silent-failure pipeline. (3) **Single-instance guard**: for Telegram polling bots specifically, a 409 is not a transient error — it means a duplicate exists. The bot should log this distinctly and alert, not just crash-loop.
+
+Cross-references: Class 30 (daemon orphaned from scheduled-task control), pm2-windows-startup in breadcrumb 2026-06-26.
+
+---
+
+## Class 51 — A sample you get approved must come from the EXACT production path/params (2026-06-27)
+
+Symptom. CEO picked voice "Algieba" from samples I generated, then said the pipeline video sounded wrong ("ты сделал голос со старым"). Receipts proved the video WAS Algieba — but I'd made the SAMPLES with a throwaway script using one style directive ("low/velvety/calm") while the PIPELINE used a different one ("energetic/upbeat/lively"). Same voice, opposite delivery → the approved sample didn't match the shipped output. CEO: «наказан… будь более внимательным».
+
+Root cause. An approval is only valid if the approved artifact was produced by the same code path and the same parameters as production. I changed the variable under test (voice) but let a HIDDEN variable (style directive) differ between the sampler and the pipeline. So the CEO approved something the pipeline would never emit.
+
+Fix. Generate previews/samples THROUGH the production function with production params — only the one variable under test may differ; assert/diff everything else is identical before presenting. After any approval, confirm the shipped output was produced with the approved params (check the receipt's voice/style/model). Attention to the hidden constants, not just the obvious variable.
+
+Cross-references. Class 47 verify-on-real-artifact; Class 50 isolated-unit hides integration; `reliable-execution.md` ground-truth.
+
+---
+
 ## Class 50 — Isolated-unit "proof" hides integration bugs; run the real end-to-end command (2026-06-27)
 
 Symptom. A prior Atlas body (Cursor/Composer) reported the Phase-0 content pipeline "SHIPPED" and proved the AZ-TTS unblock by calling `synthesize()` standalone (got a 205KB WAV). It told the CEO to run `python -m packages.swarm.content_pipeline --piece ...`. When I actually ran that command, it produced NOTHING: `step_tts` calls `synthesize()` from inside the pipeline's running asyncio loop, where `_synthesize_edge`'s `asyncio.run()` raises "cannot be called from a running event loop" → tts failed → transcribe/render/deliver all skipped. A second bug (`subprocess.run(["pnpm",...])` → `[WinError 2]` on Windows because pnpm is a `.cmd` shim) killed transcribe+render at 0ms. Both were invisible to the standalone unit test.

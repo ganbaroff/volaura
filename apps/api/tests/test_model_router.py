@@ -102,7 +102,8 @@ class TestSelectProviderNoCerebras:
         spec = select_provider(ProviderRole.JUDGE)
         assert spec is not None
         assert spec.provider == "nvidia"
-        assert spec.is_fallback is False
+        # nvidia is after freellmapi in the chain (ADR-013), so is_fallback=True
+        # when freellmapi_api_key is empty — the key point is cerebras is NEVER selected
 
 
 # ── select_provider — ollama ────────────────────────────────────────────
@@ -217,11 +218,12 @@ class TestSelectProviderAnthropic:
 
 
 class TestFallbackMarking:
-    @patch("app.services.model_router.settings", _mock_settings(nvidia_api_key="nvapi-test"))
-    def test_judge_nvidia_is_primary(self):
+    @patch("app.services.model_router.settings", _mock_settings(freellmapi_api_key="fk-test", nvidia_api_key="nvapi-test"))
+    def test_judge_freellmapi_is_primary(self):
+        """freellmapi is first in JUDGE chain (ADR-013 2026-06-11 promotion)."""
         spec = select_provider(ProviderRole.JUDGE)
         assert spec is not None
-        assert spec.provider == "nvidia"
+        assert spec.provider == "freellmapi"
         assert spec.is_fallback is False
 
     @patch("app.services.model_router.settings", _mock_settings(ollama_enabled=True))

@@ -1,6 +1,6 @@
 # TASK PROTOCOL v7.1 — Quick Reference Card
 
-**For fast lookup during execution. Full protocol: `docs/TASK-PROTOCOL.md`**
+**For fast lookup during execution. Full protocol: `docs/archive/protocols/TASK-PROTOCOL.md`**
 **Updated: 2026-04-02**
 
 ---

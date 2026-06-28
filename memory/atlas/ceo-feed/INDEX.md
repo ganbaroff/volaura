@@ -8,6 +8,21 @@
 
 ## Actionable — still-relevant signals
 
+**`legal-engagement-brief-2026-06-07.md`** (new — launch-critical)
+Counsel-facing brief for AZ PDPA/SADPP + EU GDPR Art. 9 / Art. 22 / AI Act review. Lists existing repo materials (Privacy/ToS drafts, GDPR Art. 22 research, DE-CCorp diff, lawyer shortlist). Two named counsel sets with 6 concrete questions each. Output-requested format: verdict + red/amber/green list + exact questions per lawyer + correction list. Hand to VA as the packet.
+
+**`va-legal-track-2026-06-07.md`** (new — paired with the brief)
+Operational layer for the legal track: Upwork JD ($5–8/h, ~20h/mo), 5 screening questions, weekly workflow (Mon digest / Tue–Thu outreach / Fri wrap), tracking sheet schema, confidentiality + NDA, risks + mitigations, first-month milestones, failure triggers. Closes the founder-as-lawyer-courier bottleneck the way MCP-courier closed the founder-as-AI-courier bottleneck. Budget envelope $100–160/mo.
+
+**`project-milestone-ledger-2026-06-06.md`** (new)
+Current project-level milestone map: launch gate blocked externally, code bugs currently known to be user-blocking are not found, truth-lock docs still need cleanup.
+
+**`launch-gate-sheet-2026-06-06.md`** (new)
+Short CEO-facing gate sheet: no known user-blocking code bugs from current audit; launch still blocked by Art. 9 / SADPP / key rotation / sign-off.
+
+**`codex-next-sprint-queue-2026-06-06.md`** (new)
+Compact Atlas-to-Codex handoff queue: PR #103 CI-honesty, B2B personalized-assessment wedge, docs drift, and next verification order. Claims-to-verify, not proof.
+
 **`volaura-docs-deep-scan-2026-04-12.md`** (61 lines)
 Contains 5 beta-blocker CEO action items — Railway `APP_ENV=production`, `APP_URL=https://volaura.app`, Supabase email confirmation OFF, `supabase db push` for 4 pending migrations, redirect URLs. VERIFY against prod: (a) env already set, (b) migrations already applied in later sessions. Also: deadline block (May WUF13 / GITA Georgia / Astana Hub / Turkiye Tech Visa) — check `memory/atlas/deadlines.md` for current state.
 

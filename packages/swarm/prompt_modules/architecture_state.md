@@ -11,7 +11,7 @@ They are DIFFERENT systems. Do NOT confuse them. Read ecosystem-map.md for full 
 ## Atlas Gateway (separate system — claw3d)
 - Local: `ws://localhost:18789`, Production: `wss://zeus-gateway-production.up.railway.app` (URL uses legacy "zeus" name — Railway rename deferred)
 - 39 agents in `C:/Users/user/Downloads/claw3d-fork/server/zeus-gateway-adapter.js` (file rename deferred)
-- LLM stack: Cerebras Qwen3-235B → Gemma4/Ollama → NVIDIA NIM → Anthropic
+- LLM stack: legacy gateway note — verify against the gateway runtime before use; do not rely on old Cerebras references in this file as current truth
 - Manages: Life Simulator 3D state, user memory, event-driven webhooks
 - pm2 process: `zeus-gateway` (legacy name — `pm2 restart zeus-gateway --update-env`)
 

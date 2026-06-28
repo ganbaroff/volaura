@@ -353,12 +353,17 @@ async def get_campaign_report(
     # Without this, flipping org_billing_enabled serves paid reports for free.
     # Audit finding F-LEAK (Kimi deep audit 2026-06-28).
     from app.config import settings
+
     if settings.org_billing_enabled:
         from app.services.org_entitlements import org_has_report_access
+
         if not await org_has_report_access(db_admin, org["id"], campaign_id):
             raise HTTPException(
                 status_code=402,
-                detail={"code": "REPORT_PAYMENT_REQUIRED", "message": "Subscribe or unlock this campaign to access the report."},
+                detail={
+                    "code": "REPORT_PAYMENT_REQUIRED",
+                    "message": "Subscribe or unlock this campaign to access the report.",
+                },
             )
 
     campaign_result = (

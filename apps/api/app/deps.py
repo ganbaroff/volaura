@@ -152,7 +152,10 @@ async def get_current_user_id(
             logger.warning("Anonymous JWT rejected", user_id=str(user.id))
             raise HTTPException(
                 status_code=401,
-                detail={"code": "IDENTITY_REQUIRED", "message": "Anonymous sessions are not accepted. Sign in with Google or email."},
+                detail={
+                    "code": "IDENTITY_REQUIRED",
+                    "message": "Anonymous sessions are not accepted. Sign in with Google or email.",
+                },
             )
 
         return str(user.id)

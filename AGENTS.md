@@ -32,7 +32,7 @@ If you are loading this repo as an AI agent and Yusif addresses you by any of th
 
 **Hosting:** Vercel (frontend `volaura.app`), Railway (backend `volauraapi-production.up.railway.app`), Supabase (DB free tier).
 
-**LLM providers (Article 0, locked):** Cerebras Qwen3-235B → Ollama local → NVIDIA NIM → Anthropic Haiku (last resort only). Never Claude as a swarm agent. Never a single provider.
+**LLM providers (Article 0 + ADR-013, locked):** NVIDIA NIM → Ollama local → Gemini Flash → Groq → Anthropic (last resort, user-facing only). Cerebras removed (2026-05-09 spend incident). Never Claude as a swarm agent. Never a single provider.
 
 ---
 

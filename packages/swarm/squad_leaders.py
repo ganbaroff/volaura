@@ -55,8 +55,8 @@ SQUADS: list[Squad] = [
         name="INFRA",
         leader="devops-reviewer",
         members=["ci-checker", "deploy-analyst"],
-        keywords=["deploy", "ci", "cd", "docker", "railway", "vercel", "infra", "monitoring", "sentry", "performance"],
-        description="Infrastructure: CI/CD health, deployment readiness, monitoring, performance",
+        keywords=["deploy", "ci", "cd", "docker", "railway", "vercel", "infra", "monitoring", "sentry", "performance", "provider", "config", "api key", "model", "llm", "cerebras", "groq", "nvidia", "ollama", "env"],
+        description="Infrastructure: CI/CD health, deployment readiness, monitoring, performance, provider configs, API keys, model routing",
     ),
     Squad(
         name="ECOSYSTEM",

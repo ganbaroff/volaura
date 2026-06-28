@@ -198,4 +198,4 @@ Start apostille process NOW (takes 2-3 weeks at ASAN). This is the critical path
 | BrandedBy strategy | [`memory/brandedby_context.md`](../memory/brandedby_context.md) |
 | CEO working style | [`memory/context/working-style.md`](../memory/context/working-style.md) |
 | Audit report (62 findings) | [`docs/AUDIT-REPORT.md`](AUDIT-REPORT.md) |
-| TASK-PROTOCOL v4.0 | [`docs/TASK-PROTOCOL.md`](TASK-PROTOCOL.md) |
+| TASK-PROTOCOL v4.0 | [`docs/archive/protocols/TASK-PROTOCOL.md`](../../docs/archive/protocols/TASK-PROTOCOL.md) |

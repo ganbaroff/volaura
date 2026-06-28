@@ -208,7 +208,7 @@ Required fills:
 | Purpose | File |
 |---------|------|
 | This template | `docs/AGENT-BRIEFING-TEMPLATE.md` |
-| Protocol enforcement | `docs/TASK-PROTOCOL.md` (Step 1.0.5, Step 5.5) |
+| Protocol enforcement | `docs/archive/protocols/TASK-PROTOCOL.md` (Step 1.0.5, Step 5.5) |
 | Project context source | `CLAUDE.md` → Project Overview section |
 | Mistakes to avoid | `memory/context/mistakes.md` → Mistake #60 |
 | Working patterns | `memory/context/patterns.md` → P-057 |

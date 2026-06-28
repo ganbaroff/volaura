@@ -1,3 +1,11 @@
+---
+type: reference
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: [type/reference, area/ecosystem, status/active]
+---
+
 # Pre-Launch Blockers — Status Audit (D-007)
 
 **Authority:** Operational scope split for Constitution v1.7 pre-launch P0 blockers (19 items, originally logged in session 88 handoff). Sessions since then (89-108) closed several of them through various commits; this doc reconciles the list against the real repo state so launch planning can work from ground truth.
@@ -94,7 +102,21 @@ Design System v2 is in Figma and mostly deployed. No item-by-item audit against 
 
 **S1. Telegram webhook no HMAC validation** — ✅ fixed session 108 commit `355bb36` + regression tests `d2b026f`.
 
-**S2. Role self-selection gaming** — unverified. The `role_level` field in `assessment_sessions` CHECK constraint was extended (session 108 commit `20260416000000_role_level_add_professional`), but whether the API enforces that a user cannot claim `senior_manager` without evidence is a separate check. Needs audit.
+**S2. Role self-selection gaming** — ✅ done (Session 128). `role_level` constrained via Pydantic `Literal["professional","volunteer"]` on assessment start; invalid values rejected at API boundary. Extended CHECK constraint in migration `20260416000000_role_level_add_professional`.
+
+---
+
+## CEO launch gate (legal — blocks public launch)
+
+Engineering P0 items above are largely complete. **Public launch remains gated by CEO/legal work only:**
+
+| ID | Action | Owner | Deliverable |
+|----|--------|-------|-------------|
+| #4 | Art. 9 classification of `energy_level` / burnout signals | CEO + legal counsel | Written memo: treat as non-Art.9 OR ship separate Art.9 consent screen |
+| #5 | AZ PDPA SADPP registration | CEO (Yusif) | Filing confirmation with State Agency |
+| — | Confirm SADPP timeline blocks marketing date | CEO | Date communicated to Atlas for sprint planning |
+
+Atlas cannot execute these. Engineering proceeds in parallel on control-plane hardening ([VOLAURA-FIRST Master Plan](VOLAURA-FIRST-MASTER-EXECUTION-PLAN-2026-04-23.md) Phase 1–3).
 
 ---
 
@@ -114,22 +136,9 @@ Revised Atlas work: ~1.5 days (was 4 days — 3 items were already built but doc
 CEO work unchanged: legal review + SADPP.
 
 **Can defer to post-launch (P1):**
-- #7 (DIF bias audit)
-- #10 (ADHD language CI check)
-- #13 (Vulnerability Window content alignment)
+- #7 (DIF bias audit — script exists; needs 300+ sessions for publishable findings)
 - #15 (Open Badges 3.0 VC)
 - #16 (MIRT upgrade)
 - #19 (Figma design polish)
 
-**Blocked on external, not launch-critical for text-only MVP:**
-- #6, #8, #17 (voice data path — only fires when voice ships)
-
-**Already done:** #1, #2, #3 (field level) + S1.
-
----
-
-## Next action
-
-Atlas picks up the P0 launch list above in priority order, one commit per item. #9, #11, #12, #14 are code-only, no legal dependency — they ship first. The `Must-ship` column estimates total ~4 days of focused Atlas work to clear the current launch gate.
-
-CEO action: confirm legal timeline for #4, #5, and S2 audit.
+**Already done (do not re-open):** #1, #2, #3, #9, #10, #11, #12, #13, #14, #18, S1, S2.

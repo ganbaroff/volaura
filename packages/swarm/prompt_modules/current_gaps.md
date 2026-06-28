@@ -23,11 +23,11 @@ PR ganbaroff/volaura#12 exists but not merged to main.
 Agents reading main branch don't see the Constitution.
 Priority: **HIGH** — source of truth not accessible from default branch.
 
-### E-4. Ollama/Gemma4 Not Running
-Node.js gateway hierarchy: Cerebras → Gemma4/Ollama → NVIDIA → Anthropic.
-Ollama is not started. Local GPU unused. Fallback chain broken at step 2.
-Need: systemd service or startup script for Ollama.
-Priority: **MEDIUM** — Cerebras works, but no local fallback.
+### E-4. Local gateway fallback not running
+Node.js gateway local fallback is not confirmed in current runtime.
+Ollama is not started. Local GPU unused. Fallback chain is effectively broken.
+Need: systemd service or startup script for the local fallback layer.
+Priority: **MEDIUM** — current gateway is usable, but no local fallback layer.
 
 ## Open Gaps
 

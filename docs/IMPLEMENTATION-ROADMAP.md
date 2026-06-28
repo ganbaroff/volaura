@@ -488,7 +488,7 @@ Based on MindShift's more mature v6.0 protocol, these additions to TASK-PROTOCOL
 
 | File | What to update | Priority |
 |------|---------------|----------|
-| `docs/TASK-PROTOCOL.md` | v5.3 → v6.0 changes above | HIGH |
+| `docs/archive/protocols/TASK-PROTOCOL.md` | v5.3 → v6.0 changes above | HIGH |
 | `memory/swarm/shared-context.md` | Add sprint-level tracking for Sprints 1-8 | MEDIUM |
 | `memory/swarm/SHIPPED.md` | Add session notes from this planning session | MEDIUM |
 | `memory/context/sprint-state.md` | Current position → Sprint 1 planning done | HIGH |

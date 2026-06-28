@@ -1,4 +1,6 @@
 # VOLAURA 500-Hour Execution Plan
+> **Status:** ARCHIVED / LEGACY. Superseded by current truth-lock docs, milestone ledger, and launch-gate sheet.
+> **Do not use this plan as current roadmap truth.**
 **Generated:** 2026-04-02 | **Method:** 4-agent swarm audit + cross-critique
 **Agents:** Security, Growth, Codebase, Retrospective
 **Scope:** From current state (0 real users, beta-ready API) → 1000 paying organizations
@@ -360,4 +362,3 @@ Month 5: Phase 8 (scale infra — only when justified by users)
 ---
 
 *Plan authored: 2026-04-02. Swarm input: Security agent (4 P0/P1 findings), Growth agent (resume bug, username, org routing), Codebase agent (63 migrations, schema validation), Retrospective agent (first-user definition, wrong priority diagnosis). Cross-critique: Security challenged Growth's P0 classification; Growth challenged Security's config.toml flag. Result: 2 of 4 "P0" items correctly downgraded.*
-

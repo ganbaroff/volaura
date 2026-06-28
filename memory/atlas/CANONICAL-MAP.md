@@ -1,5 +1,9 @@
 # Canonical Map
 
+> **This is the SINGLE canon registry** (declared 2026-06-10). `README.md` now redirects here; there is no `CANONICAL-LAYERS.md` (it was never on `main`). When you add / move / archive a root file, update THIS table — nowhere else.
+>
+> ⚠️ Partial-staleness note (2026-06-10): the rows below were last verified 2026-05-03 and a few no longer match disk (some files moved to `archive/`). A full row-by-row regeneration against current disk is a tracked follow-up (see `MORNING-REPORT-2026-06-10.md`). The wake chain itself (`wake.md`) was repaired to 0 dead paths on 2026-06-10.
+
 Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date for that file.
 
 | Filename | Category | Last Verified Date |

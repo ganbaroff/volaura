@@ -58,6 +58,7 @@ from app.routers import (
     badges,
     beta_invite,
     brandedby,
+    campaigns,
     character,
     community,
     discovery,
@@ -68,6 +69,7 @@ from app.routers import (
     invites,
     lifesim,
     notifications,
+    org_billing,
     organizations,
     profiles,
     skills,
@@ -209,6 +211,7 @@ app.include_router(events.router, prefix="/api")
 app.include_router(eventshift.router, prefix="/api")
 app.include_router(organizations.router, prefix="/api")
 app.include_router(invites.router, prefix="/api")
+app.include_router(campaigns.router, prefix="/api")  # B2B screening campaigns (2026-06-11 pivot)
 app.include_router(beta_invite.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")
 app.include_router(verification.router, prefix="/api")
@@ -228,6 +231,7 @@ app.include_router(character.router, prefix="/api")
 app.include_router(brandedby.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
+app.include_router(org_billing.router, prefix="/api")  # B2B org-side monetization (report paywall)
 app.include_router(tribes.router, prefix="/api")
 app.include_router(admin.router)  # prefix already set in router (/api/admin)
 app.include_router(atlas_consult.router, prefix="")  # Atlas self-consult — Layer 3 mirror consultation

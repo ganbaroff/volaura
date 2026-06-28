@@ -12,11 +12,12 @@ Updated: 2026-04-15.
 | Provider | Model | Strength | Env var |
 |---|---|---|---|
 | Ollama (local GPU) | qwen3:8b | Zero rate limit, CEO's Windows when on | `OLLAMA_URL=http://localhost:11434` |
-| Cerebras | Qwen3-235B | 2000+ tok/s, long-context | `CEREBRAS_API_KEY` |
 | Gemini 2.5 Flash | (free tier) | 15 rpm / 1M tpm / 1500 req/day | `GEMINI_API_KEY` |
 | NVIDIA NIM | Llama 3.3 70B | Balanced reasoning | `NVIDIA_API_KEY` |
 | DeepSeek R1 / V3 | (free tier) | Chain-of-thought | `DEEPSEEK_API_KEY` |
 | Groq | Llama 3.3 70B | Fast, but spend-limit reached — currently blocked | `GROQ_API_KEY` |
+
+> Cerebras removed 2026-05-09 per ADR-013 (paid-tier spend incident) and confirmed canon-dead 2026-05-10 per `lessons.md` Class 42 (Cerebras 402 error, AGENT_LLM_MAP remapped to NVIDIA/Gemini/Ollama).
 
 ### Paid (conscious spend, log to `memory/atlas/spend-log.md`)
 | Provider | Model | When to use | Env var | Rough cost |
@@ -28,12 +29,11 @@ Updated: 2026-04-15.
 | OpenRouter | gateway-to-all | Multi-provider consilium | `OPENROUTER_API_KEY` | varies |
 
 ### Routing logic
-1. Cerebras for long-context synthesis (research, code audits, corpus analysis).
-2. Gemini Flash for short structured tasks (< 1K tokens in, JSON out).
-3. NVIDIA Nemotron for balanced one-shots.
-4. DeepSeek for heavy reasoning.
-5. Ollama when local GPU is alive and cost is critical.
-6. Anthropic via `scripts/critique.py` for adversarial consilium (Opus-backed, $3 ceiling).
+1. Gemini Flash for short structured tasks (< 1K tokens in, JSON out).
+2. NVIDIA Nemotron for balanced one-shots.
+3. DeepSeek for heavy reasoning.
+4. Ollama when local GPU is alive and cost is critical.
+5. Anthropic via `scripts/critique.py` for adversarial consilium (Opus-backed, $3 ceiling).
 
 **Forbidden:** Haiku anywhere (CEO rule 2026-04-14, durable).
 

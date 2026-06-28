@@ -3,14 +3,15 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 /**
  * Matches backend QuestionOut schema (apps/api/app/schemas/assessment.py)
- * Fields: id, question_type, question_en, question_az, options, competency_id
+ * Fields: id, question_type, question_en, question_az, question_ru, options, competency_id
  */
 export interface Question {
   id: string;
   question_type: string; // "mcq" | "open_ended" | "sjt"
   question_en: string;
   question_az: string;
-  options: Array<{ key: string; text_en: string; text_az: string }> | null;
+  question_ru?: string | null;
+  options: Array<{ key: string; text_en: string; text_az: string; text_ru?: string }> | null;
   competency_id: string;
 }
 

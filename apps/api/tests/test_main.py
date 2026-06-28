@@ -102,7 +102,9 @@ _EXPECTED_ROUTERS = [
 
 
 def _route_paths() -> list[str]:
-    return [str(route.path) for route in app.routes]
+    """Get all registered API paths via OpenAPI spec — works across FastAPI versions."""
+    schema = app.openapi()
+    return list(schema.get("paths", {}).keys())
 
 
 def test_router_count_at_least_27():

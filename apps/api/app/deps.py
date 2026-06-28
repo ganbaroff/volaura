@@ -140,7 +140,22 @@ async def get_current_user_id(
                 status_code=401,
                 detail={"code": "INVALID_TOKEN", "message": "Invalid or expired token"},
             )
-        return str(user_response.user.id)
+
+        # P0d SERVER INVARIANT — reject anonymous JWTs.
+        # "Verified" is the product. A result without a confirmed human is worthless.
+        # No UI change can bypass this. Audit finding F2 (Kimi deep audit 2026-06-28).
+        user = user_response.user
+        app_meta = getattr(user, "app_metadata", None) or {}
+        provider = app_meta.get("provider", "")
+        is_anonymous = app_meta.get("is_anonymous", False)
+        if is_anonymous or provider == "anonymous":
+            logger.warning("Anonymous JWT rejected", user_id=str(user.id))
+            raise HTTPException(
+                status_code=401,
+                detail={"code": "IDENTITY_REQUIRED", "message": "Anonymous sessions are not accepted. Sign in with Google or email."},
+            )
+
+        return str(user.id)
     except HTTPException:
         raise
     except Exception as e:

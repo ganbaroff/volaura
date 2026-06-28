@@ -373,6 +373,32 @@ def should_stop(state: CATState, energy_level: str = "full") -> tuple[bool, str 
     return False, None
 
 
+def can_finalize(state: CATState, energy_level: str = "full") -> tuple[bool, int]:
+    """Gate for user-initiated session completion (D-1 min-items guard).
+
+    A session may be finalised into a score when either:
+    - the engine already stopped it (``state.stopped`` — max_items,
+      se_threshold, no_items_left, eap_degraded), or
+    - the answered-item count reached the energy profile's ``min_before_se``.
+
+    Below that floor a theta estimate is built from too little evidence: a
+    1-answer force-complete yields a publicly verifiable score + badge +
+    crystals. Callers that finalise sessions must reject completion when this
+    returns False; keeping the rule here means every future caller inherits it.
+
+    Note: the lower floors for mid/low energy are Constitution Law 2 design
+    intent (client-chosen energy reduces the minimum to 4/3), not a bypass.
+
+    Returns:
+        (allowed, min_required)
+    """
+    profile = ENERGY_STOPPING.get(energy_level, ENERGY_STOPPING["full"])
+    min_required = int(round(profile["min_before_se"]))
+    if state.stopped:
+        return True, min_required
+    return len(state.items) >= min_required, min_required
+
+
 def theta_to_score(theta: float) -> float:
     """Convert IRT theta (logit scale) to 0-100 AURA competency score.
 

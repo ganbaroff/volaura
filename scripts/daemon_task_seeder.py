@@ -65,16 +65,18 @@ def check_code_index(dry_run: bool) -> int:
         return 0
     try:
         data = json.loads(CODE_INDEX.read_text(encoding="utf-8"))
-        modules = len(data.get("modules", {}))
-        endpoints = len(data.get("endpoints", []))
-        if modules == 0 and endpoints == 0:
+        files = data.get("files", {})
+        file_count = data.get("total_files")
+        if file_count is None:
+            file_count = len(files) if isinstance(files, dict) else 0
+        if int(file_count or 0) == 0:
             return int(write_task(
                 f"{TODAY}-code-index-empty",
                 "audit",
                 "code-index.json is empty — rebuild needed",
-                "code-index.json has 0 modules and 0 endpoints despite a recent built_at timestamp. "
+                "code-index.json has 0 indexed files despite a recent built_at timestamp. "
                 "Investigate why the builder produced empty output and propose a fix. "
-                "Check if packages/swarm/archive/code_index.py was moved to archive accidentally.",
+                "Check packages/swarm/code_index.py and the INDEXED_PATHS list.",
                 dry_run,
             ))
     except (json.JSONDecodeError, OSError):

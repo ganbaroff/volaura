@@ -15,6 +15,7 @@ import { useTrackEvent } from "@/hooks/use-analytics";
 import { EnergyPicker } from "@/components/assessment/energy-picker";
 import { PreAssessmentSummary } from "@/components/assessment/pre-assessment-summary";
 import { SafetyBlock } from "@/components/assessment/safety-block";
+import { CompletedAssessmentsList } from "@/components/assessment/completed-assessments-list";
 import { TopBar } from "@/components/layout/top-bar";
 import { CommunitySignalInline } from "@/components/community/community-signal-inline";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
@@ -329,6 +330,9 @@ function AssessmentContent() {
             : t("assessment.start")
         )}
       </Button>
+
+      {/* D-5: past results — quiet section, renders nothing for new users */}
+      <CompletedAssessmentsList locale={locale} />
     </div>
     </>
   );

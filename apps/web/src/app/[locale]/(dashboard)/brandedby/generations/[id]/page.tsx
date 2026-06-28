@@ -307,7 +307,7 @@ export default function GenerationPage({
               <motion.div
                 className="h-full bg-primary rounded-full"
                 animate={{ width: gen.status === "processing" ? "75%" : "30%" }}
-                transition={{ duration: 1, ease: "easeInOut" }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
               />
             </div>
           </motion.div>

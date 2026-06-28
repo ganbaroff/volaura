@@ -349,6 +349,23 @@ async def get_campaign_report(
     _validate_uuid(campaign_id)
     org = await _get_owned_org(db_admin, user_id)
 
+    # F-LEAK gate: when org billing is enabled, require subscription or per-campaign unlock.
+    # Without this, flipping org_billing_enabled serves paid reports for free.
+    # Audit finding F-LEAK (Kimi deep audit 2026-06-28).
+    from app.config import settings
+
+    if settings.org_billing_enabled:
+        from app.services.org_entitlements import org_has_report_access
+
+        if not await org_has_report_access(db_admin, org["id"], campaign_id):
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "REPORT_PAYMENT_REQUIRED",
+                    "message": "Subscribe or unlock this campaign to access the report.",
+                },
+            )
+
     campaign_result = (
         await db_admin.table("screening_campaigns")
         .select("*")

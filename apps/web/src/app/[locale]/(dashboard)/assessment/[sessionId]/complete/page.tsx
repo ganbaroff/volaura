@@ -345,7 +345,7 @@ export default function AssessmentResultsPage() {
             <motion.div
               initial={{ scale: 1, opacity: 0.7 }}
               animate={{ scale: 1.6, opacity: 0 }}
-              transition={{ duration: 1.0, delay: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
               className="absolute inset-0 rounded-full ring-4 bg-primary/10 pointer-events-none"
               aria-hidden="true"
             />

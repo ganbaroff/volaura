@@ -143,3 +143,82 @@ jobs:
             exit 1
           fi
           echo "No secrets detected."
+
+  control-plane:
+    name: Control Plane (daemon + litellm)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install pytest pytest-asyncio litellm loguru pydantic
+          python -m pip install -r apps/api/requirements.txt
+
+      - name: Control-plane tests
+        run: |
+          pytest tests/test_atlas_swarm_daemon_*.py \
+            tests/test_litellm_adapter.py \
+            tests/test_daemon_task_seeder.py \
+            -q --tb=short
+        env:
+          APP_ENV: test
+
+  extended-suites:
+    name: Extended Python Suites (swarm / atlas-core / brain / openmanus)
+    # Closes the test gap surfaced 2026-06-10: these suites EXISTED but ran in NO job.
+    # Separate (non-required) job so wiring them in cannot break the existing required
+    # gate overnight; promote to a required check once the brain provider-chain is green.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install pytest pytest-asyncio litellm loguru pydantic
+          python -m pip install -r apps/api/requirements.txt
+
+      - name: Gating suites (must pass)
+        # atlas-core needs its package on PYTHONPATH (pyproject exists but isn't installed).
+        # The 4 brain provider-chain tests are deselected here and surfaced (red) in the next
+        # step — they fail because gemma4_brain still routes to Cerebras (ADR-013 violation).
+        run: |
+          PYTHONPATH=packages/atlas-core/python pytest \
+            packages/swarm/tests/ \
+            packages/atlas-core/python/tests/ \
+            tests/test_openmanus_*.py \
+            tests/test_gemma4_brain_*.py \
+            --deselect tests/test_gemma4_brain_provider_chain.py::test_default_chain_does_not_call_cerebras \
+            --deselect tests/test_gemma4_brain_provider_chain.py::test_cerebras_fully_removed_from_brain_chain \
+            --deselect tests/test_gemma4_brain_provider_chain.py::test_provider_order_nvidia_first \
+            --deselect tests/test_gemma4_brain_provider_chain.py::test_falls_back_through_chain_when_nvidia_fails \
+            -q --tb=short
+        env:
+          APP_ENV: test
+          GEMINI_API_KEY: fake-gemini-key
+
+      - name: "KNOWN-RED (non-blocking): brain chain still includes Cerebras — reserved for Codex fix"
+        continue-on-error: true
+        run: |
+          echo "These 4 tests are RED: gemma4_brain still has api.cerebras.ai in its provider"
+          echo "chain when ATLAS_ENABLE_CEREBRAS=true. ADR-013 / Class 42 require full removal."
+          echo "LLM-routing is spend-sensitive (DEBT-004 territory) — fix reserved for Codex review."
+          PYTHONPATH=packages/atlas-core/python pytest \
+            tests/test_gemma4_brain_provider_chain.py::test_default_chain_does_not_call_cerebras \
+            tests/test_gemma4_brain_provider_chain.py::test_cerebras_fully_removed_from_brain_chain \
+            tests/test_gemma4_brain_provider_chain.py::test_provider_order_nvidia_first \
+            tests/test_gemma4_brain_provider_chain.py::test_falls_back_through_chain_when_nvidia_fails \
+            -v --tb=short
+        env:
+          APP_ENV: test
+          GEMINI_API_KEY: fake-gemini-key

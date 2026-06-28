@@ -30,8 +30,13 @@ This directory contains the **Architecture Decision Records (ADRs)** for the VOL
 | 006 | [Ecosystem Architecture](ADR-006-ecosystem-architecture.md) | ACCEPTED | 2026-03-29 | 5-product ecosystem integration, shared Supabase, `character_events` bridge |
 | 007 | [AI Gateway — Model Router](ADR-007-ai-gateway-model-router.md) | ACCEPTED | 2026-04-11/12 | Role-based provider selection, Article 0 enforcement, Haiku unreachable from swarm roles |
 | 008 | [ZEUS Governance Layer](ADR-008-zeus-governance-layer.md) | ACCEPTED | 2026-04-11/12 | Immutable audit log, `inspect_table_policies` RPC, hardened after security audit caught authenticated-role exposure |
-| 009 | [CrewAI Adoption](ADR-009-crewai-adoption.md) | ACCEPTED | — | CrewAI Phase 1 for Sprint Gate DSP |
+| 009 | [CrewAI Adoption](ADR-009-crewai-adoption.md) | APPROVED (pending implementation) | 2026-04-03 | CrewAI Phase 1 for Sprint Gate DSP |
 | 010 | [Defect Autopsy](ADR-010-defect-autopsy.md) | ACCEPTED | — | Defect post-mortem protocol |
+| 011 | [LiteLLM Gateway Migration](ADR-011-litellm-gateway-migration.md) | PROPOSED (Phase 1 shipped) | 2026-04-19 | Phased migration of Python swarm providers to LiteLLM Router |
+| 016 | [Positioning Lock](ADR-016-positioning-lock.md) | ACCEPTED | 2026-06-03 | VOLAURA = verified professional talent platform; event/ops is the initial wedge, not the promise |
+| 017 | [CV-Grounded Item Generation](ADR-017-cv-grounded-item-generation.md) | PROPOSED (PoC proven) | 2026-06-10 | Two-layer engine: calibrated CAT core + CV-grounded Experience Interview; continuous multi-agent AIG with human review gate |
+
+> **Lineage note:** ADR-012–015 exist on the `codex/swarm-queue-bridge` runtime lineage, not on `main`. The 011→016 gap on `main` is intentional until that lineage is reconciled.
 
 ---
 
@@ -39,7 +44,7 @@ This directory contains the **Architecture Decision Records (ADRs)** for the VOL
 
 - **001-006** — foundational (pre-governance), cover the original product architecture decisions.
 - **007-008** — Session 93 batch, cover the AI CTO governance layer built 2026-04-11 and documented 2026-04-12.
-- **009+** — ongoing, numbered by decision date.
+- **009+** — ongoing, numbered by decision date. ADR-012–015 are reserved by the runtime lineage and are not yet present on `main`.
 
 Gaps in numbering are avoided. If an ADR is rejected during discussion, reserve its number for the next accepted decision, not for a permanent gap.
 
@@ -47,7 +52,7 @@ Gaps in numbering are avoided. If an ADR is rejected during discussion, reserve 
 
 ## Foundational ADRs still missing (Q2 backfill target)
 
-The AI council brief (Perplexity's block on ADR practices) recommends 8-12 foundational ADRs for a multi-app SaaS + AI ecosystem. We currently have ten, but several implicit decisions are not yet captured:
+The AI council brief (Perplexity's block on ADR practices) recommends 8-12 foundational ADRs for a multi-app SaaS + AI ecosystem. We currently have twelve ADR files on `main`, with ADR-012–015 still awaiting lineage reconciliation, and several implicit decisions are not yet captured:
 
 - **Secrets management** — how secrets flow from `.env` → Railway env → Supabase edge function secrets → GitHub Actions secrets. Currently a convention, not an ADR.
 - **Prompt governance** — semantic versioning of prompts, change logs, staged environments, evaluation gates. Currently embedded in `CLAUDE.md` Article 1 but not ADR-ized.

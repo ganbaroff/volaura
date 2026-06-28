@@ -132,6 +132,7 @@ class TestActivityFeedEndpoint:
                             "theta_estimate": 1.2,
                             "status": "completed",
                             "completed_at": "2026-04-17T10:00:00Z",
+                            "competencies": {"slug": "communication"},
                         }
                     ]
                 }
@@ -148,6 +149,8 @@ class TestActivityFeedEndpoint:
             assert len(assessment_items) == 1
             assert assessment_items[0]["id"] == "as-1"
             assert assessment_items[0]["metadata"]["competency_id"] == "communication"
+            # D-5: slug exposed for dashboard past-results list deep links
+            assert assessment_items[0]["metadata"]["competency_slug"] == "communication"
         finally:
             app.dependency_overrides.pop(get_supabase_user, None)
             app.dependency_overrides.pop(get_current_user_id, None)

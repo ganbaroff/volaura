@@ -216,8 +216,10 @@ async def test_complete_with_zero_answers_does_not_crash():
 
         # Must not 500 — engine handles empty answers gracefully
         assert resp.status_code != 500, f"complete_assessment crashed with 500 on zero-answer session: {resp.text}"
-        # 200 or 4xx are both acceptable — 500 is the only failure mode we guard against
-        assert resp.status_code in (200, 400, 404, 410, 422), f"Unexpected status {resp.status_code}: {resp.text}"
+        # D-1 gate: zero answered items on an un-stopped session is now a
+        # deterministic 409 MIN_ITEMS_NOT_REACHED (no score from no evidence).
+        assert resp.status_code == 409, f"Unexpected status {resp.status_code}: {resp.text}"
+        assert resp.json()["detail"]["code"] == "MIN_ITEMS_NOT_REACHED"
     finally:
         app.dependency_overrides.pop(get_supabase_user, None)
         app.dependency_overrides.pop(get_supabase_admin, None)

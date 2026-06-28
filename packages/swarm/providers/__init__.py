@@ -47,7 +47,7 @@ class ProviderRegistry:
             try:
                 from .litellm_adapter import LiteLLMProvider
                 provider = LiteLLMProvider()
-                logger.info("LiteLLM router active — fallback chain: Cerebras→Ollama→NVIDIA→Haiku")
+                logger.info("LiteLLM router active — fallback chain: Cerebras→Ollama→NVIDIA (Constitution Article 0: no Anthropic)")
                 return [provider]
             except Exception as e:
                 logger.warning("SWARM_USE_LITELLM=1 but LiteLLM init failed ({e}), falling back to legacy providers", e=str(e)[:200])

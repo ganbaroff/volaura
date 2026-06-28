@@ -5,12 +5,15 @@ picked providers their own way (see llm.py, swarm/engine.py, reeval_worker.py).
 This router centralises the decision and makes the provider hierarchy explicit,
 so there is one place to audit when a call goes to the wrong model.
 
-The hierarchy is dictated by Article 0 of CLAUDE.md (authoritative LLM order):
+The hierarchy is dictated by Article 0 of CLAUDE.md and ADR-013 (2026-05-09):
 
-    Cerebras Qwen3-235B   — fastest, preferred when available
-    Ollama / local GPU    — zero cost, zero rate limit, MUST try before external
-    NVIDIA NIM            — free tier, 160+ open-source models
-    Anthropic Haiku       — LAST RESORT ONLY, and NEVER as a swarm agent
+    NVIDIA NIM            — Inception credits, primary when available
+    Ollama / local GPU    — zero cost, zero rate limit
+    Gemini Flash          — Google free tier
+    Groq                  — last-resort free tier
+    Anthropic Sonnet      — LAST RESORT ONLY for safe_user_facing; NEVER swarm agent
+
+    Cerebras was removed entirely after the ADR-013 spend incident.
 
 Roles:
     judge            — highest-quality reasoning / architecture / synthesis
@@ -59,7 +62,7 @@ class ProviderRole(StrEnum):
 class ProviderSpec:
     """Resolved provider — ready to hand to an SDK client."""
 
-    provider: str  # 'cerebras' | 'ollama' | 'nvidia' | 'gemini' | 'groq' | 'anthropic'
+    provider: str  # 'ollama' | 'nvidia' | 'gemini' | 'groq' | 'anthropic'
     model: str  # exact model id
     base_url: str | None  # for OpenAI-compatible endpoints
     api_key: str  # resolved from settings; "" means zero-auth (Ollama)
@@ -71,20 +74,6 @@ class ProviderSpec:
 # Each entry is a callable that returns a ProviderSpec OR None if the
 # provider is not available (e.g. key missing). Evaluated top to bottom;
 # the first non-None wins.
-
-
-def _cerebras_qwen() -> ProviderSpec | None:
-    key = getattr(settings, "cerebras_api_key", "") or ""
-    if not key:
-        return None
-    return ProviderSpec(
-        provider="cerebras",
-        model="qwen-3-235b",
-        base_url="https://api.cerebras.ai/v1",
-        api_key=key,
-        rationale="Article 0 primary: Cerebras Qwen3-235B, 2000+ tok/s",
-        is_fallback=False,
-    )
 
 
 def _ollama_local() -> ProviderSpec | None:
@@ -127,6 +116,27 @@ def _nvidia_llama_70b() -> ProviderSpec | None:
         base_url="https://integrate.api.nvidia.com/v1",
         api_key=settings.nvidia_api_key,
         rationale="NVIDIA NIM Llama 3.3 70B — balanced reasoning, free",
+        is_fallback=False,
+    )
+
+
+def _freellmapi_gemini_flash() -> ProviderSpec | None:
+    """FreeLLMAPI gateway → Gemini 2.5 Flash via OpenAI-compatible router.
+
+    Added 2026-06-11 after NVIDIA NGC key went 401 and the model_router was
+    silently emitting fallback==False NVIDIA specs that the callers then 401'd
+    on (no HTTP-error-driven retry in this router). CEO has 75M tokens/month
+    unused on this gateway; using it as primary diversifies away from one
+    dead-key prod blackout.
+    """
+    if not settings.freellmapi_api_key:
+        return None
+    return ProviderSpec(
+        provider="freellmapi",
+        model="gemini-2.5-flash",
+        base_url="http://34.60.182.57:8799/v1",
+        api_key=settings.freellmapi_api_key,
+        rationale="FreeLLMAPI gateway → Gemini 2.5 Flash (Balanced, 75M/mo budget)",
         is_fallback=False,
     )
 
@@ -214,27 +224,31 @@ def _sonnet_last_resort() -> ProviderSpec | None:
 
 _CHAINS: dict[ProviderRole, list] = {
     ProviderRole.JUDGE: [
-        _cerebras_qwen,
+        _freellmapi_gemini_flash,  # 2026-06-11: NVIDIA NGC key dead, promote to primary
         _nvidia_nemotron_ultra,
-        _gemini_pro,
         _ollama_local,
+        _gemini_pro,
         _nvidia_llama_70b,
         _gemini_flash,
+        _groq_llama_70b,
     ],
     ProviderRole.WORKER: [
         _ollama_local,
+        _freellmapi_gemini_flash,  # 2026-06-11: before NVIDIA after NGC key dead
         _nvidia_llama_70b,
         _groq_llama_70b,
         _gemini_flash,
     ],
     ProviderRole.FAST: [
         _groq_llama_8b,
+        _freellmapi_gemini_flash,  # 2026-06-11: before NVIDIA after NGC key dead
         _gemini_flash,
         _nvidia_llama_70b,
     ],
     ProviderRole.SAFE_USER_FACING: [
         _gemini_pro,
         _gemini_flash,
+        _freellmapi_gemini_flash,  # 2026-06-11: before NVIDIA after NGC key dead
         _nvidia_nemotron_ultra,
         _sonnet_last_resort,  # CEO-authorised last resort after free tiers
     ],

@@ -6,8 +6,8 @@ routing through LiteLLM's Router for unified fallback semantics.
 Enable via env var: SWARM_USE_LITELLM=1
 Disable (default): unset or SWARM_USE_LITELLM=0
 
-Fallback chain mirrors CLAUDE.md hierarchy:
-  Cerebras Qwen3-235B → Ollama local → NVIDIA NIM → Anthropic Haiku (last resort)
+Fallback chain per ADR-013 (2026-05-09):
+  NVIDIA NIM (Inception credits) → Ollama local → Gemini Flash
 """
 
 from __future__ import annotations
@@ -32,52 +32,72 @@ except ImportError:
     Router = None  # type: ignore[assignment,misc]
 
 
+_FORBIDDEN_MODEL_PREFIXES: tuple[str, ...] = ("anthropic/",)
+
+
+def _build_model_list(env: dict[str, str] | None = None) -> list[dict[str, Any]]:
+    """Construct the LiteLLM model_list from environment."""
+    env = env if env is not None else dict(os.environ)
+    model_list: list[dict[str, Any]] = []
+
+    # Priority 1: NVIDIA NIM (Inception credits, ADR-013 §a)
+    if env.get("NVIDIA_API_KEY"):
+        model_list.append({
+            "model_name": "primary",
+            "litellm_params": {
+                "model": "nvidia_nim/meta/llama-3.3-70b-instruct",
+                "api_key": env["NVIDIA_API_KEY"],
+            },
+        })
+
+    # Priority 2: Ollama local — always attempt (no key needed, may be offline).
+    ollama_model = env.get("OLLAMA_MODEL", "ollama/qwen3:8b")
+    if not ollama_model.startswith("ollama/"):
+        ollama_model = f"ollama/{ollama_model}"
+    model_list.append({
+        "model_name": "ollama-fb",
+        "litellm_params": {
+            "model": ollama_model,
+            "api_base": env.get("OLLAMA_API_BASE", "http://localhost:11434"),
+        },
+    })
+
+    # Priority 3: Gemini Flash (Google free tier)
+    if env.get("GEMINI_API_KEY"):
+        model_list.append({
+            "model_name": "gemini-fb",
+            "litellm_params": {
+                "model": "gemini/gemini-2.5-flash",
+                "api_key": env["GEMINI_API_KEY"],
+            },
+        })
+
+    # Cerebras removed — ADR-013 spend incident ($7.25 burn)
+    safe_list = [
+        m for m in model_list
+        if not str(m.get("litellm_params", {}).get("model", "")).startswith(_FORBIDDEN_MODEL_PREFIXES)
+    ]
+
+    if len(safe_list) != len(model_list):
+        dropped = [m for m in model_list if m not in safe_list]
+        logger.warning(
+            "litellm_adapter dropped {n} forbidden model(s) per Constitution Article 0: {names}",
+            n=len(dropped),
+            names=[m.get("model_name") for m in dropped],
+        )
+
+    return safe_list
+
+
 def _build_router() -> "Router":
     """Build LiteLLM Router with VOLAURA fallback chain."""
     if not _LITELLM_AVAILABLE:
         raise ImportError("litellm is not installed. Run: pip install litellm>=1.50")
 
-    model_list = []
-
-    if os.environ.get("CEREBRAS_API_KEY"):
-        model_list.append({
-            "model_name": "primary",
-            "litellm_params": {
-                "model": "cerebras/qwen-3-235b-a22b-instruct",
-                "api_key": os.environ["CEREBRAS_API_KEY"],
-            },
-        })
-
-    # Ollama local — always attempt (no key needed, may be offline)
-    model_list.append({
-        "model_name": "ollama-fb",
-        "litellm_params": {
-            "model": "ollama/qwen2.5:32b",
-            "api_base": os.environ.get("OLLAMA_API_BASE", "http://localhost:11434"),
-        },
-    })
-
-    if os.environ.get("NVIDIA_API_KEY"):
-        model_list.append({
-            "model_name": "nvidia-fb",
-            "litellm_params": {
-                "model": "nvidia_nim/meta/llama-3.3-70b-instruct",
-                "api_key": os.environ["NVIDIA_API_KEY"],
-            },
-        })
-
-    # Haiku — always registered as last resort (CLAUDE.md: never use as swarm agent proactively)
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        model_list.append({
-            "model_name": "haiku-lr",
-            "litellm_params": {
-                "model": "anthropic/claude-haiku-4-5-20251001",
-                "api_key": os.environ["ANTHROPIC_API_KEY"],
-            },
-        })
+    model_list = _build_model_list()
 
     if not model_list:
-        raise RuntimeError("No LLM credentials found. Set at least one of: CEREBRAS_API_KEY, NVIDIA_API_KEY, ANTHROPIC_API_KEY")
+        raise RuntimeError("No LLM credentials found. Set at least one of: NVIDIA_API_KEY, GEMINI_API_KEY")
 
     primary_name = model_list[0]["model_name"]
     fallback_names = [m["model_name"] for m in model_list[1:]]
@@ -116,7 +136,7 @@ class LiteLLMProvider(LLMProvider):
     def info(self) -> ProviderInfo:
         return ProviderInfo(
             name="litellm",
-            model="router/cerebras→ollama→nvidia→haiku",
+            model="router/nvidia→ollama→gemini→groq",
             cost_per_mtok_input=0.0,
             cost_per_mtok_output=0.0,
             rate_limit_rpm=60,

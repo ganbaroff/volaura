@@ -8,11 +8,11 @@
 
 ## Context
 
-Volaura's core value is verifying volunteer quality through rigorous competency assessment. Volunteers must be evaluated across 8 competencies (communication, reliability, english_proficiency, leadership, event_performance, tech_literacy, adaptability, empathy_safeguarding) using a combination of behavioral scales, multiple choice, and LLM-evaluated open text responses.
+Volaura's core value is verifying professional talent through rigorous competency assessment. Candidates must be evaluated across 8 competencies (communication, reliability, english_proficiency, leadership, event_performance, tech_literacy, adaptability, empathy_safeguarding) using a combination of behavioral scales, multiple choice, and LLM-evaluated open text responses.
 
 The assessment engine must:
 
-1. **Deliver fast, engaging assessments** in unstable WiFi (major event venue, 5000 concurrent volunteers)
+1. **Deliver fast, engaging assessments** in unstable WiFi (major event venue, 5000 concurrent candidates)
 2. **Prevent cheating** while remaining accessible to diverse literacy levels
 3. **Provide immediate feedback** while enabling robust LLM evaluation
 4. **Support offline-first design** (assessment works without connectivity)
@@ -50,13 +50,13 @@ All weights are **FINAL** and must not be changed without explicit cross-organiz
 
 **Format:**
 - 7-point scale (1–7)
-- Volunteer reads a scenario, then selects the response that best matches their behavior
+- Candidate reads a scenario, then selects the response that best matches their behavior
 - Each response level is anchored with a specific behavior description
 
 **Example (Communication):**
 
 ```
-Scenario: A team member disagrees with your event plan in front of volunteers.
+Scenario: A team member disagrees with your event plan in front of the group.
 
 1. Ignores the conflict; moves forward without addressing
 2. Acknowledges disagreement but doesn't engage further
@@ -114,14 +114,14 @@ score = selected_option_weight * 100
 **Purpose:** Assess complex reasoning, communication quality, and judgment in authentic scenarios.
 
 **Format:**
-- Volunteer writes free-form response (200–500 words recommended)
+- Candidate writes free-form response (200–500 words recommended)
 - Gemini 2.5 Flash evaluates against a rubric
 - Returns structured JSON with score, reasoning, and competency signals
 
 **Example (Leadership):**
 
 ```
-Scenario: Your volunteer event has poor attendance. The team is demoralized.
+Scenario: Your event has poor attendance. The team is demoralized.
 Write how you would handle the situation.
 
 Rubric:
@@ -140,17 +140,17 @@ async def evaluate_open_text(
     user_id: UUID
 ) -> EvaluationResult:
     """
-    Evaluate volunteer response using Gemini 2.5 Flash.
+    Evaluate candidate response using Gemini 2.5 Flash.
     Cache at submit_answer time (NEVER re-evaluate).
     """
 
-    prompt = f"""You are evaluating a volunteer's response for the competency: {question.competency}
+    prompt = f"""You are evaluating a candidate's response for the competency: {question.competency}
 
 Scenario: {question.content}
 
 Rubric: {question.rubric}
 
-Volunteer's response:
+Candidate's response:
 {response}
 
 Evaluate and return ONLY valid JSON (no markdown, no extra text):
@@ -272,7 +272,7 @@ async def submit_answer(
 
 **Caching:** Evaluation result is **cached at submit_answer time**. This prevents:
 - Double-billing on LLM API (cost savings)
-- Inconsistent scores if volunteer views result multiple times
+- Inconsistent scores if candidate views result multiple times
 - Cascading failures if Gemini is down later
 
 **Storage:** `assessment_responses.llm_evaluation` (JSONB), `assessment_responses.score` (0–100 or NULL)
@@ -343,7 +343,7 @@ async def submit_answer(
                 │ • Show timer: 60s–300s           │
                 └──────────────────────────────────┘
                                │
-                    (Volunteer responds)
+                    (Candidate responds)
                                │
                                ▼
                 ┌──────────────────────────────────┐
@@ -516,7 +516,7 @@ async def get_next_question(
 
 ### Offline Assessment Support (Major Event Critical)
 
-Volaura must support 5,000+ concurrent volunteers on unstable WiFi at the launch event.
+Volaura must support 5,000+ concurrent candidates on unstable WiFi at the launch event.
 
 **Strategy: Offline-First, Online-Sync**
 
@@ -640,7 +640,7 @@ async def submit_answer(
 ```
 
 **Benefits:**
-- Volunteers start assessment even if WiFi drops
+- Candidates start assessment even if WiFi drops
 - Answers queue locally; sync when back online
 - No lost work
 - UI shows "Answers saved offline" indicator
@@ -894,7 +894,7 @@ class LLMService:
         Returns structured JSON with score, reasoning, signals.
         """
 
-        system_prompt = f"""You are an expert evaluator assessing volunteer competencies.
+        system_prompt = f"""You are an expert evaluator assessing professional talent competencies.
 Evaluate responses on the competency: {question['competency']}
 
 Be fair, encouraging, and constructive. Consider:
@@ -910,7 +910,7 @@ Return ONLY valid JSON, no markdown."""
 Rubric for evaluation:
 {question['rubric']}
 
-Volunteer's response:
+Candidate's response:
 {response}
 
 Evaluate and return JSON:
@@ -1010,7 +1010,7 @@ async def submit_answer(
 
 ### Assessment Completion & AURA Calculation
 
-When a volunteer completes the assessment:
+When a candidate completes the assessment:
 
 ```python
 @router.post("/assessments/{assessment_id}/complete")
@@ -1185,7 +1185,7 @@ CREATE TABLE public.questions (
 2. **LLM dependency:** Open text eval relies on Gemini API; fallback is manual review (slow for event)
 3. **No CAT logic yet:** Each question takes ~3–5 mins; full assessment can't adaptively shorten
 4. **Offline score display:** Scoring visible offline is approximate (no LLM evals until sync)
-5. **Cool-down friction:** 7-day wait between reassessments may frustrate some volunteers
+5. **Cool-down friction:** 7-day wait between reassessments may frustrate some candidates
 
 ### Mitigation
 
@@ -1213,8 +1213,8 @@ CREATE TABLE public.questions (
 | Aspect | Assessment |
 |--------|-----------|
 | **Simplicity** | Trivial; just randomize questions |
-| **Fairness** | Low; some volunteers get harder assessment than others |
-| **Game-ability** | Medium; volunteers could memorize hard questions |
+| **Fairness** | Low; some candidates get harder assessment than others |
+| **Game-ability** | Medium; candidates could memorize hard questions |
 | **Decision** | **Rejected:** Unfair; MVP difficulty trajectory is minimal overhead |
 
 ### Option C: Async LLM Evaluation (No Caching)
@@ -1242,7 +1242,7 @@ CREATE TABLE public.questions (
 - [[ADR-001-system-architecture]]: FastAPI monolith handles assessment engine; Edge Functions not suitable for complex question selection
 - [[ADR-002-database-schema]]: Full schema for assessments, questions, responses
 - [[ADR-005-aura-scoring]]: Weighted composite calculation across 8 competencies
-- **Future:** ADR-006 (IRT Calibration & CAT Implementation)
+- **Future:** separate ADR for IRT Calibration & CAT Implementation
 
 ---
 
@@ -1254,8 +1254,8 @@ CREATE TABLE public.questions (
 
 **Next Steps:**
 1. Implement MVP question bank with 80–100 questions (20+ per competency, 3 difficulty levels)
-2. Seed Gemini eval rubrics with education/volunteering domain expertise
-3. Deploy assessment flow to staging; test with 50 volunteers at internal event
+2. Seed Gemini eval rubrics with assessment and professional competency domain expertise
+3. Deploy assessment flow to staging; test with 50 candidates at internal event
 4. Gather feedback on question clarity, time-per-question, LLM eval quality
 5. Plan Phase 2 IRT calibration using initial cohort data (min 500 responses)
 # Four Question Types

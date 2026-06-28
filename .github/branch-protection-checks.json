@@ -1,0 +1,8 @@
+{
+  "strict": true,
+  "contexts": [
+    "Backend (FastAPI)",
+    "Control Plane (daemon + litellm)",
+    "hard-gates"
+  ]
+}

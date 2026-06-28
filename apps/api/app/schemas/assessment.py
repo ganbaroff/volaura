@@ -354,7 +354,8 @@ class PublicVerificationOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    verified: bool = True
+    verified: bool = False  # True ONLY when identity confirmed (SiMA/liveness)
+    credential_tier: str = "assessment_completed"  # "verified_skills" when identity confirmed
     platform: str = "Volaura"
     session_id: str
     competency_slug: str

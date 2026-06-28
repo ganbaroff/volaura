@@ -1023,8 +1023,6 @@ async def complete_assessment(
 
     session = session_result.data
 
-    # Guard: only active/in_progress/completed sessions may reach the scoring pipeline.
-    # Abandoned/expired sessions (set via RLS self-service or expiry cron) must never score.
     completable_statuses = {"active", "in_progress", "completed"}
     if session.get("status") not in completable_statuses:
         raise HTTPException(
@@ -2197,8 +2195,12 @@ async def verify_assessment(
     )
     profile = (profile_result.data if profile_result else None) or {}
 
+    identity_confirmed = profile.get("identity_confirmed", False)
+
     return PublicVerificationOut(
         session_id=session_id,
+        verified=bool(identity_confirmed),
+        credential_tier="verified_skills" if identity_confirmed else "assessment_completed",
         competency_slug=comp_data.get("slug", ""),
         competency_name=comp_data.get("name_en"),
         competency_score=competency_score,

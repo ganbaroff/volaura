@@ -441,7 +441,8 @@ class TestResponseSchemas:
             badge_tier="gold",
             questions_answered=8,
         )
-        assert pv.verified is True
+        assert pv.verified is False  # No identity proofing → honest default
+        assert pv.credential_tier == "assessment_completed"
         assert pv.platform == "Volaura"
 
     def test_assessment_info(self):

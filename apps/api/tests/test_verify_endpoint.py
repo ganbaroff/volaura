@@ -122,7 +122,8 @@ async def test_verify_happy_path():
 
         assert resp.status_code == 200
         body = resp.json()
-        assert body["verified"] is True
+        assert body["verified"] is False  # No identity proofing yet
+        assert body["credential_tier"] == "assessment_completed"
         assert body["platform"] == "Volaura"
         assert body["session_id"] == SESSION_ID
         assert body["competency_slug"] == "communication"

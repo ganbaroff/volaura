@@ -35,6 +35,10 @@ stripe>=8.0.0
 # File uploads
 python-multipart>=0.0.20
 
+# CV parsing (Sprint 1 — CV Truth Machine)
+pymupdf>=1.25.0
+python-docx>=1.1.0
+
 # Observability — LLM tracing (optional, graceful degradation if keys not set)
 langfuse>=2.0.0
 

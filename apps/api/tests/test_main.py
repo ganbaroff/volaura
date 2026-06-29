@@ -10,8 +10,9 @@ from app.main import _MAX_REQUEST_BODY_BYTES, app
 # ---------------------------------------------------------------------------
 
 
-def test_max_request_body_bytes_is_one_mb():
-    assert _MAX_REQUEST_BODY_BYTES == 1_048_576
+def test_max_request_body_bytes_allows_cv_upload():
+    # 6MB: 1MB assessment payloads + 5MB CV upload (Sprint 1)
+    assert _MAX_REQUEST_BODY_BYTES == 6_291_456
 
 
 # ---------------------------------------------------------------------------

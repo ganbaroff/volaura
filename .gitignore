@@ -144,3 +144,4 @@ secrets.txt
 memory/swarm/content-runs/
 test-results/
 packages/remotion/.whisper/
+CAPABILITIES-PRIVATE.md

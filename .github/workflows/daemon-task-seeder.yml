@@ -29,7 +29,8 @@ jobs:
         run: |
           git config user.name "atlas-daemon-seeder"
           git config user.email "atlas@volaura.app"
-          git add memory/atlas/work-queue/pending/
+          mkdir -p memory/atlas/work-queue/pending/
+          git add memory/atlas/work-queue/pending/ || true
           if git diff --cached --quiet; then
             echo "No new tasks seeded"
           else

@@ -34,9 +34,10 @@ def take_screenshot(region: tuple[int, int, int, int] | None = None, save_path: 
         save_path: optional path to save PNG
     """
     with mss.MSS() as sct:
-        monitor = sct.monitors[1]  # Primary monitor
-        if region:
-            monitor = {"left": region[0], "top": region[1], "width": region[2], "height": region[3]}
+        raw_mon = sct.monitors[1]
+        monitor = {"left": int(raw_mon["left"]), "top": int(raw_mon["top"]), "width": int(raw_mon["width"]), "height": int(raw_mon["height"])}
+        if region is not None:
+            monitor = {"left": int(region[0]), "top": int(region[1]), "width": int(region[2]), "height": int(region[3])}
         raw = sct.grab(monitor)
         img = Image.frombytes("RGB", (raw.width, raw.height), raw.rgb)
 

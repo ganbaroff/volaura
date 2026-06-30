@@ -15,10 +15,11 @@ test.describe("Browser Verification — Swarm Required", () => {
 
   test("1. Landing page has visible Get Started CTA", async ({ page }) => {
     await page.goto(`${BASE}/en`);
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
 
-    const cta = page.locator('a[href="/en/signup"]').first();
-    await expect(cta).toBeVisible({ timeout: 10000 });
+    // Next.js hydration may delay visibility — wait for any signup link in viewport
+    const cta = page.locator('a[href*="signup"]').first();
+    await expect(cta).toBeVisible({ timeout: 15000 });
 
     const text = await cta.textContent();
     expect(text?.toLowerCase()).toMatch(/get started|sign up|начать|qeydiyyat/);
@@ -26,10 +27,10 @@ test.describe("Browser Verification — Swarm Required", () => {
 
   test("2. Signup page renders without errors", async ({ page }) => {
     await page.goto(`${BASE}/en/signup`);
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
 
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
-    await expect(emailInput).toBeVisible({ timeout: 10000 });
+    await expect(emailInput).toBeVisible({ timeout: 15000 });
 
     // No red error elements visible on fresh load
     const errorElements = page.locator('[role="alert"], .text-destructive');

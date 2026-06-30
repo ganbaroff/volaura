@@ -27,6 +27,7 @@ def _load_env():
     for env_path in [
         Path(__file__).parent.parent / "apps" / "api" / ".env",
         Path(__file__).parent.parent / ".env",
+        Path.home() / "OneDrive" / "Documents" / "GitHub" / "ANUS" / ".env",
     ]:
         if env_path.exists():
             for line in env_path.read_text(encoding="utf-8").splitlines():
@@ -140,6 +141,38 @@ def call_nvidia(prompt: str) -> str | None:
         return resp["choices"][0]["message"]["content"]
     except Exception as e:
         print(f"  NVIDIA error: {e}", file=sys.stderr)
+        return None
+
+
+def call_freellmapi(prompt: str) -> str | None:
+    """Call freellmapi gateway (free, 8 models available)."""
+    api_key = os.environ.get("FREELLMAPI_API_KEY", "")
+    base_url = os.environ.get("FREELLMAPI_BASE_URL", "")
+    if not api_key or not base_url:
+        return None
+
+    body = json.dumps({
+        "model": "gemini-2.5-flash",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.7,
+        "max_tokens": 8192,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        f"{base_url}/v1/chat/completions",
+        data=body,
+        method="POST",
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+    )
+    try:
+        r = urllib.request.urlopen(req, timeout=60)
+        resp = json.loads(r.read())
+        return resp["choices"][0]["message"]["content"]
+    except Exception as e:
+        print(f"  freellmapi error: {e}", file=sys.stderr)
         return None
 
 
@@ -302,9 +335,11 @@ def main():
     print(f"Generating {args.count} {args.difficulty} questions for {args.competency}...")
     raw = call_gemini(prompt)
     if not raw:
-        # Fallback: NVIDIA NIM
         print("  Gemini failed, trying NVIDIA NIM...")
         raw = call_nvidia(prompt)
+    if not raw:
+        print("  NVIDIA failed, trying freellmapi...")
+        raw = call_freellmapi(prompt)
     if not raw:
         print("ERROR: All LLM providers failed", file=sys.stderr)
         sys.exit(1)

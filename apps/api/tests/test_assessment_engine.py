@@ -366,10 +366,11 @@ def test_calculate_overall_all_100():
 
 
 def test_calculate_overall_partial():
+    # P0-1 fix: 1 competency is enough. Averages only completed, re-normalizes weights.
     scores = {"communication": 100.0}  # weight 0.20
     result = calculate_overall(scores)
-    assert result.score is None
-    assert result.status == "incomplete"
+    assert result.score == 100.0  # 100 * (0.20/0.20) = 100
+    assert result.status == "complete"
 
 
 def test_get_badge_tier():

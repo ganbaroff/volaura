@@ -17,8 +17,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 # CRIT-I01: Reject oversized request bodies before routing (DoS hardening)
-# 1MB covers all assessment payloads; video/file upload endpoints not present.
-_MAX_REQUEST_BODY_BYTES = 1_048_576  # 1 MB
+# 6MB: 1MB for assessment payloads + 5MB headroom for CV upload (Sprint 1).
+_MAX_REQUEST_BODY_BYTES = 6_291_456  # 6 MB
 from loguru import logger
 
 try:
@@ -61,6 +61,7 @@ from app.routers import (
     campaigns,
     character,
     community,
+    cv,
     discovery,
     events,
     eventshift,
@@ -232,6 +233,7 @@ app.include_router(brandedby.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
 app.include_router(org_billing.router, prefix="/api")  # B2B org-side monetization (report paywall)
+app.include_router(cv.router, prefix="/api")  # CV Truth Machine — upload + claim extraction (Sprint 1)
 app.include_router(tribes.router, prefix="/api")
 app.include_router(admin.router)  # prefix already set in router (/api/admin)
 app.include_router(atlas_consult.router, prefix="")  # Atlas self-consult — Layer 3 mirror consultation

@@ -62,13 +62,15 @@ class TestCalculateOverall:
         assert result.status == "complete"
         assert result.badge_tier is None
 
-    def test_missing_competencies_mark_incomplete(self):
+    def test_partial_competencies_produce_score(self):
+        # P0-1 fix (2026-06-28): 1 competency is enough for a score.
+        # AURA averages only completed competencies, re-normalizes weights.
         result = calculate_overall({"communication": 100.0})
-        assert result.score is None
-        assert result.status == "incomplete"
+        assert result.score == 100.0  # 100 * (0.20/0.20) = 100
+        assert result.status == "complete"
         assert result.completed == 1
         assert result.confidence == pytest.approx(0.125, abs=0.001)
-        assert result.badge_tier is None
+        assert result.badge_tier == "platinum"
 
     def test_empty_scores(self):
         result = calculate_overall({})
